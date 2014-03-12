@@ -1,7 +1,6 @@
 var Terminal = require('./terminal.js');
-var XTML = require('./xtml.js')
-var X = new XTML
-var concolor = X.colors;
+require('./concolor.js')
+var concolor = consoleColors;
 var pty = require('pty.js');
 
 function cvt(s) {
@@ -15,7 +14,6 @@ function cvt(s) {
 
 for (var i = 0; i < concolor.length; i++) {
 	concolor[i] = cvt(concolor[i])
-if (i < 20)log(concolor[i].toString(16))
 }
 concolor[7] = getColor.console[0]
 concolor[16] = getColor.console[1]
