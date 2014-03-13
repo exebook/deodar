@@ -51,12 +51,8 @@ TConsole.can.respawn = function(cmd, args, cwd, callback) {
 	var me = this
 	var wh = me.termsize()
 	if (cmd == 'ls') args.push('--color')
-//	args.unshift(cmd)
-//	args = [args.join(' ')]
-//	args.unshift('-c')
-//	cmd = 'bash'
-	log(cmd, args)
 	if (cwd == undefined) cwd = process.env.HOME
+//	process.chdir(cwd)
 	this.term = pty.spawn(cmd, args, { name: 'xterm-color', cols: wh.w, rows: wh.h, cwd: cwd, env: process.env });
 	this.term.on('data', function(Data) {
 		me.terminal.writer.write(Data)

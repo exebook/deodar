@@ -44,6 +44,7 @@ TInputAndPanels.can.init = function(panelW, panelH) {
 	this.react(100, keycode['e'], this.historyNavigate, { arg: 'up' })
 	this.react(100, keycode.DOWN, this.historyNavigate, { arg: 'down' })
 	this.react(100, keycode['x'], this.historyNavigate, { arg: 'down' })
+	this.react(0, keycode.F3, this.viewFile)
 }
 
 TInputAndPanels.can.test = function() {
@@ -145,6 +146,7 @@ TInputAndPanels.can.size = function(w, h) {
 	this.input.size(w, 1)
 	this.output.pos(0, 0)
 	this.output.size(w, h - 1)
+	if (this.viewer != undefined) this.viewer.size(w, h)
 }
 TInputAndPanels.can.cwd = function() {
 	if (this.actor == this.right) return this.right.list.path
@@ -170,12 +172,6 @@ TInputAndPanels.can.onKey1 = function (char, key, down, physical) {
 	if (down) {
 		if(true) {
 
-		} else if (key == 69 && key_modifiers[0] != true) { // F3 -- VIEW
-			var dest = this.left
-			if (this.actor == this.left) dest = this.right
-			with (this.actor.list) {
-				if (items[sid].dir == false && items[sid].hint != true) viewFile(path + '/' + items[sid].name); else log('not a file')
-			}
 		} else if (key == 70 && key_modifiers[0] != true) { // F4 -- EDIT
 			var dest = this.left
 			if (this.actor == this.left) dest = this.right
@@ -312,7 +308,7 @@ TInputAndPanels.can.onChar = function (char) {
 	if (this.actor == this.output) this.output.onChar(char)
 }
 
-function tabize(s, tabsize) {
+function tabize111(s, tabsize) {
 	var R = '', t = 0
 	for (var i = 0; i < s.length; i++) {
 		if (s[i] == '\t') {
@@ -340,9 +336,11 @@ TInputAndPanels.can.execute = function(command) {
 		this.enterOutputMode(true)
 		return
 	}
-	this.output.log(this.cwd() + '> ' + command)
+	var cwd = this.cwd()
+	this.output.log(cwd + '> ' + command)
 	var args = command.split(' ')
 	command = args.shift()
+	if (args[args.length - 1] == '') args.pop()
 //	this.output.view.scrollToBottom()
 	var me = this
 	this.preCommandFocus = this.actor
@@ -353,7 +351,8 @@ TInputAndPanels.can.execute = function(command) {
 	this.right.size(this.right.w, this.right.h + 1)
 	this.hide(this.input)
 	var f = this.execDone.bind(this)
-	this.output.respawn(command, args, this.cwd(), f)
+log(command, ' + ', args, '+', cwd)
+	this.output.respawn(command, args, cwd, f)
 }
 
 TInputAndPanels.can.outputFlip = function() {
@@ -406,6 +405,7 @@ TInputAndPanels.can.onPipe = function(str) {
 	//native_repaint(display.handle)
 	return true
 }
+
 TInputAndPanels.can.print = function(str) {
 	str = str.split('\n')
 	this.output.view.lines = this.output.view.lines.concat(str)
@@ -413,6 +413,7 @@ TInputAndPanels.can.print = function(str) {
 	this.output.view.scrollToBottom()
 	repaint()
 }
+
 TInputAndPanels.can.log = function(anything) {
 	var T0 = new Date().getTime()
 	var T = T0 - logT
@@ -422,3 +423,14 @@ TInputAndPanels.can.log = function(anything) {
 	this.print(s + Array.prototype.slice.call(arguments).join(' '))
 	logT = T0
 }
+
+TInputAndPanels.can.viewFile = function() {
+	if (this.actor == this.left || this.actor == this.right) {
+		with (this.actor.list) {
+			if (items[sid].dir == false && items[sid].hint != true) {
+				this.viewer = viewFile(this.getDesktop(), path + '/' + items[sid].name)
+			} else log('not a file')
+		}
+	}
+}
+

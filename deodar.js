@@ -1,6 +1,6 @@
-
+require('./lexer')
 //actor==panel cursor->actor
-var fs = require('fs');
+fs = require('fs');
 
 TODO = false
 log = console.log
@@ -38,7 +38,8 @@ TController.can.init = function(W, H) {
 	this.add(this.main)
 }
 
-TController.can.onSize = function(w, h) {
+TController.can.size = function(w, h) {
+	dnaof(this, w, h)
 	this.main.size(w, h)
 }
 
