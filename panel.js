@@ -148,9 +148,9 @@ TFileList.can.showDots = function() {
 	return true
 }
 
-TFileList.can.onMouse = function(button, down, x, y) {
-	if (down && button == 10) return this.onEnter()
-	return dnaof(this, button, down, x, y)
+TFileList.can.onMouse = function(hand) {
+	if (hand.down && hand.button == 10) return this.onEnter()
+	return dnaof(this, hand)
 }
 
 TFileList.can.load = function(path) {
@@ -242,8 +242,8 @@ TFileDetail.can.draw = function(state) {
 	}
 }
 
-TFileDetail.can.onMouse = function(button, down, x, y) {
-	if (down && button == 0) this.parent.actor = this.filelist
+TFileDetail.can.onMouse = function(hand) {
+	if (hand.down && hand.button == 0) this.parent.actor = this.filelist
 }
 
 TFilePanel = kindof(TWindow)
@@ -264,11 +264,11 @@ TFilePanel.can.init = function() {
 	this.list.pos(1, 1)
 }
 
-TFilePanel.can.onMouse = function(button, down, x, y) {
+TFilePanel.can.onMouse = function(hand) {
 	var a = this.actor
-	var ret = dnaof(this, button, down, x, y)
+	var ret = dnaof(this, hand)
 	if (this.actor == undefined) {
-		if  (down && button == 0) {
+		if  (this.down && this.button == 0) {
 			this.actor = this.list
 			return a == undefined // мож просто true?
 		}

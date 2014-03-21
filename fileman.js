@@ -44,7 +44,8 @@ TInputAndPanels.can.init = function(panelW, panelH) {
 	this.react(100, keycode['e'], this.historyNavigate, { arg: 'up' })
 	this.react(100, keycode.DOWN, this.historyNavigate, { arg: 'down' })
 	this.react(100, keycode['x'], this.historyNavigate, { arg: 'down' })
-	this.react(0, keycode.F3, this.viewFile)
+	this.react(0, keycode.F3, this.viewFile, { arg: TTextView })
+	this.react(0, keycode.F4, this.viewFile, { arg: TFileEdit })
 }
 
 TInputAndPanels.can.test = function() {
@@ -424,13 +425,15 @@ TInputAndPanels.can.log = function(anything) {
 	logT = T0
 }
 
-TInputAndPanels.can.viewFile = function() {
+TInputAndPanels.can.viewFile = function(viewClass) {
 	if (this.actor == this.left || this.actor == this.right) {
 		with (this.actor.list) {
 			if (items[sid].dir == false && items[sid].hint != true) {
-				this.viewer = viewFile(this.getDesktop(), path + '/' + items[sid].name)
+				this.viewer = viewFile(this.getDesktop(), path + '/' + items[sid].name, viewClass, getColor.syntax)
 			} else log('not a file')
 		}
 	}
 }
+
+
 
