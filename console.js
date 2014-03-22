@@ -30,7 +30,7 @@ TConsole.can.init = function() {
 	//[].concat(this.pal)
 	//this.pal[1] = 0
 	this.size(1, 1)
-	this.terminal = new Terminal(80-2, 24-3, 'xtml');
+	this.terminal = new Terminal(80-2, 24-4, '');
 	this.terminal.buffer.setMode('crlf',true);
 //	this.respawn('bash')
 	this.defaultTitle = 'terminal'
@@ -84,6 +84,7 @@ TConsole.can.arrow = function(arrow) {
 	}
 	this.term.write(key)//todo: move those two write+caretReset to function        
 	this.getDesktop().display.caretReset()
+	return true
 }
 
 TConsole.can.onKey = function(k) {

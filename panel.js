@@ -122,9 +122,10 @@ TFileList.can.onEnter = function () {
 		this.repaint()
 		return true
 	} else {
-		if (this.items[this.sid].flags.indexOf('x') >= 0) {
-			this.parent.parent.execute(this.items[this.sid].name);
-		}
+		this.parent.parent.onItemEnter(this.items[this.sid])
+//		if (this.items[this.sid].flags.indexOf('x') >= 0) {
+//			this.parent.parent.execute(this.items[this.sid].name);
+//		}
 	}
 	return false
 }
@@ -196,7 +197,6 @@ TFileDetail.can.init = function() {
 	this.name = 'TFileDetail'
 	this.sel = undefined
 	this.pal = getColor.filelist
-	log(this.pal)
 }
 //	$.bg = 0x0f0
 

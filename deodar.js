@@ -18,6 +18,19 @@ require('./fileman')
 require('./console')
 require('./copier')
 
+var enterRule = [ { ext: 'coffee', cmd: 'coffee' } ,{ ext: 'js', cmd: 'node' }, { ext: 'atr', cmd: 'atari800' } ]
+
+applyEnterRules = function(s) {
+	for (var i = 0; i < enterRule.length; i++) {
+		var x = '.' + enterRule[i].ext
+		var j = s.indexOf(x)
+		if (j >= 0 && j == s.length - x.length) {
+			return enterRule[i].cmd + ' ' + s
+		}
+	}
+	return s
+}
+
 TController = kindof(TDesktop)
 
 TController.can.init = function(W, H) {
@@ -38,17 +51,17 @@ TController.can.init = function(W, H) {
 //	var f = '/v/deodar/intervision/tool.js'
 ////	f = 'lexer.js'
 //	this.main = TModalTextView.create(this, f, TEdit, getColor.editor)
+//	this.add(this.main)
 //	this.main.size(30, 20)
 //	this.main.pos(0, 0)
-//	this.add(this.main)
-//	this.main.viewer.text.L = fs.readFileSync(f).toString().split('\n')
-//	this.main.viewer.para = 2
+////	this.main.viewer.text.L = fs.readFileSync(f).toString().split('\n')
+//	this.main.viewer.multiLine = false
+//	this.main.viewer.setText('abc')
+//	this.main.viewer.para = 0
 //	this.main.viewer.sym = 3
 //	this.main.viewer.sel.start(0, 3)
-//	this.main.viewer.sel.end(2, 3)
+//	this.main.viewer.sel.end(0, 0)
 //	this.main.viewer.targetX = 2
-//
-	
 
 	this.main = TInputAndPanels.create(W, H)
 	this.main.name = 'Деодар'
