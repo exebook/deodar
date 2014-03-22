@@ -35,31 +35,25 @@ TController.can.init = function(W, H) {
 	this.add(this.main)
 	this.main.load('/')*/
 
-	var f = '/v/deodar/intervision/tool.js'
-//	f = 'lexer.js'
-	this.main = TModalTextView.create(this, f, TEdit, getColor.editor)
-	this.main.size(30, 20)
-	this.main.pos(0, 0)
-	this.add(this.main)
-	this.main.viewer.text.L = fs.readFileSync(f).toString().split('\n')
-//	this.main.viewer.text.L.splice(7, 1000000)
-//	this.main.viewer.text.L = ['1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890',	'abcde']
-//	this.main.viewer.text.L = ['		if (typeof list[i].key == \'string\') code = keycode[list[i].key.charAt(0)]','asdfgh']
-//	this.main.viewer.text.L = [	'                                                                                                                                                                         1234567890','asdfgh']
-//	this.main.viewer.text.L = ['							1234567890','asdfgh']
-//	this.main.viewer.text.L = ['1234567','', 'ABCDEFG']
-	this.main.viewer.para = 2
-	this.main.viewer.sym = 3
-	this.main.viewer.sel.start(0, 3)
-	this.main.viewer.sel.end(2, 3)
-	this.main.viewer.targetX = 2
-
-	
-
-//	this.main = TInputAndPanels.create(W, H)
-//	this.main.name = 'Деодар'
+//	var f = '/v/deodar/intervision/tool.js'
+////	f = 'lexer.js'
+//	this.main = TModalTextView.create(this, f, TEdit, getColor.editor)
+//	this.main.size(30, 20)
 //	this.main.pos(0, 0)
 //	this.add(this.main)
+//	this.main.viewer.text.L = fs.readFileSync(f).toString().split('\n')
+//	this.main.viewer.para = 2
+//	this.main.viewer.sym = 3
+//	this.main.viewer.sel.start(0, 3)
+//	this.main.viewer.sel.end(2, 3)
+//	this.main.viewer.targetX = 2
+//
+	
+
+	this.main = TInputAndPanels.create(W, H)
+	this.main.name = 'Деодар'
+	this.main.pos(0, 0)
+	this.add(this.main)
 }
 
 TController.can.size = function(w, h) {
