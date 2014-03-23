@@ -54,9 +54,9 @@ TController.can.init = function(W, H) {
 //	this.add(this.main)
 //	this.main.size(30, 20)
 //	this.main.pos(0, 0)
-////	this.main.viewer.text.L = fs.readFileSync(f).toString().split('\n')
+//	this.main.viewer.text.L = fs.readFileSync(f).toString().split('\n')
 //	this.main.viewer.multiLine = false
-//	this.main.viewer.setText('abc')
+////	this.main.viewer.setText('abc')
 //	this.main.viewer.para = 0
 //	this.main.viewer.sym = 3
 //	this.main.viewer.sel.start(0, 3)

@@ -268,7 +268,7 @@ TFilePanel.can.onMouse = function(hand) {
 	var a = this.actor
 	var ret = dnaof(this, hand)
 	if (this.actor == undefined) {
-		if  (this.down && this.button == 0) {
+		if  (hand.down && hand.button == 0) {
 			this.actor = this.list
 			return a == undefined // мож просто true?
 		}

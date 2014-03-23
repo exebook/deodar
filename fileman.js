@@ -23,8 +23,8 @@ TInputAndPanels.can.init = function(panelW, panelH) {
 	this.right.pos(panelW, 0)
 	this.right.size(panelW, panelH);
 	this.left.pos(0, 0); this.left.size(panelW, panelH);
-	this.input.pal = getColor.syntax
-	this.input.pal[1] = 0
+	this.input.pal = getColor.syntaxCyan
+//	this.input.pal[1] = 0
 //	this.input.pal[0] = 0xaaa; this.input.pal[1] = 0x000
 	this.input.pos(0, panelH); this.input.size(panelW * 2, 1)
 	this.input.setText('')
@@ -289,7 +289,10 @@ TInputAndPanels.can.viewFile = function(viewClass) {
 	if (this.actor == this.left || this.actor == this.right) {
 		with (this.actor.list) {
 			if (items[sid].dir == false && items[sid].hint != true) {
-				this.viewer = viewFile(this.getDesktop(), path + '/' + items[sid].name, viewClass, getColor.syntax)
+				var colors
+				if (viewClass === TFileEdit) colors = getColor.syntaxWhite
+				if (viewClass === TTextView) colors = getColor.syntaxWhite
+				this.viewer = viewFile(this.getDesktop(), path + '/' + items[sid].name, viewClass, colors)
 			} else log('not a file')
 		}
 	}
