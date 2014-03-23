@@ -4,17 +4,14 @@ TInputAndPanels.can.init = function(panelW, panelH) {
 	panelH--
 	dnaof(this)
 	this.name = 'TInputAndPanels'
+	this.output = TConsole.create(1,1)//panelW * 2, panelH-1)
 	this.left = TFilePanel.create(); this.left.name = 'Left'; this.left.list.name = 'LeftList'
 	this.right = TFilePanel.create(); this.right.name = 'Right'
 	this.label = TLabel.create('c:\\')
 	this.input = TEdit.create()
 	this.input.multiLine = false
 
-
-
 	this.add(this.label)
-
-	this.output = TConsole.create(panelW * 2, panelH)
 	this.add(this.output)
 	this.add(this.left)
 	this.add(this.right)
@@ -23,7 +20,8 @@ TInputAndPanels.can.init = function(panelW, panelH) {
 	this.right.pos(panelW, 0)
 	this.right.size(panelW, panelH);
 	this.left.pos(0, 0); this.left.size(panelW, panelH);
-	this.input.pal = getColor.syntaxCyan
+	this.input.pal = getColor.syntaxBlack
+	this.label.pal = getColor.syntaxBlack
 //	this.input.pal[1] = 0
 //	this.input.pal[0] = 0xaaa; this.input.pal[1] = 0x000
 	this.input.pos(0, panelH); this.input.size(panelW * 2, 1)
@@ -32,6 +30,7 @@ TInputAndPanels.can.init = function(panelW, panelH) {
 	var a = '~', b = '.'
 	a = expandPath(a)
 	b = expandPath(b)
+	this.panelReduce = 0
 	this.right.list.load(a)
 	this.left.list.load(b)
 	this.updateInputLabel()
@@ -48,14 +47,48 @@ TInputAndPanels.can.init = function(panelW, panelH) {
 
 	this.react(0, keycode.ENTER, this.pressEnter, {role:['panel','input']})
 	this.react(100, keycode.ENTER, this.pressAppendFocusedName, {role:['input']})
-	this.react(100, keycode.UP, this.historyNavigate, { arg: 'up', role:['panel','input'] })
+	this.react(100, keycode.UP, this.panelsResize, { arg: 'up', role:['panel'] })
+	this.react(100, keycode.DOWN, this.panelsResize, { arg: 'down', role:['panel'] })
 	this.react(100, keycode['e'], this.historyNavigate, { arg: 'up', role:['panel','input'] })
-	this.react(100, keycode.DOWN, this.historyNavigate, { arg: 'down', role:['panel','input'] })
 	this.react(100, keycode['x'], this.historyNavigate, { arg: 'down', role:['panel','input'] })
 	this.react(0, keycode.F3, this.viewFile, { arg: TTextView, role:['panel'] })
 	this.react(0, keycode.F4, this.viewFile, { arg: TFileEdit, role:['panel'] })
+	this.react(0, keycode.F5, this.commandCopy, {  role:['panel'] })
+	this.react(0, keycode.F6, this.commandMove, {  role:['panel'] })
+	this.react(0, keycode.F7, this.commandMakeDir, { role:['panel'] })
+	this.react(0, keycode.F8, this.commandDelete, { role:['panel'] })
+
 	this.react(100, keycode['k'], this.showKeyCode, {role:['panel','input']})
 	this.react(0, keycode.ESCAPE, this.escape, {role:['panel', 'input']})
+	this.react(0, keycode.LEFT, this.input.handleCursorKey.bind(this.input), {arg:'left', role:['input']})
+	this.react(0, keycode.RIGHT, this.input.handleCursorKey.bind(this.input), {arg:'right', role:['input']})
+	this.react(100, keycode.LEFT, this.input.handleCursorKey.bind(this.input), {arg:'wordleft', role:['input']})
+	this.react(100, keycode.RIGHT, this.input.handleCursorKey.bind(this.input), {arg:'wordright', role:['input']})
+	this.react(0, keycode.HOME, this.input.handleCursorKey.bind(this.input), {arg:'home', role:['input']})
+	this.react(0, keycode.END, this.input.handleCursorKey.bind(this.input), {arg:'end', role:['input']})
+
+	this.react(1, keycode.HOME, this.input.shiftSel.bind(this.input), {arg:'home', role:['input']})
+	this.react(1, keycode.END, this.input.shiftSel.bind(this.input), {arg:'end', role:['input']})
+	this.react(1, keycode.LEFT, this.input.shiftSel.bind(this.input), {arg:'left', role:['input']})
+	this.react(1, keycode.RIGHT, this.input.shiftSel.bind(this.input), {arg:'right', role:['input']})
+	this.react(101, keycode.LEFT, this.input.shiftSel.bind(this.input), {arg:'wordleft', role:['input']})
+	this.react(101, keycode.RIGHT, this.input.shiftSel.bind(this.input), {arg:'wordright', role:['input']})
+
+
+	this.shortcuts.enable('all', false)
+	this.shortcuts.enable('panel', true)
+}
+
+TInputAndPanels.can.panelsResize = function(arg) {
+	if (arg == 'up') this.panelReduce++
+	if (arg == 'down') this.panelReduce--
+	if (this.panelReduce < 0) this.panelReduce = 0
+	if (this.panelReduce > this.h >> 1) this.panelReduce = this.h >> 1
+	var W = this.w >> 1, H = this.h - 1
+	if (this.input.visible() != true) H++
+	this.left.size(W, H - this.panelReduce);
+	this.right.size(this.w-W, H - this.panelReduce);
+	return true
 }
 
 TInputAndPanels.can.showKeyCode = function() {
@@ -145,16 +178,17 @@ TInputAndPanels.can.setLabel = function(s) {
 TInputAndPanels.can.size = function(w, h) {
 	dnaof(this, w, h)
 	var W = w >> 1, H = h - 1
+	this.output.pos(0, 0)
+	this.output.size(w, h-1)
 	this.left.pos(0, 0);
-	this.left.size(W, H);
+	if (this.input.visible() != true) H++
+	this.left.size(W, H - this.panelReduce);
 	this.right.pos(W, 0)
-	this.right.size(w-W, H);
+	this.right.size(w-W, H - this.panelReduce);
 	this.label.pos(0, H)
 	this.label.size(this.label.title.length, 1)
 	this.input.pos(this.label.w, H)
 	this.input.size(w - this.label.w, 1)
-	this.output.pos(0, 0)
-	this.output.size(w, h - 1)
 	if (this.viewer != undefined) this.viewer.size(w, h)
 }
 TInputAndPanels.can.cwd = function() {
@@ -170,7 +204,7 @@ function visibleChar(c) {
 
 TInputAndPanels.can.onKey = function (K) {
 	if (this.actor == this.right || this.actor == this.left) {
-		if (K.char != undefined && K.plain && visibleChar(K.char) && this.input.visible()) {
+		if (K.char != undefined && K.mod.control == false && K.mod.alt == false && visibleChar(K.char) && this.input.visible()) {
 			return this.input.onKey(K)
 		}
 	}
@@ -179,7 +213,6 @@ TInputAndPanels.can.onKey = function (K) {
 
 TInputAndPanels.can.pressEnter = function() {
 	var s = this.input.getText()
-	if (applyEnterRules) s = applyEnterRules(s)
 	if (s.length > 0) {
 		if (commandHistory.list == undefined) commandHistory.list = []
 		var L = commandHistory.list
@@ -194,6 +227,7 @@ TInputAndPanels.can.pressEnter = function() {
 			//this.log(s)
 			return true
 		} else setTimeout(function() { 
+			if (applyEnterRules) s = applyEnterRules(s)
 			me.execute(s) 
 		}, 10)
 		return true
@@ -228,9 +262,9 @@ TInputAndPanels.can.execute = function(command) {
 	}
 	//TODO: check if pipes "cat | grep" in command work
 	var cwd = this.cwd()
-	var args = command.split(' ')
-	command = args.shift()
-	if (args[args.length - 1] == '') args.pop()
+//	var args = command.split(' ')
+//	command = args.shift()
+//	if (args[args.length - 1] == '') args.pop()
 	var me = this
 	this.preCommandFocus = this.actor
 	this.flip = this.enterOutputMode(true)
@@ -242,7 +276,7 @@ TInputAndPanels.can.execute = function(command) {
 	var f = this.execDone.bind(this)
 	this.shortcuts.enable('all', false)
 	this.shortcuts.enable('output', true)
-	this.output.respawn(command, args, cwd, f)
+	this.output.respawn(command, '', cwd, f)
 }
 
 TInputAndPanels.can.outputFlip = function() {
@@ -266,10 +300,8 @@ TInputAndPanels.can.enterOutputMode = function(focusConsole) {
 	this.shortcuts.enable('all', false)
 	if (this.output.working() || focusConsole) {
 		this.shortcuts.enable('output', true)
-		log('focusing console')
 		this.actor = this.output
 	} else {
-		log('only show console, no focus')
 		this.shortcuts.enable('input', true)
 	}
 	return true
@@ -277,9 +309,9 @@ TInputAndPanels.can.enterOutputMode = function(focusConsole) {
 TInputAndPanels.can.exitOutputMode = function() {
 	this.shortcuts.enable('all', false)
 	this.shortcuts.enable('panel', true)
-	this.shortcuts.enable('input', true)
+//	this.shortcuts.enable('input', true)
 	this.actor = this.actor_before_output
-	if(this.actor != this.left && this.actor != this.right) this.actor = this.left, log('restoring lost focus on panel')
+	if(this.actor != this.left && this.actor != this.right) this.actor = this.left
 	if (this.left_was_visible) this.show(this.left)
 	if (this.right_was_visible) this.show(this.right)
 	this.getDesktop().display.caretReset()
@@ -291,12 +323,32 @@ TInputAndPanels.can.viewFile = function(viewClass) {
 			if (items[sid].dir == false && items[sid].hint != true) {
 				var colors
 				if (viewClass === TFileEdit) colors = getColor.syntaxWhite
-				if (viewClass === TTextView) colors = getColor.syntaxWhite
+				if (viewClass === TTextView) colors = getColor.syntaxCyan
 				this.viewer = viewFile(this.getDesktop(), path + '/' + items[sid].name, viewClass, colors)
 			} else log('not a file')
 		}
 	}
 }
 
+TInputAndPanels.can.commandMakeDir = function() {
+	if (this.actor == this.left || this.actor == this.right)
+		promptMakeDir(this.actor)
+	return true
+}
+
+TInputAndPanels.can.commandDelete = function() {
+	if (this.actor == this.left || this.actor == this.right)
+		promptDeleteFile(this.actor)
+	return true
+}
+
+TInputAndPanels.can.commandCopy = function() {
+	if (this.actor == this.left || this.actor == this.right) {
+		var dest = this.left
+		if (this.actor == this.left) dest = this.right
+		promptCopyFile('copy', this.actor, dest)
+	}
+	return true
+}
 
 

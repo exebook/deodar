@@ -18,20 +18,30 @@ for (var i = 0; i < concolor.length; i++) {
 concolor[7] = getColor.console[0]
 concolor[16] = getColor.console[1]
 
-TConsole = kindof(TWindow)
+THolder = kindof(TGroup)
+THolder.can.draw = function(state) {
+	TView.can.draw.apply(this, state)
+	dnaof(this, state)
+}
+
+TConsole = kindof(TView)
 
 TConsole.can.init = function() {
 	dnaof(this)
 	this.termsize = function() {
-		if (this instanceof TWindow) return {w: this.w - 2, h: this.h - 2}
-		else return {w:this.w, h:this.h}
+		//if (this instanceof TWindow) return {w: this.w - 2, h: this.h - 2}
+		//else 
+		return {w:this.w, h:this.h}
 	}
 	this.pal = getColor.console
 	//[].concat(this.pal)
 	//this.pal[1] = 0
 	this.size(1, 1)
-	this.terminal = new Terminal(80-2, 24-4, '');
+	this.terminal = new Terminal(1, 1, '');
 	this.terminal.buffer.setMode('crlf',true);
+//	var O = this.terminal.writer
+//	for (var i in O) log(i, typeof O[i])
+//	for (var i = 0; i < 50; i++) this.terminal.writer.write('\n')
 //	this.respawn('bash')
 	this.defaultTitle = 'terminal'
 	this.title = this.defaultTitle
@@ -42,6 +52,7 @@ TConsole.can.init = function() {
 TConsole.can.log = function() {
 	var s = Array.prototype.slice.apply(arguments)
 	s = s.join(' ')
+//	s = '\u001b[01;32m' + cwd + '\u001b[01;34m' +s+'\u001b[00m'
 	this.terminal.writer.write(s + '\n')
 	this.repaint()
 }
@@ -50,7 +61,14 @@ TConsole.can.respawn = function(cmd, args, cwd, callback) {
 	if (this.working()) return false
 	var me = this
 	var wh = me.termsize()
-	if (cmd == 'ls') args.push('--color')
+	var s = '\u001b[01;32m' + cwd + '\u001b[00m>\u001b[01;34m' + cmd + '\u001b[00m'
+	this.terminal.writer.write(s + '\n')
+
+	if (cmd.indexOf('ls') == 0) cmd = cmd.replace(/^ls\b/, 'ls --color')
+	args = []
+	args.unshift(cmd)
+	args.unshift('-c')
+	cmd = 'bash'
 	if (cwd == undefined) cwd = process.env.HOME
 //	process.chdir(cwd)
 	this.term = pty.spawn(cmd, args, { name: 'xterm-color', cols: wh.w, rows: wh.h, cwd: cwd, env: process.env });
@@ -60,9 +78,8 @@ TConsole.can.respawn = function(cmd, args, cwd, callback) {
 		me.repaint()
 	});
 	this.term.on('exit', function(Data) {
-		me.fitSize()
+//		me.fitSize()
 		me.title = me.defaultTitle
-//		me.respawn()
 		me.repaint()
 		if (callback != undefined) callback()
 	});
@@ -95,14 +112,6 @@ TConsole.can.onKey = function(k) {
 		this.getDesktop().display.caretReset()
 		return
 	}
-	return
-	if (down && key == 36 && key_modifiers[0] != true) this.term.write("\n");
-	if (down && key == 23 && key_modifiers[0] != true) this.term.write('\t'), log('tab')
-	if (down && key == 22 && key_modifiers[0] != true) this.term.write("\b"), log('back')
-	else if (key == 54 && key_modifiers[0] == true) { // Control-C
-		this.terminal.buffer.write('Control-C pressed')
-		this.repaint()
-	}
 }
 
 TConsole.can.draw = function(state) {
@@ -110,7 +119,7 @@ TConsole.can.draw = function(state) {
 	var S = this.terminal.buffer._buffer.str
 	var A = this.terminal.buffer._buffer.attr
 	for (var y = 0; y < this.terminal.buffer.height; y++) {
-		if (y >= this.h - 2) break
+		if (y >= this.h - 0) break
 		if (S[y] == undefined) continue
 		var s = S[y], a = A[y]
 		var F = concolor[7], B = concolor[16], f = 7, b = 0
@@ -126,20 +135,22 @@ TConsole.can.draw = function(state) {
 					F = concolor[f]
 				}
 			}
-			this.set(x+1, y+1, ch, F, B)
+			this.set(x, y, ch, F, B)
 		}
 	}
-	if (state.focused)  with(this.terminal.buffer.cursor) this.caret = { x:x+1, y:y+1 }
-	
+	if (state.focused)  with(this.terminal.buffer.cursor) this.caret = { x: x, y: y }
 }
 
 TConsole.can.fitSize = function() {
 	var w = this.w, h = this.h
 	try {
-		if (this.terminal != undefined) this.terminal.buffer.resize(w - 2, h - 2)
+		if (this.terminal != undefined) {
+			this.terminal.buffer.resize(w, h)
+			this.terminal.buffer.setCursor(0, h-2)
+		}
 	} catch (e) { log('Console buffer resize failure:', e) }
 	if (this.term != undefined && this.working()) {
-		try { this.term.resize(w - 2, h - 2) } catch (e) {
+		try { this.term.resize(w, h) } catch (e) {
 			log(e)
 		}
 	}

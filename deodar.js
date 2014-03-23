@@ -14,6 +14,8 @@ glxwin = require('./glxwin/glxwin.js')
 //return
 require('./intervision')
 require('./panel')
+require('./makedir')
+require('./delet')
 require('./fileman')
 require('./console')
 require('./copier')

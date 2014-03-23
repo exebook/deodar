@@ -48,6 +48,8 @@ TFileList.can.init = function() {
 	this.react(100, keycode.F4, this.setSortMode, { arg:'ext' })
 	this.react(100, keycode.F6, this.setSortMode, { arg:'size' })
 	this.react(100, keycode['.'], this.showDots, { })
+	this.react(100, keycode.PAGE_UP, this.goUpLevel, { })
+	this.react(100, keycode.PAGE_DOWN, this.goDownLevel, { })
 }
 
 TFileList.can.goToRoot = function() {
@@ -99,6 +101,18 @@ TFileList.can.drawItem = function(A) {
 	}
 	this.hilite_print(A.x, A.y, A.w, A.item, F, B, A.selected)
 	return true
+}
+
+TFileList.can.goUpLevel = function () {
+	this.sid = 0
+	if (this.path == '/') return true
+	return this.onEnter()
+}
+
+TFileList.can.goDownLevel = function () {
+	if (this.items[this.sid].dir) {
+		return this.onEnter()
+	}
 }
 
 TFileList.can.onEnter = function () {

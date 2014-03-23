@@ -13,11 +13,6 @@ TInputAndPanels.can.onKey1 = function (char, key, down, physical) {
 						else editFileAlt(path + '/' + items[sid].name)
 				}
 			}
-		} else if (key == 71 && key_modifiers[0] != true) { // F5 -- COPY
-			var dest = this.left
-			if (this.actor == this.left) dest = this.right
-			promptCopyFile('copy', this.actor, dest)
-			repaint()
 		} else if (key == 72 && key_modifiers[0] != true) { // F6 -- MOVE
 			var dest = this.left
 			if (this.actor == this.left) dest = this.right
@@ -33,14 +28,6 @@ TInputAndPanels.can.onKey1 = function (char, key, down, physical) {
 				$.actor.list.sid = sid
 				$.actor.list.onItem(sid)
 			})
-			repaint()
-		} else if (key == 73 && key_modifiers[0] != true) { // F7 -- MAKE DIR
-			if (this.actor.name == 'TFilePanel')
-				promptMakeDir(this.actor)
-			repaint()
-		} else if (key == 74 && key_modifiers[0] != true) { // F8 -- DELETE
-			if (this.actor.name == 'TFilePanel')
-				promptDeleteFile(this.actor)
 			repaint()
 		} else if (key == 34) { // [
 			if (key_modifiers[0]) { // Control-[
