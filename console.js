@@ -1,4 +1,7 @@
 var Terminal = require('./terminal.js');
+// terminal отсюда:
+// git clone https://github.com/c3ks/terminal.js
+
 require('./concolor.js')
 var concolor = consoleColors;
 var pty = require('pty.js');

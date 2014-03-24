@@ -75,14 +75,17 @@ TInputAndPanels.can.onChar = function (char) {
 		q.title = 'Поиск (RegEx)'
 		q.bottom_title = 'Escape: отмена'
 		q.onKey = function(key, down, physical) { with (this) {
-			if (((key >= 110 && key <= 118) || (key >= 67 && key <= 76) || [9, 36].indexOf(key) >= 0) && down) {
+			if (((key >= 110 && key <= 118) || (key >= 67 && key <= 76) 
+			|| [9, 36].indexOf(key) >= 0) && down) {
 				var Desktop = this.parent
 				Desktop.hideModal(q)
 				if (key == 36) this.link.list.onEnter()
-				if ((key >= 110 && key <= 118) || (key >= 67 && key <= 76)) this.link.onKey(key, down)
+				if ((key >= 110 && key <= 118) || (key >= 67 && key <= 76))
+					this.link.onKey(key, down)
 				repaint()
 			} else if (key == 22 && down) {
-				if (key_modifiers[0] == true) text = ''; else text = text.substr(0, text.length - 1)
+				if (key_modifiers[0] == true) text = '';
+				else text = text.substr(0, text.length - 1)
 				onchange()
 				repaint()
 			}
@@ -114,7 +117,8 @@ TInputAndPanels.can.onChar = function (char) {
 		Desktop.showModal(q, this.actor.x + 10, this.h - 3)
 		return
 	}
-	if (this.actor == this.left || this.actor == this.right || this.actor == this.input) this.input.onChar(char)
+	if (this.actor == this.left || this.actor == this.right 
+		|| this.actor == this.input) this.input.onChar(char)
 	if (this.actor == this.output) this.output.onChar(char)
 }
 

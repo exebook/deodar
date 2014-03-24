@@ -8,7 +8,7 @@ function initKeywords() {
 
 	"console log process fs",
 
-	"TConsole TBeginCopyDialog TController var TDeodar TInputAndPanels TFileList TFileDetail TFilePanel TControl TButton TLabel TInput TDialog TOkCancel TMessageBox TGLXVision TEdit TLabeledEdit TTextView TModalTextView TGroup TDesktop TObject TKeyInput TList TKeyCode THelp TDriveList TDriveMenu TView TWindow",
+	"THolder TConsole TChain TCopyProgress TBeginCopyDialog TController varTDeodar TDeleteDialog TNorton TFileList TFileDetail TFilePanel TControl TButton TLabel TInput TDoneBar TDialog TOkCancel TInputBox TMessageBox TGLXVision TMouse TEdit TGroup TDesktop TObject TKeyInput TList TSelection TText TKeyCode THelp TDriveList TDriveMenu TTextView TScrollBar TModalTextView TFileEdit TView TWindow",
 
 	"init true false null arguments length callee NaN self Infinity void this  default undefined"]
 	var keywords = {}

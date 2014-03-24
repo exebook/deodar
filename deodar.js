@@ -12,7 +12,8 @@
 	настройки в файле
 	детальный список
 	скрол в терминале
-	
+	запуск програм в бакграунде(опера например)
+	сохранить да/нет
 */
 
 
@@ -33,6 +34,7 @@ glxwin = require('./glxwin/glxwin.js')
 //return
 require('./intervision')
 require('./panel')
+require('./editfile')
 require('./makedir')
 require('./filedel')
 require('./fileman')

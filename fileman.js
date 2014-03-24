@@ -53,6 +53,7 @@ TNorton.can.init = function(panelW, panelH) {
 	this.react(100, keycode['x'], this.historyNavigate, { arg: 'down', role:['panel','input'] })
 	this.react(0, keycode.F3, this.viewFile, { arg: TTextView, role:['panel'] })
 	this.react(0, keycode.F4, this.viewFile, { arg: TFileEdit, role:['panel'] })
+	this.react(1, keycode.F4, this.editFileInput, { arg: TFileEdit, role:['panel'] })
 	this.react(0, keycode.F5, this.commandCopy, {  role:['panel'] })
 	this.react(0, keycode.F6, this.commandMove, {  role:['panel'] })
 	this.react(0, keycode.F7, this.commandMakeDir, { role:['panel'] })
@@ -338,7 +339,7 @@ TNorton.can.viewFile = function(viewClass) {
 			var panel = this.actor
 			if (items[sid].dir == false && items[sid].hint != true) {
 				var colors
-				if (viewClass === TFileEdit) colors = getColor.syntaxWhite
+				if (viewClass === TFileEdit) colors = getColor.syntaxCyan
 				if (viewClass === TTextView) colors = getColor.syntaxCyan
 				this.viewer = viewFile(this.getDesktop(), path + '/' 
 					+ items[sid].name, viewClass, colors)
@@ -348,6 +349,12 @@ TNorton.can.viewFile = function(viewClass) {
 			} else log('not a file')
 		}
 	}
+}
+
+TNorton.can.editFileInput = function() {
+	if (this.actor == this.left || this.actor == this.right)
+		promptEditFile(this.actor)
+	return true
 }
 
 TNorton.can.commandMakeDir = function() {
