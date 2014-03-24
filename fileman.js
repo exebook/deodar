@@ -351,9 +351,13 @@ TNorton.can.viewFile = function(viewClass) {
 	}
 }
 
+TNorton.can.editNew = function() {
+	this.viewFile(TFileEdit)
+}
+
 TNorton.can.editFileInput = function() {
 	if (this.actor == this.left || this.actor == this.right)
-		promptEditFile(this.actor)
+		promptEditFile(this.actor, this.editNew.bind(this))
 	return true
 }
 

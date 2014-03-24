@@ -39,9 +39,9 @@ require('./makedir')
 require('./filedel')
 require('./fileman')
 require('./console')
-require('./copyfile')
-require('./copydir')
-require('./copier')
+require('./file/copyfile')
+require('./file/copydir')
+require('./file/copier')
 
 var enterRule = [ { ext: 'coffee', tty: 'coffee' } ,{ ext: 'js', tty: 'node' }, { ext: 'atr', tty: 'atari800' }
 , { ext: 'jpg', spawn: 'xdg-open'}
