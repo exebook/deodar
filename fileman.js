@@ -31,8 +31,8 @@ TNorton.can.init = function(panelW, panelH) {
 	a = expandPath(a)
 	b = expandPath(b)
 	this.panelReduce = 0
-	this.right.list.load(a)
-	this.left.list.load(b)
+	this.left.list.load(a)
+	this.right.list.load(b)
 	this.updateInputLabel()
 	this.pos(0, 0)
 	this.size(2 * panelW, panelH + 1)
@@ -46,7 +46,7 @@ TNorton.can.init = function(panelW, panelH) {
 	this.react(100, keycode.BACK_SPACE, this.input.commandDeleteWordBack.bind(this.input), {role:['panel', 'input']})
 
 	this.react(0, keycode.ENTER, this.pressEnter, {role:['panel','input']})
-	this.react(100, keycode.ENTER, this.pressAppendFocusedName, {role:['input']})
+	this.react(100, keycode.ENTER, this.pressAppendFocusedName, {role:['panel']})
 	this.react(100, keycode.UP, this.panelsResize, { arg: 'up', role:['panel'] })
 	this.react(100, keycode.DOWN, this.panelsResize, { arg: 'down', role:['panel'] })
 	this.react(100, keycode['e'], this.historyNavigate, { arg: 'up', role:['panel','input'] })
@@ -62,8 +62,8 @@ TNorton.can.init = function(panelW, panelH) {
 	this.react(0, keycode.ESCAPE, this.escape, {role:['panel', 'input']})
 	this.react(0, keycode.LEFT, this.input.handleCursorKey.bind(this.input), {arg:'left', role:['input']})
 	this.react(0, keycode.RIGHT, this.input.handleCursorKey.bind(this.input), {arg:'right', role:['input']})
-	this.react(100, keycode.LEFT, this.input.handleCursorKey.bind(this.input), {arg:'wordleft', role:['input']})
-	this.react(100, keycode.RIGHT, this.input.handleCursorKey.bind(this.input), {arg:'wordright', role:['input']})
+	this.react(100, keycode.LEFT, this.input.handleCursorKey.bind(this.input), {arg:'wordleft', role:['input', 'panel']})
+	this.react(100, keycode.RIGHT, this.input.handleCursorKey.bind(this.input), {arg:'wordright', role:['input', 'panel']})
 	this.react(0, keycode.HOME, this.input.handleCursorKey.bind(this.input), {arg:'home', role:['input']})
 	this.react(0, keycode.END, this.input.handleCursorKey.bind(this.input), {arg:'end', role:['input']})
 
@@ -113,11 +113,12 @@ TNorton.can.inputEdit = function(arg) {
 }
 
 TNorton.can.pressAppendFocusedName = function() {
-	var list = this.actor.list; if (this.actor != this.left) list = this.right.list
-	//if (this.input.getText().length > 0) this.input.setText(this.input.getText() += ' ')
+	var list = this.left.list
+	if (this.actor == this.right) list = this.right.list
 	var s = list.items[list.sid].name
 	if (s == '..') s = list.path
 	this.input.setText(this.input.getText() + s + ' ')
+	this.input.sel.clear()
 	return true
 }
 
@@ -139,6 +140,7 @@ TNorton.can.historyNavigate = function(arg) {
 		L.push(s)
 	}
 	this.input.setText(s)
+	this.input.sel.clear()
 	return true
 }
 
@@ -229,14 +231,24 @@ TNorton.can.pressEnter = function() {
 			//this.log(s)
 			return true
 		} else setTimeout(function() { 
-			if (applyEnterRules) s = applyEnterRules(s)
 			me.execute(s) 
 		}, 10)
 		return true
 	}
 }
 
-TNorton.can.onItemEnter = function(item) {
+TNorton.can.onItemEnter = function(list, item) {
+	if (applyEnterRules) {
+		var X = applyEnterRules(item.name)
+		if (X.spawn) {
+			spawn(X.spawn, [list.path + '/' + X.name])
+			return
+		}
+		if (X.tty) {
+			this.execute(X.tty + ' ' + X.name)
+			return
+		}
+	}
 	if (item.flags.indexOf('x') >= 0) {
 		if (this.input.getText() == '') this.input.setText(item.name);
 		this.pressEnter()
@@ -270,6 +282,7 @@ TNorton.can.execute = function(command) {
 	var me = this
 	this.preCommandFocus = this.actor
 	this.flip = this.enterOutputMode(true)
+	this.repaint()
 	this.actor = this.output
 	this.output.size(this.output.w, this.output.h + 1)
 	this.left.size(this.left.w, this.left.h + 1)
@@ -322,11 +335,16 @@ TNorton.can.exitOutputMode = function() {
 TNorton.can.viewFile = function(viewClass) {
 	if (this.actor == this.left || this.actor == this.right) {
 		with (this.actor.list) {
+			var panel = this.actor
 			if (items[sid].dir == false && items[sid].hint != true) {
 				var colors
 				if (viewClass === TFileEdit) colors = getColor.syntaxWhite
 				if (viewClass === TTextView) colors = getColor.syntaxCyan
-				this.viewer = viewFile(this.getDesktop(), path + '/' + items[sid].name, viewClass, colors)
+				this.viewer = viewFile(this.getDesktop(), path + '/' 
+					+ items[sid].name, viewClass, colors)
+				this.viewer.onHide = function() {
+					panel.list.reload()
+				}
 			} else log('not a file')
 		}
 	}

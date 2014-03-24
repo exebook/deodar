@@ -59,7 +59,7 @@ TFileList.can.goToRoot = function() {
 	return true
 }
 
-TFileList.can.hilite_print = function(x, y, w, item, F, B, itemSelected) {
+TFileList.can.hilitePrint = function(x, y, w, item, F, B, itemSelected) {
 	var s = item.name
 	if (item.flags != undefined && !item.dir && item.flags.indexOf('x') >= 0) F = 0xf0
 	if (item.dir != true) {
@@ -99,7 +99,7 @@ TFileList.can.drawItem = function(A) {
 		this.print(Math.floor(this.w / 2) - Math.ceil(A.item.name.length / 2), Math.floor(this.h / 2)-1, text, F, B)
 		return false
 	}
-	this.hilite_print(A.x, A.y, A.w, A.item, F, B, A.selected)
+	this.hilitePrint(A.x, A.y, A.w, A.item, F, B, A.selected)
 	return true
 }
 
@@ -136,7 +136,7 @@ TFileList.can.onEnter = function () {
 		this.repaint()
 		return true
 	} else {
-		this.parent.parent.onItemEnter(this.items[this.sid])
+		this.parent.parent.onItemEnter(this, this.items[this.sid])
 //		if (this.items[this.sid].flags.indexOf('x') >= 0) {
 //			this.parent.parent.execute(this.items[this.sid].name);
 //		}

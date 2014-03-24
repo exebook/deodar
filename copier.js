@@ -13,42 +13,63 @@
 //  у этих заданий есть общий ход выполнения
 //  он же прогрессбар, у некоторых подзадач он тоже может быть
 
-//copier
-//newTask
-
-var tasks = []
-
-function copylist(op, desktop, sel, src, dest) {
-	var progress = TCopyProgress.create()
-	desktop.showModal(progress)
-	for (var i = 0; i < sel.length; i++) {
-		tasks.push({
-			op: op, name: sel[i]
-		})
-	}
-	log(op, sel, src, dest)
-}
-
-
-TDoneBar = kindof(TView)
-TDoneBar.can.init = function() {
+TChain = kindof(TObject)
+TChain.can.init = function() {
 	dnaof(this)
-	this.pos = 0, this.max = 100
-	//'█▒▓░▍▌'
+	this.tasks = []
+	this.pos = 0
 }
 
-TDoneBar.can.draw = function(state) {
-	dnaof(this, state)
-	var X = (this.max / this.w)
-	if (X == 0) return
-	X = Math.round(this.pos / X)
-	this.rect(X, 0, this.w, 1, '░', 0xaaa, 0x888, 0x0)
-	this.rect(0, 0, X, 1, ' ', this.pal[1], this.pal[0]) //█
+TChain.can.next = function() {
+	this.progress.repaint()
+	if (this.pos == this.tasks.length) {
+		this.progress.getDesktop().hideModal()
+		this.sPanel.list.reload()
+		this.dPanel.list.reload()
+		return
+	}
+	var T = this.tasks[this.pos]
+	if (T.state == undefined) {
+		T.state = 'active'
+		T.chain = this
+		T.task = T.task.bind(T)
+	}
+	
+	if (T.state == 'done') {
+		if (T.id != undefined) this.sPanel.list.selectItem(T.id, false)
+		this.pos++
+		this.progress.total.pos++
+		this.tick()
+	} else if (T.state == 'canceled') {
+		this.pos++
+		this.progress.total.pos++
+		this.tick()
+	} else if (T.state == 'active') {
+		T.task()
+	} else if (T.state == 'cancel') {
+		T.task()
+	}
 }
 
+
+TChain.can.cancel = function() {
+	this.tasks.splice(this.pos + 1, this.tasks.length - this.pos - 1)
+	var T = this.tasks[this.pos]
+	if (T) {
+		if (T.state == 'active') T.state = 'cancel'
+		else {
+			this.tasks.splice(this.pos, 1)
+		}
+	}
+}
+
+TChain.can.tick = function() {
+	setImmediate(this.next.bind(this))
+//	setTimeout(this.next.bind(this), 100)
+}
 
 TCopyProgress = kindof(TDialog)
-TCopyProgress.can.init = function () {
+TCopyProgress.can.init = function (interrupt) {
 	var $ = this
 	dnaof(this, 55, 10)
 	$.title = 'Исполнение задач'
@@ -56,72 +77,111 @@ TCopyProgress.can.init = function () {
 	$.totalname = TLabel.create('Общий ход:')
 	$.file = TDoneBar.create()
 	$.total = TDoneBar.create()
-	$.add($.filename, 45, 1)
+
+	$.add($.totalname, 45, 1), $.addRow()
+	$.add($.total, 45, 1), $.addRow()
+	$.add($.filename, 45, 1), $.addRow()
+	$.add($.file, 45, 1), $.addRow()
 	$.addRow()
-	$.add($.file, 45, 1)
-	$.addRow()
-	$.add($.totalname, 45, 1)
-	$.addRow()
-	$.add($.total, 45, 1)
-	$.addRow()
-	$.addRow()
-	$.cancel = TButton.create(9, 'Отмена', function() {
-		log('Вы изволили нажать "Отмена", но эта возможность пока ещё не разработана, простите.')
-		//$.close()
-		return true
-	})
+	$.cancel = TButton.create(9, 'Отмена', interrupt)
 	$.add($.cancel, 10, 1)
 }
 
 TBeginCopyDialog = kindof(TDialog)
-TBeginCopyDialog.can.init = function(W, H, title, message) {
-	dnaof(this, W, H)
+TBeginCopyDialog.can.init = function(W, title, message, dest, callback) {
+	dnaof(this, W, 1)
 	var $ = this
 	this.title = title
 	this.msg = TLabel.create()
 	this.msg.title = message
-	this.add(this.msg, 45, 1)
+	this.add(this.msg, 45, 1), this.addRow()
+	this.to = TInput.create(dest)
+	this.add(this.to, 45, 1), this.addRow()
 	this.addRow()
-
-	this.to = TInput.create('')
-	this.add(this.to, 45, 1)
-	this.addRow()
-	this.addRow()
-	
 	this.ok = TButton.create(36, 'Давай', function() {
 		$.close()
-		copylist($.operation, $.getDesktop(), $.selection, $.from, $.to.text.getText())
+		callback()
 		return true
 	})
-	
 	this.add(this.ok, 10, 1)
 	this.cancel = TButton.create(9, 'Отмена', function() { $.close(); return true })
 	this.add(this.cancel, 10, 1)
 	this.size(this.w, this.addY + 3)
 }
 
-promptCopyFile = function(operation, src, dest, do_after) {
-	var sel = [], it = src.list.items, sid = src.list.sid
-	if (src.list.selection.length == 0) {
+taskCopyItem = function() {
+	try {
+		var stat = fs.statSync(this.idir +'/'+ this.iname)
+		if (stat.isFile() == true) {
+			this.task = taskCopyFile.bind(this)
+		} else if (stat.isDirectory() == true) {
+			this.task = taskCopyDir.bind(this)
+		} else this.state = 'canceled' // unknown inode
+	} catch (e) { this.state = 'canceled' }
+	this.chain.tick()
+}
+
+promptCopyFile = function(operation, sPanel, dPanel, do_after) {
+	var list = [], 
+		it = sPanel.list.items,
+		sid = sPanel.list.sid,
+		sel = sPanel.list.selection
+	if (sel.length == 0) {
 		if (it[sid].dir && it[sid].name == '..') return
-		sel.push(it[sid].name)
-	} else {
-		for (var i = 0; i < src.list.selection.length; i++) {
-			sel.push(it[src.list.selection[i]].name)
-		}
-	}
+		list.push({ id: sid, name: it[sid].name })
+	} else 
+		for (var i = 0; i < sel.length; i++)
+			list.push({ name: it[sel[i]].name, id: sel[i] })
 	var Operation = 'Копировать'
 	if (operation == 'move') Operation = 'Перенести'
-	var copyDialog = TBeginCopyDialog.create(55, 1, Operation, Operation + ' ' + sel.length + ' штук в:')
-	copyDialog.msg.title = Operation + ' ' + sel.length + ' штук в:'
-	copyDialog.from = src.list.path
-	copyDialog.to.setText(dest.list.path)
-	copyDialog.actor = copyDialog.to
-	copyDialog.selection = sel
-	copyDialog.operation = operation
-//	copier.sourcePanel = src
-//	copier.destPanel = dest
-//	copier.operation = operation
+	var copyDialog = TBeginCopyDialog.create(55, Operation, 
+		Operation + ' ' + list.length + ' штук в:', 
+		dPanel.list.path, copyFunc)
+	
 //	copier.do_after = do_after
-	src.getDesktop().showModal(copyDialog)
+	copyDialog.actor = copyDialog.to
+	sPanel.getDesktop().showModal(copyDialog)
+
+	var chain
+	
+	function interrupt() {
+		chain.cancel()
+		return true
+	}
+
+	function copyFunc() {
+		var typed = copyDialog.to.getText(), oname
+		var odir = dPanel.list.path
+		if (dPanel.list.path != typed) { // user typed destination
+			var odir = sPanel.list.path
+			if (typed.charAt(0) == '/') odir = ''
+			var isDir = false
+			try { isDir = fs.statSync(odir + '/' + typed).isDirectory() } catch (e) {}
+			log('isdir:', isDir)
+			if (!isDir) {
+				if (list.length == 1) { list[0].oname = typed }
+				else { log('что поделать, нельзя скопировать много файлов в один'); return }
+			} else {
+				odir = sPanel.list.path + '/' + typed
+			}
+		}
+		chain = TChain.create()
+		chain.progress = TCopyProgress.create(interrupt)
+		chain.progress.total.pos = 0
+		chain.progress.total.max = list.length
+		chain.sPanel = sPanel
+		chain.dPanel = dPanel
+		sPanel.getDesktop().showModal(chain.progress)
+		for (var i = 0; i < list.length; i++) {
+			var iname = list[i].name, oname = list[i].name
+			if (list[i].oname) oname = list[i].oname
+			chain.tasks.push({
+				task: taskCopyItem, chain: chain, id: list[i].id, 
+				iname: iname, oname: oname, 
+				op: operation, idir: sPanel.list.path, odir: odir
+			})
+		}
+		chain.tick()
+	}
 }
+

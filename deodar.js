@@ -1,3 +1,21 @@
+/*
+	Срочно
+	
+	создать файл
+	перенос файлов
+	поиск в редакторе
+	поиск в файлах
+	клипборд
+	инфо панель
+	квик
+	номера строк в редакторе (на пустых строках?)
+	настройки в файле
+	детальный список
+	скрол в терминале
+*/
+
+
+spawn = require('child_process').spawn
 require('./lexer')
 //actor==panel cursor->actor
 fs = require('fs');
@@ -18,19 +36,32 @@ require('./makedir')
 require('./filedel')
 require('./fileman')
 require('./console')
+require('./copyfile')
+require('./copydir')
 require('./copier')
 
-var enterRule = [ { ext: 'coffee', cmd: 'coffee' } ,{ ext: 'js', cmd: 'node' }, { ext: 'atr', cmd: 'atari800' } ]
+var enterRule = [ { ext: 'coffee', tty: 'coffee' } ,{ ext: 'js', tty: 'node' }, { ext: 'atr', tty: 'atari800' }
+, { ext: 'jpg', spawn: 'xdg-open'}
+, { ext: 'avi', spawn: 'xdg-open'}
+, { ext: 'wmv', spawn: 'xdg-open'}
+, { ext: 'mov', spawn: 'xdg-open'}
+, { ext: 'mkv', spawn: 'xdg-open'}
+, { ext: 'mp3', spawn: 'xdg-open'}
+, { ext: 'ogg', spawn: 'xdg-open'}
+, { ext: 'png', spawn: 'xdg-open'}
+ ]
 
 applyEnterRules = function(s) {
 	for (var i = 0; i < enterRule.length; i++) {
-		var x = '.' + enterRule[i].ext
+		var e = enterRule[i]
+		var x = '.' + e.ext
 		var j = s.indexOf(x)
 		if (j >= 0 && j == s.length - x.length) {
-			return enterRule[i].cmd + ' ' + s
+			if (e.tty) return { tty: e.tty, name: s }
+			if (e.spawn) return { spawn: e.spawn, name: s }
+			return { name: s }
 		}
 	}
-	return s
 }
 
 TController = kindof(TDesktop)
@@ -130,6 +161,8 @@ glxwin.mainLoop()
 -- control-\ from subst
 -- colorize input line and output command
 -- возможность сортировать так чтобы отредактированые файлы были сверху для удобства програмиста
+-- reload после команд не обновляет размеры файлов
+
 Плюсы использования "православного" коммандера:
 
 -- мгновнное время отклика составляющее микросекунды для большинства задач
