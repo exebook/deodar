@@ -83,7 +83,7 @@ TController.can.onMouse = function(hand) {
 var TDeodar = kindof(TGLXVision)
 
 TDeodar.can.init = function() {
-	dnaof(this, TController, 80, 24)//0, 0, 800, 600)
+	dnaof(this, TController, 110, 33)//0, 0, 800, 600)
 	DESK = this.desktop
 }
 
@@ -130,7 +130,7 @@ glxwin.mainLoop()
 -- control-\ from subst
 -- colorize input line and output command
 -- возможность сортировать так чтобы отредактированые файлы были сверху для удобства програмиста
-Плюсы использования православного коммандера:
+Плюсы использования "православного" коммандера:
 
 -- мгновнное время отклика составляющее микросекунды для большинства задач
 -- возможность перемещаться по диску со скоростью намного недоступной в виджетовых файл-менеджерах

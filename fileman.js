@@ -149,6 +149,8 @@ TNorton.can.checkFocus = function(view) {
 	return dnaof(this, view)
 }
 TNorton.can.switchPanel = function() {
+	this.left.list.showFocused = false // TODO: move to onFocus
+	this.right.list.showFocused = false // это чтобы видеть что удаляешь
 	if (this.actor == this.left) this.actor = this.right; else this.actor = this.left
 	this.updateInputLabel()
 	return true
@@ -337,8 +339,10 @@ TNorton.can.commandMakeDir = function() {
 }
 
 TNorton.can.commandDelete = function() {
-	if (this.actor == this.left || this.actor == this.right)
+	if (this.actor == this.left || this.actor == this.right) {
+		this.actor.list.showFocused = true
 		promptDeleteFile(this.actor)
+	}
 	return true
 }
 
