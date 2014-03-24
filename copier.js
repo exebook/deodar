@@ -16,34 +16,46 @@
 //copier
 //newTask
 
-function copylist(a, b, c) {
-	log(a, b, c)
+var tasks = []
+
+function copylist(op, desktop, sel, src, dest) {
+	var progress = TCopyProgress.create()
+	desktop.showModal(progress)
+	for (var i = 0; i < sel.length; i++) {
+		tasks.push({
+			op: op, name: sel[i]
+		})
+	}
+	log(op, sel, src, dest)
 }
 
 
 TDoneBar = kindof(TView)
-TDoneBar = 
-	var $ = TView()
-	$.pos = 0, $.max = 100
-	$.bg = 0xaaa, $.fg = 0x800
-	$.override('draw')
-	$.draw = function() {
-		this.inherited('draw')
-		var X = (this.max / this.w)
-		if (X == 0) return
-		X = Math.round(this.pos / X)
-		this.rect(X, 0, this.w, 1, '░', 0xaaa, 0x888, 0x0)
-		this.rect(0, 0, X, 1, ' ', this.bg, this.fg) //█
-	}
-	return $ //'█▒▓░▍▌'
+TDoneBar.can.init = function() {
+	dnaof(this)
+	this.pos = 0, this.max = 100
+	//'█▒▓░▍▌'
 }
 
-TCopyProgress = function() {
-	var $ = TDialog(55, 10)
-	$.filename = TLabel('$file')
-	$.totalname = TLabel('Общий ход:')
-	$.file = TDoneBar()
-	$.total = TDoneBar()
+TDoneBar.can.draw = function(state) {
+	dnaof(this, state)
+	var X = (this.max / this.w)
+	if (X == 0) return
+	X = Math.round(this.pos / X)
+	this.rect(X, 0, this.w, 1, '░', 0xaaa, 0x888, 0x0)
+	this.rect(0, 0, X, 1, ' ', this.pal[1], this.pal[0]) //█
+}
+
+
+TCopyProgress = kindof(TDialog)
+TCopyProgress.can.init = function () {
+	var $ = this
+	dnaof(this, 55, 10)
+	$.title = 'Исполнение задач'
+	$.filename = TLabel.create('$file')
+	$.totalname = TLabel.create('Общий ход:')
+	$.file = TDoneBar.create()
+	$.total = TDoneBar.create()
 	$.add($.filename, 45, 1)
 	$.addRow()
 	$.add($.file, 45, 1)
@@ -53,13 +65,12 @@ TCopyProgress = function() {
 	$.add($.total, 45, 1)
 	$.addRow()
 	$.addRow()
-	$.cancel = TButton(9, 'Отмена', function() {
+	$.cancel = TButton.create(9, 'Отмена', function() {
 		log('Вы изволили нажать "Отмена", но эта возможность пока ещё не разработана, простите.')
 		//$.close()
 		return true
 	})
 	$.add($.cancel, 10, 1)
-	return $
 }
 
 TBeginCopyDialog = kindof(TDialog)
@@ -79,7 +90,7 @@ TBeginCopyDialog.can.init = function(W, H, title, message) {
 	
 	this.ok = TButton.create(36, 'Давай', function() {
 		$.close()
-		copylist($.selection, $.from, $.to.text.getText())
+		copylist($.operation, $.getDesktop(), $.selection, $.from, $.to.text.getText())
 		return true
 	})
 	
@@ -107,6 +118,7 @@ promptCopyFile = function(operation, src, dest, do_after) {
 	copyDialog.to.setText(dest.list.path)
 	copyDialog.actor = copyDialog.to
 	copyDialog.selection = sel
+	copyDialog.operation = operation
 //	copier.sourcePanel = src
 //	copier.destPanel = dest
 //	copier.operation = operation

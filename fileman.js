@@ -1,9 +1,9 @@
-TInputAndPanels = kindof(TGroup)
-TInputAndPanels.can.init = function(panelW, panelH) {
+TNorton = kindof(TGroup)
+TNorton.can.init = function(panelW, panelH) {
 	panelW >>= 1
 	panelH--
 	dnaof(this)
-	this.name = 'TInputAndPanels'
+	this.name = 'TNorton'
 	this.output = TConsole.create(1,1)//panelW * 2, panelH-1)
 	this.left = TFilePanel.create(); this.left.name = 'Left'; this.left.list.name = 'LeftList'
 	this.right = TFilePanel.create(); this.right.name = 'Right'
@@ -79,7 +79,7 @@ TInputAndPanels.can.init = function(panelW, panelH) {
 	this.shortcuts.enable('panel', true)
 }
 
-TInputAndPanels.can.panelsResize = function(arg) {
+TNorton.can.panelsResize = function(arg) {
 	if (arg == 'up') this.panelReduce++
 	if (arg == 'down') this.panelReduce--
 	if (this.panelReduce < 0) this.panelReduce = 0
@@ -91,28 +91,28 @@ TInputAndPanels.can.panelsResize = function(arg) {
 	return true
 }
 
-TInputAndPanels.can.showKeyCode = function() {
+TNorton.can.showKeyCode = function() {
 	var keyCode = TKeyCode.create()
 	this.getDesktop().showModal(keyCode)
 }
 
-TInputAndPanels.can.test = function() {
+TNorton.can.test = function() {
 }
 
-TInputAndPanels.can.escape =  function() {
+TNorton.can.escape =  function() {
 	if (this.input.getText().length > 0) this.input.setText(''); else this.outputFlip()
 	return true
 }
 
 
-TInputAndPanels.can.inputEdit = function(arg) {
+TNorton.can.inputEdit = function(arg) {
 	if (this.actor == this.left || this.actor == this.right) {
 		if (arg == 'back') return this.input.commandBack()
 		if (arg == 'backword') return this.input.commandBackWord()
 	}
 }
 
-TInputAndPanels.can.pressAppendFocusedName = function() {
+TNorton.can.pressAppendFocusedName = function() {
 	var list = this.actor.list; if (this.actor != this.left) list = this.right.list
 	//if (this.input.getText().length > 0) this.input.setText(this.input.getText() += ' ')
 	var s = list.items[list.sid].name
@@ -126,7 +126,7 @@ function(err, data) {
 	if(err != undefined) commandHistory = []
 	else commandHistory = eval(data.toString())
 })
-TInputAndPanels.can.historyNavigate = function(arg) {
+TNorton.can.historyNavigate = function(arg) {
 	var L = commandHistory.list
 	if (L == undefined) return
 	if (arg == 'up') {
@@ -142,40 +142,40 @@ TInputAndPanels.can.historyNavigate = function(arg) {
 	return true
 }
 
-TInputAndPanels.can.checkFocus = function(view) {
+TNorton.can.checkFocus = function(view) {
 	if  (view == this.input) {
 		return ((this.actor == view || this.actor == this.left || this.actor == this.right) && this.getDesktop().modal == undefined)
 	}
 	return dnaof(this, view)
 }
-TInputAndPanels.can.switchPanel = function() {
+TNorton.can.switchPanel = function() {
 	if (this.actor == this.left) this.actor = this.right; else this.actor = this.left
 	this.updateInputLabel()
 	return true
 }
-TInputAndPanels.can.updateInputLabel = function() {
+TNorton.can.updateInputLabel = function() {
 	this.setLabel(this.actor.list.path)
 }
-TInputAndPanels.can.driveMenu = function(which) {
+TNorton.can.driveMenu = function(which) {
 	if (which == 'left') panel = this.left
 	if (which == 'right') panel = this.right
 	this.actor = panel
 	showDriveMenu(this.getDesktop(), panel)
 	return true
 }
-TInputAndPanels.can.getOpposite = function(panel) {
+TNorton.can.getOpposite = function(panel) {
 	if (panel == this.right) return this.left
 	if (panel == this.left) return this.right
 }
 
-TInputAndPanels.can.setLabel = function(s) {
+TNorton.can.setLabel = function(s) {
 	this.label.title = s + '>'
 	this.label.size(this.label.title.length, 1)
 	this.input.pos(this.label.w, this.input.y)
 	this.input.size(this.w - this.label.w, 1)
 }
 
-TInputAndPanels.can.size = function(w, h) {
+TNorton.can.size = function(w, h) {
 	dnaof(this, w, h)
 	var W = w >> 1, H = h - 1
 	this.output.pos(0, 0)
@@ -191,7 +191,7 @@ TInputAndPanels.can.size = function(w, h) {
 	this.input.size(w - this.label.w, 1)
 	if (this.viewer != undefined) this.viewer.size(w, h)
 }
-TInputAndPanels.can.cwd = function() {
+TNorton.can.cwd = function() {
 	if (this.actor == this.right) return this.right.list.path
 	return this.left.list.path
 }
@@ -202,7 +202,7 @@ function visibleChar(c) {
 	return true
 }
 
-TInputAndPanels.can.onKey = function (K) {
+TNorton.can.onKey = function (K) {
 	if (this.actor == this.right || this.actor == this.left) {
 		if (K.char != undefined && K.mod.control == false && K.mod.alt == false && visibleChar(K.char) && this.input.visible()) {
 			return this.input.onKey(K)
@@ -211,7 +211,7 @@ TInputAndPanels.can.onKey = function (K) {
 	return dnaof(this, K)
 }
 
-TInputAndPanels.can.pressEnter = function() {
+TNorton.can.pressEnter = function() {
 	var s = this.input.getText()
 	if (s.length > 0) {
 		if (commandHistory.list == undefined) commandHistory.list = []
@@ -234,14 +234,14 @@ TInputAndPanels.can.pressEnter = function() {
 	}
 }
 
-TInputAndPanels.can.onItemEnter = function(item) {
+TNorton.can.onItemEnter = function(item) {
 	if (item.flags.indexOf('x') >= 0) {
 		if (this.input.getText() == '') this.input.setText(item.name);
 		this.pressEnter()
 	}
 }
 
-TInputAndPanels.can.execDone = function(command) {
+TNorton.can.execDone = function(command) {
 	this.shortcuts.enable('all', false)
 	this.shortcuts.enable('input', true)
 	this.show(this.input)
@@ -255,7 +255,7 @@ TInputAndPanels.can.execDone = function(command) {
 	this.left.list.reload()
 }
 
-TInputAndPanels.can.execute = function(command) {
+TNorton.can.execute = function(command) {
 	if (this.output.working()) {
 		this.enterOutputMode(true)
 		return
@@ -279,7 +279,7 @@ TInputAndPanels.can.execute = function(command) {
 	this.output.respawn(command, '', cwd, f)
 }
 
-TInputAndPanels.can.outputFlip = function() {
+TNorton.can.outputFlip = function() {
 	if (this.left.visible() || this.right.visible()) {
 		this.enterOutputMode()
 	} else {
@@ -288,7 +288,7 @@ TInputAndPanels.can.outputFlip = function() {
 	return true
 }
 
-TInputAndPanels.can.enterOutputMode = function(focusConsole) {
+TNorton.can.enterOutputMode = function(focusConsole) {
 	this.actor_before_output = this.actor
 	if (!this.left.visible() && !this.right.visible()) {
 		return false
@@ -306,7 +306,7 @@ TInputAndPanels.can.enterOutputMode = function(focusConsole) {
 	}
 	return true
 }
-TInputAndPanels.can.exitOutputMode = function() {
+TNorton.can.exitOutputMode = function() {
 	this.shortcuts.enable('all', false)
 	this.shortcuts.enable('panel', true)
 //	this.shortcuts.enable('input', true)
@@ -317,7 +317,7 @@ TInputAndPanels.can.exitOutputMode = function() {
 	this.getDesktop().display.caretReset()
 }
 
-TInputAndPanels.can.viewFile = function(viewClass) {
+TNorton.can.viewFile = function(viewClass) {
 	if (this.actor == this.left || this.actor == this.right) {
 		with (this.actor.list) {
 			if (items[sid].dir == false && items[sid].hint != true) {
@@ -330,19 +330,19 @@ TInputAndPanels.can.viewFile = function(viewClass) {
 	}
 }
 
-TInputAndPanels.can.commandMakeDir = function() {
+TNorton.can.commandMakeDir = function() {
 	if (this.actor == this.left || this.actor == this.right)
 		promptMakeDir(this.actor)
 	return true
 }
 
-TInputAndPanels.can.commandDelete = function() {
+TNorton.can.commandDelete = function() {
 	if (this.actor == this.left || this.actor == this.right)
 		promptDeleteFile(this.actor)
 	return true
 }
 
-TInputAndPanels.can.commandCopy = function() {
+TNorton.can.commandCopy = function() {
 	if (this.actor == this.left || this.actor == this.right) {
 		var dest = this.left
 		if (this.actor == this.left) dest = this.right
@@ -351,4 +351,7 @@ TInputAndPanels.can.commandCopy = function() {
 	return true
 }
 
+editFileAlt = function(s) {
+	glxwin.sh_async('pluma '+ s)
+}
 

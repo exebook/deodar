@@ -15,7 +15,7 @@ glxwin = require('./glxwin/glxwin.js')
 require('./intervision')
 require('./panel')
 require('./makedir')
-require('./delet')
+require('./filedel')
 require('./fileman')
 require('./console')
 require('./copier')
@@ -65,7 +65,7 @@ TController.can.init = function(W, H) {
 //	this.main.viewer.sel.end(0, 0)
 //	this.main.viewer.targetX = 2
 
-	this.main = TInputAndPanels.create(W, H)
+	this.main = TNorton.create(W, H)
 	this.main.name = 'Деодар'
 	this.main.pos(0, 0)
 	this.add(this.main)
@@ -129,7 +129,7 @@ glxwin.mainLoop()
 -- дву кнопки внизу между панелями (на рамках) с содержимым клипобордов
 -- control-\ from subst
 -- colorize input line and output command
-
+-- возможность сортировать так чтобы отредактированые файлы были сверху для удобства програмиста
 Плюсы использования православного коммандера:
 
 -- мгновнное время отклика составляющее микросекунды для большинства задач
