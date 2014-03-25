@@ -9,6 +9,7 @@ TNorton.can.init = function(panelW, panelH) {
 	this.right = TFilePanel.create(); this.right.name = 'Right'
 	this.label = TLabel.create('c:\\')
 	this.input = TEdit.create()
+	this.output.fileman = this
 	this.input.multiLine = false
 
 	this.add(this.label)

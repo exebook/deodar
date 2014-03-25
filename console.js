@@ -48,6 +48,8 @@ TConsole.can.init = function() {
 //	this.respawn('bash')
 	this.defaultTitle = 'terminal'
 	this.title = this.defaultTitle
+	this.scrollBuf = []
+	this.scrollMax = 4096
 	this.react(0, keycode.UP, this.arrow, { arg: 'up' })
 	this.react(0, keycode.DOWN, this.arrow, { arg: 'down' })
 }
@@ -80,6 +82,7 @@ TConsole.can.respawn = function(cmd, args, cwd, callback) {
 		name: 'xterm-color', cols: wh.w, rows: wh.h, cwd: cwd, env: process.env });
 	this.term.on('error', function(a) {})
 	this.term.on('close', function(a) {})
+	this.terminal.buffer.on('lineremove', this.saveScrollLine.bind(this))
 	this.term.on('data', function(Data) {
 		me.terminal.writer.write(Data)
 		me.title = me.term.process
@@ -91,6 +94,12 @@ TConsole.can.respawn = function(cmd, args, cwd, callback) {
 		me.repaint()
 		if (callback != undefined) callback()
 	});
+}
+
+TConsole.can.saveScrollLine = function(line) {
+	var S = this.terminal.buffer._buffer.str
+	var A = this.terminal.buffer._buffer.attr
+//	log(S[line])
 }
 
 TConsole.can.working = function() {
@@ -116,10 +125,18 @@ TConsole.can.onKey = function(k) {
 	if (dnaof(this, k)) return;
 	if (k.char != undefined) {
 		this.term.write(k.char)
-		this.repaint();
+		this.repaint()
 		this.getDesktop().display.caretReset()
 		return
 	}
+}
+
+TConsole.can.onMouse = function(hand) {
+	if (this.working() == false) {
+		this.parent.actor = this.fileman.input
+		return
+	}
+	return dnaof(this, hand)
 }
 
 TConsole.can.draw = function(state) {

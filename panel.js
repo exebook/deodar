@@ -227,6 +227,8 @@ TFileDetail.can.draw = function(state) {
 	function zz(s) { s=s+''; while (s.length < 2)s='0'+s; return s }
 
 	x = this.w
+	if (this.info.mode != undefined) s = ' '+(this.info.mode).toString(8).substr(), x -= (s.length),
+		this.print(x, 1, s, 0x773, this.bg)
 	if (this.info.mtime != undefined) {
 		s = ''
 		s += zz(this.info.mtime[3]) // hour
@@ -241,12 +243,10 @@ TFileDetail.can.draw = function(state) {
 		x -= (s.length + 1)
 		this.print(x, 1, s, 0x284, this.bg)
 	}
-	if (this.info.mode != undefined) s = (this.info.mode).toString(8).substr(), x -= (s.length + 1),
-		this.print(x, 1, s, this.fg, this.bg)
 	if (this.info.size != undefined) {
 //			x += 1
 		var s = readableSize(this.info.size)
-		x -= (s.length + 1)
+		x -= (s.length + 2)
 		this.print(x, 1, s, 0xaef, this.bg)
 	}
 
