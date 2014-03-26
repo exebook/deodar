@@ -38,20 +38,23 @@ TNorton.can.init = function(panelW, panelH) {
 	this.pos(0, 0)
 	this.size(2 * panelW, panelH + 1)
 
-	this.react(0, keycode.F1, showHelp, { arg:this, role:['panel', 'input'] })
+	this.react(10, keycode.F1, showHelp, { arg:this, role:['panel', 'input'] })
 	this.react(0, keycode.TAB, this.switchPanel, {role:['panel']})
 	this.react(100, keycode['o'], this.outputFlip, {role:['panel', 'input', 'output']})
-	this.react(10, keycode.F1, this.driveMenu, {arg: 'left', role:['panel', 'input']})
-	this.react(10, keycode.F2, this.driveMenu, {arg: 'right', role:['panel']})
-	this.react(0, keycode.BACK_SPACE, this.input.commandDeleteBack.bind(this.input), {role:['panel', 'input']})
+	this.react(0, keycode.F1, this.driveMenu, {arg: 'left', role:['panel', 'input']})
+	this.react(0, keycode.F2, this.driveMenu, {arg: 'right', role:['panel']})
+	this.react(0, keycode.BACK_SPACE, this.smartBackSpace, {role:['panel', 'input']})
 	this.react(100, keycode.BACK_SPACE, this.input.commandDeleteWordBack.bind(this.input), {role:['panel', 'input']})
 
 	this.react(0, keycode.ENTER, this.pressEnter, {role:['panel','input']})
+	this.react(1, keycode.ENTER, this.runInBackground, {role:['panel','input']})
 	this.react(100, keycode.ENTER, this.pressAppendFocusedName, {role:['panel']})
 	this.react(100, keycode.UP, this.panelsResize, { arg: 'up', role:['panel'] })
 	this.react(100, keycode.DOWN, this.panelsResize, { arg: 'down', role:['panel'] })
 	this.react(100, keycode['e'], this.historyNavigate, { arg: 'up', role:['panel','input'] })
 	this.react(100, keycode['x'], this.historyNavigate, { arg: 'down', role:['panel','input'] })
+	this.react(0, keycode.UP, this.historyNavigate, { arg: 'up', role:['input'] })
+	this.react(0, keycode.DOWN, this.historyNavigate, { arg: 'down', role:['input'] })
 	this.react(0, keycode.F3, this.viewFile, { arg: TTextView, role:['panel'] })
 	this.react(0, keycode.F4, this.viewFile, { arg: TFileEdit, role:['panel'] })
 	this.react(1, keycode.F4, this.editFileInput, { arg: TFileEdit, role:['panel'] })
@@ -62,10 +65,14 @@ TNorton.can.init = function(panelW, panelH) {
 
 	this.react(100, keycode['k'], this.showKeyCode, {role:['panel','input']})
 	this.react(0, keycode.ESCAPE, this.escape, {role:['panel', 'input']})
+	this.react(100, keycode.INSERT, this.input.userCopy.bind(this.input), {role:['panel', 'input']})
+	this.react(1, keycode.INSERT, this.input.userPaste.bind(this.input), {role:['panel', 'input']})
 	this.react(0, keycode.LEFT, this.input.handleCursorKey.bind(this.input), {arg:'left', role:['input']})
 	this.react(0, keycode.RIGHT, this.input.handleCursorKey.bind(this.input), {arg:'right', role:['input']})
-	this.react(100, keycode.LEFT, this.input.handleCursorKey.bind(this.input), {arg:'wordleft', role:['input', 'panel']})
-	this.react(100, keycode.RIGHT, this.input.handleCursorKey.bind(this.input), {arg:'wordright', role:['input', 'panel']})
+	this.react(100, keycode.LEFT, this.input.handleCursorKey.bind(this.input),
+		{arg:'wordleft', role:['input', 'panel']})
+	this.react(100, keycode.RIGHT, this.input.handleCursorKey.bind(this.input),
+		{arg:'wordright', role:['input', 'panel']})
 	this.react(0, keycode.HOME, this.input.handleCursorKey.bind(this.input), {arg:'home', role:['input']})
 	this.react(0, keycode.END, this.input.handleCursorKey.bind(this.input), {arg:'end', role:['input']})
 
@@ -73,12 +80,26 @@ TNorton.can.init = function(panelW, panelH) {
 	this.react(1, keycode.END, this.input.shiftSel.bind(this.input), {arg:'end', role:['input']})
 	this.react(1, keycode.LEFT, this.input.shiftSel.bind(this.input), {arg:'left', role:['input']})
 	this.react(1, keycode.RIGHT, this.input.shiftSel.bind(this.input), {arg:'right', role:['input']})
-	this.react(101, keycode.LEFT, this.input.shiftSel.bind(this.input), {arg:'wordleft', role:['input']})
-	this.react(101, keycode.RIGHT, this.input.shiftSel.bind(this.input), {arg:'wordright', role:['input']})
+	this.react(101, keycode.LEFT, this.input.shiftSel.bind(this.input), 
+		{arg:'wordleft', role:['panel','input']})
+	this.react(101, keycode.RIGHT, this.input.shiftSel.bind(this.input), 
+		{arg:'wordright', role:['panel', 'input']})
 
 
 	this.shortcuts.enable('all', false)
 	this.shortcuts.enable('panel', true)
+}
+
+TNorton.can.smartBackSpace = function() {
+	if (this.input.getText() != '') {
+		this.input.commandDeleteBack()
+	}
+	else {
+		log('UP LEVEL')
+//	this.react(100, keycode.PAGE_UP, this.goUpLevel, { })
+//	this.react(100, keycode.PAGE_DOWN, this.goDownLevel, { })
+	}
+	return true
 }
 
 TNorton.can.panelsResize = function(arg) {
@@ -217,20 +238,38 @@ TNorton.can.onKey = function (K) {
 	return dnaof(this, K)
 }
 
+TNorton.can.historyAdd = function(text) {
+	if (commandHistory.list == undefined) commandHistory.list = []
+	var L = commandHistory.list
+	var j = L.indexOf(text); if (j >= 0) L.splice(j, 1)
+	L.push(text)
+//		saveCommandHistory()
+//		fs.writeFileSync(expandPath('~/.deodar/command_history.js'),  
+//			'commandHistory=' + JSON.stringify(commandHistory,0, ' '))
+}
+
+TNorton.can.runInBackground = function() {
+	var s = this.input.getText()
+	if (s.length > 0) {
+		this.historyAdd(s)
+		this.input.setText('')
+		try {
+			var prog = require('child_process').spawn(s)
+			prog.on('error', function() { log('child error') })
+		} catch (e) {
+			messageBox(this.getDesktop(), 'Ошибка запуска', e.toString())
+		}
+	}
+	return true
+}
+
 TNorton.can.pressEnter = function() {
 	var s = this.input.getText()
 	if (s.length > 0) {
-		if (commandHistory.list == undefined) commandHistory.list = []
-		var L = commandHistory.list
-		var j = L.indexOf(s); if (j >= 0) L.splice(j, 1)
-		L.push(s)
-//		saveCommandHistory()
-//		fs.writeFileSync(expandPath('~/.deodar/command_history.js'),  'commandHistory=' + JSON.stringify(commandHistory,0, ' '))
+		this.historyAdd(s)
 		this.input.setText('')
-//		repaint()
 		var me = this
 		if (s.charAt(0) == ' ') {
-			//this.log(s)
 			return true
 		} else setTimeout(function() { 
 			me.execute(s) 
@@ -247,6 +286,7 @@ TNorton.can.onItemEnter = function(list, item) {
 			return
 		}
 		if (X.tty) {
+			this.historyAdd(X.tty + ' ' + X.name)
 			this.execute(X.tty + ' ' + X.name)
 			return
 		}

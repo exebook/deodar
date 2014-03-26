@@ -146,13 +146,13 @@ TController.can.onMouse = function(hand) {
 var TDeodar = kindof(TGLXVision)
 
 TDeodar.can.init = function() {
-	dnaof(this, TController, 110, 33)//0, 0, 800, 600)
+	dnaof(this, TController, 110, 33)
 	DESK = this.desktop
 }
 
 var A = TDeodar.create()
 A.show()
-//startCopyFile(A.desktop)
+A.desktop.main.output.colorLog('   *  ^2Рабочая среда ^0"^5Деодар^0", лицензия: ^1Unlicense^0, автор: Яков Нивин  *')
 glxwin.mainLoop()
 
 /* TODO:

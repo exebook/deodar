@@ -42,6 +42,7 @@ TConsole.can.init = function() {
 	this.size(1, 1)
 	this.terminal = new Terminal(1, 1, '');
 	this.terminal.buffer.setMode('crlf',true);
+	this.sel = TSelection.create()
 //	var O = this.terminal.writer
 //	for (var i in O) log(i, typeof O[i])
 	this.defaultTitle = 'terminal'
@@ -92,6 +93,20 @@ TConsole.can.log = function() {
 //	s = '\u001b[01;32m' + cwd + '\u001b[01;34m' +s+'\u001b[00m'
 	this.terminal.writer.write(s + '\n')
 	this.repaint()
+}
+
+TConsole.can.colorLog = function(s) {
+	s += '^0'
+	for (var i = 0; i < 8; i++) {
+		var x = new RegExp('\\^' + i, 'g')
+		s = s.replace(x, '\u001b[01;3' + i + 'm')
+	}
+//	s = s.replace(/\^0/g, '\u001b[00m')
+	this.terminal.writer.write(s + '\n')
+}
+
+TConsole.can.errorLog = function(s) {
+	this.colorLog('^1' + s)
 }
 
 TConsole.can.respawn = function(cmd, args, cwd, callback) {
@@ -193,23 +208,18 @@ TConsole.can.onKey = function(k) {
 	}
 }
 
-TConsole.can.onMouse = function(hand) {
-	if (this.working() == false) {
-		this.parent.actor = this.fileman.input
-		return
-	}
-	return dnaof(this, hand)
-}
-
 TConsole.can.draw = function(state) {
 	dnaof(this, state)
 	var S = this.terminal.buffer._buffer.str
 	var A = this.terminal.buffer._buffer.attr
+	var sel = this.sel.get()
 	for (var y = 0; y < this.terminal.buffer.height; y++) {
 		if (y >= this.h - 0) break
 		if (S[y] == undefined) continue
 		var s = S[y], a = A[y]
-		var F = concolor[7], B = concolor[16], f = 7, b = 0
+		var F, B, f = 7, b = 0
+		B = concolor[16]
+		F = concolor[7]
 		for (var x = 0; x < this.terminal.buffer.width; x++) {
 			if (x >= s.length) break;
 			var ch = s.charAt(x)
@@ -222,7 +232,14 @@ TConsole.can.draw = function(state) {
 					F = concolor[f]
 				}
 			}
-			this.set(x, y, ch, F, B)
+			var fc = F, bc = B
+			if (sel) {
+				if (y >= sel.a.y && y <= sel.b.y) {
+					if (sel.a.y != sel.b.y || (x >= sel.a.x && x <= sel.b.x)) 
+						bc = concolor[7], fc = concolor[0]
+				}
+			}
+			this.set(x, y, ch, fc, bc)
 		}
 	}
 	if (state.focused)  with(this.terminal.buffer.cursor) this.caret = { x: x, y: y }
@@ -248,243 +265,38 @@ TConsole.can.size = function(w, h) {
 	this.fitSize()
 }
 
-/*
-Terminal.prototype.keyDown = function(ev) {
-  var self = this
-    , key;
+TConsole.can.copyTextBlock = function(B) {
+	var S = this.terminal.buffer._buffer.str
+	var A = this.terminal.buffer._buffer.attr
+	var txt = []
+	for (var y = B.a.y; y <= B.b.y; y++) {
+		var s = S[y]
+		if (B.a.y == B.b.y) s = s.substr(B.a.x, B.b.x - B.a.x + 1)
+		txt.push(s)
+	}
+	clipboardSet(txt.join('\n'))
+}
 
-  switch (ev.keyCode) {
-    // backspace
-    case 8:
-      if (ev.shiftKey) {
-        key = '\x08'; // ^H
-        break;
-      }
-      key = '\x7f'; // ^?
-      break;
-    // tab
-    case 9:
-      if (ev.shiftKey) {
-        key = '\x1b[Z';
-        break;
-      }
-      key = '\t';
-      break;
-    // return/enter
-    case 13:
-      key = '\r';
-      break;
-    // escape
-    case 27:
-      key = '\x1b';
-      break;
-    // left-arrow
-    case 37:
-      if (this.applicationCursor) {
-        key = '\x1bOD'; // SS3 as ^[O for 7-bit
-        //key = '\x8fD'; // SS3 as 0x8f for 8-bit
-        break;
-      }
-      key = '\x1b[D';
-      break;
-    // right-arrow
-    case 39:
-      if (this.applicationCursor) {
-        key = '\x1bOC';
-        break;
-      }
-      key = '\x1b[C';
-      break;
-    // up-arrow
-    case 38:
-      if (this.applicationCursor) {
-        key = '\x1bOA';
-        break;
-      }
-      if (ev.ctrlKey) {
-        this.scrollDisp(-1);
-        return cancel(ev);
-      } else {
-        key = '\x1b[A';
-      }
-      break;
-    // down-arrow
-    case 40:
-      if (this.applicationCursor) {
-        key = '\x1bOB';
-        break;
-      }
-      if (ev.ctrlKey) {
-        this.scrollDisp(1);
-        return cancel(ev);
-      } else {
-        key = '\x1b[B';
-      }
-      break;
-    // delete
-    case 46:
-      key = '\x1b[3~';
-      break;
-    // insert
-    case 45:
-      key = '\x1b[2~';
-      break;
-    // home
-    case 36:
-      if (this.applicationKeypad) {
-        key = '\x1bOH';
-        break;
-      }
-      key = '\x1bOH';
-      break;
-    // end
-    case 35:
-      if (this.applicationKeypad) {
-        key = '\x1bOF';
-        break;
-      }
-      key = '\x1bOF';
-      break;
-    // page up
-    case 33:
-      if (ev.shiftKey) {
-        this.scrollDisp(-(this.rows - 1));
-        return cancel(ev);
-      } else {
-        key = '\x1b[5~';
-      }
-      break;
-    // page down
-    case 34:
-      if (ev.shiftKey) {
-        this.scrollDisp(this.rows - 1);
-        return cancel(ev);
-      } else {
-        key = '\x1b[6~';
-      }
-      break;
-    // F1
-    case 112:
-      key = '\x1bOP';
-      break;
-    // F2
-    case 113:
-      key = '\x1bOQ';
-      break;
-    // F3
-    case 114:
-      key = '\x1bOR';
-      break;
-    // F4
-    case 115:
-      key = '\x1bOS';
-      break;
-    // F5
-    case 116:
-      key = '\x1b[15~';
-      break;
-    // F6
-    case 117:
-      key = '\x1b[17~';
-      break;
-    // F7
-    case 118:
-      key = '\x1b[18~';
-      break;
-    // F8
-    case 119:
-      key = '\x1b[19~';
-      break;
-    // F9
-    case 120:
-      key = '\x1b[20~';
-      break;
-    // F10
-    case 121:
-      key = '\x1b[21~';
-      break;
-    // F11
-    case 122:
-      key = '\x1b[23~';
-      break;
-    // F12
-    case 123:
-      key = '\x1b[24~';
-      break;
-    default:
-      // a-z and space
-      if (ev.ctrlKey) {
-        if (ev.keyCode >= 65 && ev.keyCode <= 90) {
-          // Ctrl-A
-          if (this.screenKeys) {
-            if (!this.prefixMode && !this.selectMode && ev.keyCode === 65) {
-              this.enterPrefix();
-              return cancel(ev);
-            }
-          }
-          // Ctrl-V
-          if (this.prefixMode && ev.keyCode === 86) {
-            this.leavePrefix();
-            return;
-          }
-          // Ctrl-C
-          if ((this.prefixMode || this.selectMode) && ev.keyCode === 67) {
-            if (this.visualMode) {
-              setTimeout(function() {
-                self.leaveVisual();
-              }, 1);
-            }
-            return;
-          }
-          key = String.fromCharCode(ev.keyCode - 64);
-        } else if (ev.keyCode === 32) {
-          // NUL
-          key = String.fromCharCode(0);
-        } else if (ev.keyCode >= 51 && ev.keyCode <= 55) {
-          // escape, file sep, group sep, record sep, unit sep
-          key = String.fromCharCode(ev.keyCode - 51 + 27);
-        } else if (ev.keyCode === 56) {
-          // delete
-          key = String.fromCharCode(127);
-        } else if (ev.keyCode === 219) {
-          // ^[ - escape
-          key = String.fromCharCode(27);
-        } else if (ev.keyCode === 221) {
-          // ^] - group sep
-          key = String.fromCharCode(29);
-        }
-      } else if ((!this.isMac && ev.altKey) || (this.isMac && ev.metaKey)) {
-        if (ev.keyCode >= 65 && ev.keyCode <= 90) {
-          key = '\x1b' + String.fromCharCode(ev.keyCode + 32);
-        } else if (ev.keyCode === 192) {
-          key = '\x1b`';
-        } else if (ev.keyCode >= 48 && ev.keyCode <= 57) {
-          key = '\x1b' + (ev.keyCode - 48);
-        }
-      }
-      break;
-  }
+TConsole.can.onCursor = function(hand) {
+	this.sel.end(hand.y, hand.x)
+	return true
+}
 
-  if (!key) return true;
-
-  if (this.prefixMode) {
-    this.leavePrefix();
-    return cancel(ev);
-  }
-
-  if (this.selectMode) {
-    this.keySelect(ev, key);
-    return cancel(ev);
-  }
-
-  this.emit('keydown', ev);
-  this.emit('key', key, ev);
-
-  this.showCursor();
-  this.handler(key);
-
-  return cancel(ev);
-};
-
-
-*/
+TConsole.can.onMouse = function(hand) {
+	if (hand.button == 0 && this.working() == false) {
+		this.parent.actor = this.fileman.input
+		return
+	}
+	if (hand.down && hand.button == 1) {
+		this.sel.start(hand.y, hand.x)
+		return true
+	}
+	if (hand.down == false && hand.button == 1) {
+		if (!this.sel.clean()) this.copyTextBlock(this.sel.get())
+		this.sel.clear()
+		if (this.working() == false) 
+			this.parent.actor = this.fileman.input
+		return true
+	}
+	return true
+}
