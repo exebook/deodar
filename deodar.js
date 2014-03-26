@@ -1,3 +1,4 @@
+//        Начальный файл Рабочей Среды "Деодар"
 /*
 	Срочно
 	
@@ -13,7 +14,11 @@
 	сохранить да/нет
 	таб дополняет если что то набрано в инпуте
 	control-tab
-	
+	глобальную горячую клавишу прекратить текущий (зависший) процесс
+
+	глюки
+	зависла (пропала полоска ввода) после запуска gedit через bash+&+bg
+			
 	Сделано
 	создать файл
 	поиск в редакторе
@@ -47,6 +52,25 @@ require('./file/copyfile')
 require('./file/copydir')
 require('./file/copier')
 require('./drivemenu')
+var x11clip = require('./x11clip')
+clipboardSet = x11clip.copy
+
+clipboardGet = function(callback) {
+	x11clip.pasteCallback = callback
+	'inter hint clipboardSet'
+	x11clip.paste()
+}
+log(x11clip.start())
+
+x11clip.mainLoop = function() {
+	function go() {
+		var s = x11clip.step()
+		if (s) x11clip.pasteCallback(s)
+		setImmediate(go)
+	}
+	setImmediate(go)
+}
+x11clip.mainLoop()
 
 var enterRule = [ { ext: 'coffee', tty: 'coffee' } ,{ ext: 'js', tty: 'node' }, { ext: 'atr', tty: 'atari800' }
 , { ext: 'jpg', spawn: 'xdg-open'}

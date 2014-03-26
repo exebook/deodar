@@ -44,14 +44,46 @@ TConsole.can.init = function() {
 	this.terminal.buffer.setMode('crlf',true);
 //	var O = this.terminal.writer
 //	for (var i in O) log(i, typeof O[i])
-//	for (var i = 0; i < 50; i++) this.terminal.writer.write('\n')
-//	this.respawn('bash')
 	this.defaultTitle = 'terminal'
 	this.title = this.defaultTitle
 	this.scrollBuf = []
 	this.scrollMax = 4096
-	this.react(0, keycode.UP, this.arrow, { arg: 'up' })
-	this.react(0, keycode.DOWN, this.arrow, { arg: 'down' })
+	this.react(0, keycode.UP, this.specialKey, { arg: 'up' })
+	this.react(0, keycode.DOWN, this.specialKey, { arg: 'down' })
+	this.react(0, keycode.LEFT, this.specialKey, { arg: 'left' })
+	this.react(0, keycode.RIGHT, this.specialKey, { arg: 'right' })
+//	this.react(100, keycode.LEFT, this.specialKey, { arg: '^left' })
+//	this.react(100, keycode.RIGHT, this.specialKey, { arg: '^right' })
+	this.react(0, keycode.INSERT, this.specialKey, { arg: 'insert' })
+	this.react(0, keycode.DELETE, this.specialKey, { arg: 'delete' })
+	this.react(0, keycode.HOME, this.specialKey, { arg: 'home' })
+	this.react(0, keycode.END, this.specialKey, { arg: 'end' })
+	this.react(0, keycode.PAGE_UP, this.specialKey, { arg: 'pageup' })
+	this.react(0, keycode.PAGE_DOWN, this.specialKey, { arg: 'pagedown' })
+	this.react(0, keycode.F1, this.specialKey, { arg: 'f1' })
+	this.react(0, keycode.F2, this.specialKey, { arg: 'f2' })
+	this.react(0, keycode.F3, this.specialKey, { arg: 'f3' })
+	this.react(0, keycode.F4, this.specialKey, { arg: 'f4' })
+	this.react(0, keycode.F5, this.specialKey, { arg: 'f5' })
+	this.react(0, keycode.F6, this.specialKey, { arg: 'f6' })
+	this.react(0, keycode.F7, this.specialKey, { arg: 'f7' })
+	this.react(0, keycode.F8, this.specialKey, { arg: 'f8' })
+	this.react(0, keycode.F9, this.specialKey, { arg: 'f9' })
+	this.react(0, keycode.F10, this.specialKey, { arg: 'f10' })
+	this.react(0, keycode.F11, this.specialKey, { arg: 'f11' })
+	this.react(0, keycode.F12, this.specialKey, { arg: 'f12' })
+	this.react(1, keycode.INSERT, this.commandPaste)
+}
+
+TConsole.can.commandPaste = function() {
+	if (typeof clipboardGet == 'undefined') return true
+	var me = this
+	function on(text) {
+		me.term.write(text)
+		me.repaint()
+	}
+	clipboardGet(on)
+	return true
 }
 
 TConsole.can.log = function() {
@@ -107,16 +139,46 @@ TConsole.can.working = function() {
 	return this.term.readable || this.term.writable;
 }
 
-TConsole.can.arrow = function(arrow) {
+TConsole.can.specialKey = function(cmd) {
 	var key
-	if (arrow == 'up') {
-		key = '\x1b[A';
-		key = '\x1bOA';
-	} else if (arrow == 'down') {
-		key = '\x1b[B';
-		key = '\x1bOB';
+	if (cmd == 'up') {
+		key = '\x1b[A'
+		key = '\x1bOA'
+	} else if (cmd == 'down') {
+		key = '\x1b[B'
+		key = '\x1bOB'
+	} else if (cmd == 'left') {
+        key = '\x1bOD'; //appcursor SS3 as ^[O for 7-bit
+        //key = '\x8fD'; // appcursor SS3 as 0x8f for 8-bit
+//      key = '\x1b[D'
+	} else if (cmd == 'right') {
+        key = '\x1bOC' // appcursor
+//      key = '\x1b[C'
+	} else if (cmd == 'delete') { key = '\x1b[3~' 
+	} else if (cmd == 'insert') { key = '\x1b[2~'
+	} else if (cmd == 'home') {
+	 // key = '\x1bOH'//if keypad
+      key = '\x1bOH'
+	} else if (cmd == 'end') {
+      key = '\x1bOF'// if keypad
+      key = '\x1bOF'
+	} else if (cmd == 'pageup') { key = '\x1b[5~'
+	} else if (cmd == 'pagedown') { key = '\x1b[6~'
+	} else if (cmd == 'f1') { key = '\x1bOP'
+	} else if (cmd == 'f2') { key = '\x1bOQ'
+	} else if (cmd == 'f3') { key = '\x1bOR'
+	} else if (cmd == 'f4') { key = '\x1bOS'
+	} else if (cmd == 'f5') { key = '\x1b[15~'
+	} else if (cmd == 'f6') { key = '\x1b[17~'
+	} else if (cmd == 'f7') { key = '\x1b[18~'
+	} else if (cmd == 'f8') { key = '\x1b[19~'
+	} else if (cmd == 'f9') { key = '\x1b[20~'
+	} else if (cmd == 'f10') { key = '\x1b[21~'
+	} else if (cmd == 'f11') { key = '\x1b[23~'
+	} else if (cmd == 'f12') { key = '\x1b[24~'
 	}
-	this.term.write(key)//todo: move those two write+caretReset to function        
+
+	this.term.write(key)      
 	this.getDesktop().display.caretReset()
 	return true
 }
