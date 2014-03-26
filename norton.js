@@ -180,8 +180,12 @@ TNorton.can.switchPanel = function() {
 	this.updateInputLabel()
 	return true
 }
+
 TNorton.can.updateInputLabel = function() {
-	this.setLabel(this.actor.list.path)
+	var w = 20
+	if (this.w) w = this.w / 3
+	var s = pathCompress(this.actor.list.path, w)
+	this.setLabel(s)
 }
 TNorton.can.driveMenu = function(which) {
 	if (which == 'left') panel = this.left

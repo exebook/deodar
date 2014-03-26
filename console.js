@@ -283,7 +283,7 @@ TConsole.can.onCursor = function(hand) {
 }
 
 TConsole.can.onMouse = function(hand) {
-	if (hand.button == 0 && this.working() == false) {
+	if ((hand.button == 0 || hand.button == 3) && this.working() == false) {
 		this.parent.actor = this.fileman.input
 		return
 	}

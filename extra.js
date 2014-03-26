@@ -62,67 +62,6 @@ TInputAndPanels.can.onKey1 = function (char, key, down, physical) {
 	}
 	this.actor.onKey(key, down, physical)
 }
-
-
-TInputAndPanels.can.onChar = function (char) {
-	if (key_modifiers[3]) {
-		var q = TWindow.create()
-		q.text = '^' + char
-		//q.bg = 0xabb, q.frame.fg_focus = 0, q.frame.fg = 0, q.frame.bg = q.frame.bg_focus = 0xabb
-		q.pal = getColor.window
-		q.size(20, 3)
-		q.link = this.actor
-		q.title = 'Поиск (RegEx)'
-		q.bottom_title = 'Escape: отмена'
-		q.onKey = function(key, down, physical) { with (this) {
-			if (((key >= 110 && key <= 118) || (key >= 67 && key <= 76) 
-			|| [9, 36].indexOf(key) >= 0) && down) {
-				var Desktop = this.parent
-				Desktop.hideModal(q)
-				if (key == 36) this.link.list.onEnter()
-				if ((key >= 110 && key <= 118) || (key >= 67 && key <= 76))
-					this.link.onKey(key, down)
-				repaint()
-			} else if (key == 22 && down) {
-				if (key_modifiers[0] == true) text = '';
-				else text = text.substr(0, text.length - 1)
-				onchange()
-				repaint()
-			}
-		}}
-		q.onChar = function(char) {
-			this.text += char
-			this.onchange()
-			repaint()
-		}
-		q.onchange = function() {
-			var it = this.link.list.items
-			var R = new RegExp(this.text, "")
-			for (var i = 0; i < it.length; i++) {
-				if (R.test(it[i].name) || R.test(it[i].name.toLowerCase())) {
-					this.link.list.sid = i
-					this.link.list.onItem(i)
-					this.link.list.scrollIntoView()
-					break
-				}
-			}
-		}
-		q.inherit('draw', function(state) {
-			dnaof(this, state)
-			this.rect(1, 1, this.w-2, 1, ' ', undefined, 0x880)
-			this.print(1, 1, this.text)
-		})
-		q.onchange()
-		var Desktop = this.parent
-		Desktop.showModal(q, this.actor.x + 10, this.h - 3)
-		return
-	}
-	if (this.actor == this.left || this.actor == this.right 
-		|| this.actor == this.input) this.input.onChar(char)
-	if (this.actor == this.output) this.output.onChar(char)
-}
-
-
 TInputAndPanels.can.onPipe = function(str) {
 	if (str == undefined) {
 		if (this.flip) this.exitOutputMode()

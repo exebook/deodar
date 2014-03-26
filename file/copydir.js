@@ -1,8 +1,32 @@
+function noCopyIntoSelf(idir, odir) {
+}
+
 taskCopyDir = function() {
 	var me = this
+	// проверим самосебяние
+	var recur = false, ridir, rodir
+	ridir = fs.realpathSync(me.idir +'/'+ me.iname)
+	try {
+		rodir = fs.realpathSync(me.odir +'/'+ me.oname)
+	} catch (e) {
+		rodir = fs.realpathSync(me.odir)
+	}
+	recur = ((rodir + '/').indexOf(ridir + '/') == 0)
+
 	var idir = me.idir +'/'+ me.iname
 	var odir = me.odir +'/'+ me.oname
-	if (!fs.existsSync(odir)) {
+	if (recur) {
+		log('стопка (каталог) не пишется сама в себя')
+		me.state = 'canceled'
+		me.chain.tick()
+		return
+	}
+
+me.state = 'canceled'
+me.chain.tick()
+return
+	
+		if (!fs.existsSync(odir)) {
 		try {
 			fs.mkdirSync(odir)
 		} catch (e) {

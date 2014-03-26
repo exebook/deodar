@@ -46,7 +46,7 @@ require('./panel')
 require('./editfile')
 require('./makedir')
 require('./filedel')
-require('./fileman')
+require('./norton')
 require('./console')
 require('./file/copyfile')
 require('./file/copydir')
@@ -72,15 +72,18 @@ x11clip.mainLoop = function() {
 }
 x11clip.mainLoop()
 
-var enterRule = [ { ext: 'coffee', tty: 'coffee' } ,{ ext: 'js', tty: 'node' }, { ext: 'atr', tty: 'atari800' }
-, { ext: 'jpg', spawn: 'xdg-open'}
-, { ext: 'avi', spawn: 'xdg-open'}
-, { ext: 'wmv', spawn: 'xdg-open'}
-, { ext: 'mov', spawn: 'xdg-open'}
-, { ext: 'mkv', spawn: 'xdg-open'}
-, { ext: 'mp3', spawn: 'xdg-open'}
-, { ext: 'ogg', spawn: 'xdg-open'}
-, { ext: 'png', spawn: 'xdg-open'}
+var enterRule = [ 
+ { ext: 'coffee', tty: 'coffee' },
+ { ext: 'js', tty: 'node' },
+ { ext: 'atr', tty: 'atari800' },
+ { ext: 'jpg', spawn: 'xdg-open' },
+ { ext: 'avi', spawn: 'xdg-open' },
+ { ext: 'wmv', spawn: 'xdg-open' },
+ { ext: 'mov', spawn: 'xdg-open' },
+ { ext: 'mkv', spawn: 'xdg-open' },
+ { ext: 'mp3', spawn: 'xdg-open' },
+ { ext: 'ogg', spawn: 'xdg-open' },
+ { ext: 'png', spawn: 'xdg-open' }
  ]
 
 applyEnterRules = function(s) {

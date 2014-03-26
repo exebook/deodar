@@ -298,6 +298,10 @@ TFilePanel.can.size = function(w, h) {
 	this.detail.x = this.list.x, this.detail.y = this.list.y + this.list.h
 }
 
+TFilePanel.can.titleFit = function(s, w) {
+	return pathCompress(s, w)
+}
+
 TFilePanel.can.draw = function(state) {
 	dnaof(this, state)
 	this.detail.draw(state) // detail must be drawn after the list to show column bottoms

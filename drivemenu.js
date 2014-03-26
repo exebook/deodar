@@ -5,10 +5,9 @@ TDriveMenu.can.init = function(panel) {
 	this.title = 'Телепорт:'
 	this.list = TDriveList.create()
 	this.list.columns = 1
-	//$.bg = 0xabb, $.frame.fg_focus = 0, $.frame.fg = 0, $.frame.bg = $.frame.bg_focus = 0xabb
 	var list = [
-	//,
-	{ key:49, title:'~ (HOME)', path:'~' }, { key:58, title:'/media', path:'/media' }]
+		{ key:49, title:'~ (HOME)', path:'~' }, { key:58, title:'/media', path:'/media' }
+	]
 	if (fs.existsSync(expandPath('~/.deodar/driveMenu.js'))) {
 		var js = expandPath('~/.deodar/driveMenu.js')
 		list = eval(fs.readFileSync(js).toString())
@@ -24,7 +23,7 @@ TDriveMenu.can.init = function(panel) {
 		this.list.items.push(list[i])
 		if (typeof list[i].key == 'number') code = list[i].key
 		if (typeof list[i].key == 'string') code = keycode[list[i].key.charAt(0)]
-		this.react(0, code, this.pathSelect, { arg: list[i]})
+		this.react(0, code, this.pathSelect, { arg: list[i] })
 	}
 	this.list.pal = this.pal
 	this.add(this.list, width, list.length)

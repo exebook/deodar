@@ -132,7 +132,7 @@ promptCopyFile = function(operation, sPanel, dPanel, do_after) {
 	} else 
 		for (var i = 0; i < sel.length; i++)
 			list.push({ name: it[sel[i]].name, id: sel[i] })
-	var Operation = 'Копировать'
+	var Operation = 'Списать'
 	if (operation == 'move') Operation = 'Перенести'
 	var copyDialog = TBeginCopyDialog.create(55, Operation, 
 		Operation + ' ' + list.length + ' штук в:', 
@@ -157,10 +157,9 @@ promptCopyFile = function(operation, sPanel, dPanel, do_after) {
 			if (typed.charAt(0) == '/') odir = ''
 			var isDir = false
 			try { isDir = fs.statSync(odir + '/' + typed).isDirectory() } catch (e) {}
-			log('isdir:', isDir)
 			if (!isDir) {
 				if (list.length == 1) { list[0].oname = typed }
-				else { log('что поделать, нельзя скопировать много файлов в один'); return }
+				else { log('что поделать, нельзя списать много файлов в один'); return }
 			} else {
 				odir = sPanel.list.path + '/' + typed
 			}
