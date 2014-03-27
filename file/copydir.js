@@ -22,11 +22,7 @@ taskCopyDir = function() {
 		return
 	}
 
-me.state = 'canceled'
-me.chain.tick()
-return
-	
-		if (!fs.existsSync(odir)) {
+	if (!fs.existsSync(odir)) {
 		try {
 			fs.mkdirSync(odir)
 		} catch (e) {

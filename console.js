@@ -1,5 +1,4 @@
 var Terminal = require('./terminal.js');
-// terminal отсюда:
 // git clone https://github.com/c3ks/terminal.js
 
 require('./concolor.js')
@@ -95,7 +94,8 @@ TConsole.can.log = function() {
 	this.repaint()
 }
 
-TConsole.can.colorLog = function(s) {
+TConsole.can.colorLog = function() {
+	var s = Array.prototype.slice.apply(arguments)
 	s += '^0'
 	for (var i = 0; i < 8; i++) {
 		var x = new RegExp('\\^' + i, 'g')
@@ -105,7 +105,8 @@ TConsole.can.colorLog = function(s) {
 	this.terminal.writer.write(s + '\n')
 }
 
-TConsole.can.errorLog = function(s) {
+TConsole.can.errorLog = function() {
+	var s = Array.prototype.slice.apply(arguments)
 	this.colorLog('^1' + s)
 }
 
@@ -125,6 +126,7 @@ TConsole.can.respawn = function(cmd, args, cwd, callback) {
 //	cmd = args.shift()
 	if (cwd == undefined) cwd = process.env.HOME
 //	process.chdir(cwd)
+	this.lastCmd = cmd
 	this.term = pty.spawn(cmd, args, { 
 		name: 'xterm-color', cols: wh.w, rows: wh.h, cwd: cwd, env: process.env });
 	this.term.on('error', function(a) {})
@@ -147,6 +149,15 @@ TConsole.can.saveScrollLine = function(line) {
 	var S = this.terminal.buffer._buffer.str
 	var A = this.terminal.buffer._buffer.attr
 //	log(S[line])
+}
+
+TConsole.can.kill = function() {
+	try {
+		process.kill(this.term.pid, 'SIGKILL')
+		this.errorLog('\n\n\n\nПопытка прервать процесс:', this.term.pid, this.lastCmd, 'и все его подпроцессы')
+	} catch (e) {
+		log(e)
+	}
 }
 
 TConsole.can.working = function() {

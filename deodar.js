@@ -15,6 +15,7 @@
 
 	глюки
 	зависла (пропала полоска ввода) после запуска gedit через bash+&+bg
+	enter  в начале строки косит отступ
 			
 	Сделано
 	* сохранить да/нет
@@ -63,10 +64,21 @@ clipboardGet = function(callback) {
 log(x11clip.start())
 
 x11clip.mainLoop = function() {
+	var speed = 100, timer
+	function slowDown() {
+		speed = 100
+		timer = undefined
+	}
 	function go() {
-		var s = x11clip.step()
-		if (s) x11clip.pasteCallback(s)
-		setImmediate(go)
+		var event = x11clip.step()
+		if (event) {
+			speed = 1
+			if (timer) clearTimeout(timer)
+			timer = setTimeout(slowDown, 1000)
+			var s = x11clip.get()
+			if (s) x11clip.pasteCallback(s)
+		}
+		setTimeout(function() { setImmediate(go) }, speed)
 	}
 	setImmediate(go)
 }

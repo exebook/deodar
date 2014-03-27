@@ -1,3 +1,5 @@
+// внимание, написаное ниже не совсем верно, на самом деле задачи выполняются по-очереди
+
 //  основа для очереди задач
 //  на каждом шаге очереди запускается
 //  шаг каждой из висящих задач
@@ -152,7 +154,7 @@ promptCopyFile = function(operation, sPanel, dPanel, do_after) {
 	function copyFunc() {
 		var typed = copyDialog.to.getText(), oname
 		var odir = dPanel.list.path
-		if (dPanel.list.path != typed) { // user typed destination
+		if (dPanel.list.path != typed) { // что то ввели
 			var odir = sPanel.list.path
 			if (typed.charAt(0) == '/') odir = ''
 			var isDir = false

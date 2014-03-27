@@ -2,7 +2,7 @@ TList.can.onAltChar = function (K) {
 	var q = TQuickFind.create(K.char, this)
 	var G = this.getGlobal()
 	var D = this.getDesktop()
-	D.showModal(q, G.x + 10, D.h - 3)//G.y + this.h - 3)
+	D.showModal(q, G.x + 10, D.h - 3)
 	this.showFocused = true
 }
 
@@ -60,7 +60,7 @@ TQuickFind.can.onKey = function(hand) {
 		this.close()
 		return
 	}
-	if (hand.down && hand.char == undefined && !hand.mod.shift) {
+	if (hand.down && (hand.char == undefined || hand.key == keycode.ENTER) && !hand.mod.shift) {
 		this.close()
 		this.getDesktop().onKey(hand)
 		return false

@@ -84,7 +84,7 @@ TNorton.can.init = function(panelW, panelH) {
 		{arg:'wordleft', role:['panel','input']})
 	this.react(101, keycode.RIGHT, this.input.shiftSel.bind(this.input), 
 		{arg:'wordright', role:['panel', 'input']})
-
+	this.react(100, keycode['c'], this.output.kill.bind(this.output), { role:['panel','input'] })
 
 	this.shortcuts.enable('all', false)
 	this.shortcuts.enable('panel', true)
@@ -93,11 +93,15 @@ TNorton.can.init = function(panelW, panelH) {
 TNorton.can.smartBackSpace = function() {
 	if (this.input.getText() != '') {
 		this.input.commandDeleteBack()
+		delete this.blockBackspaceUpLevel
+		this.blockBackspaceUpLevel = setTimeout(function() {
+			delete this.blockBackspaceUpLevel
+		}.bind(this), 2000)
 	}
 	else {
-		log('UP LEVEL')
-//	this.react(100, keycode.PAGE_UP, this.goUpLevel, { })
-//	this.react(100, keycode.PAGE_DOWN, this.goDownLevel, { })
+		if (this.blockBackspaceUpLevel) return true
+		if (this.actor == this.left || this.actor == this.right)
+			this.actor.list.goUpLevel()
 	}
 	return true
 }
@@ -285,14 +289,16 @@ TNorton.can.pressEnter = function() {
 TNorton.can.onItemEnter = function(list, item) {
 	if (applyEnterRules) {
 		var X = applyEnterRules(item.name)
-		if (X.spawn) {
-			spawn(X.spawn, [list.path + '/' + X.name])
-			return
-		}
-		if (X.tty) {
-			this.historyAdd(X.tty + ' ' + X.name)
-			this.execute(X.tty + ' ' + X.name)
-			return
+		if (X) {
+			if (X.spawn) {
+				spawn(X.spawn, [list.path + '/' + X.name])
+				return
+			}
+			if (X.tty) {
+				this.historyAdd(X.tty + ' ' + X.name)
+				this.execute(X.tty + ' ' + X.name)
+				return
+			}
 		}
 	}
 	if (item.flags.indexOf('x') >= 0) {
