@@ -25,6 +25,11 @@ TChain.can.init = function() {
 TChain.can.next = function() {
 	this.progress.repaint()
 	if (this.pos == this.tasks.length) {
+		for (var i = this.tasks.length - 1; i >= 0; i--) {
+			if (this.tasks[i].state == 'pending') { this.tasks[i].state = 'active', this.pos = i; break }
+		}
+	}
+	if (this.pos == this.tasks.length) {
 		this.progress.getDesktop().hideModal()
 		this.sPanel.list.reload()
 		this.dPanel.list.reload()
@@ -39,7 +44,7 @@ TChain.can.next = function() {
 	
 	if (T.state == 'done') {
 		if (T.id != undefined) this.sPanel.list.selectItem(T.id, false)
-		this.pos++
+		this.tasks.splice(this.pos, 1)
 		this.progress.total.pos++
 		this.tick()
 	} else if (T.state == 'canceled') {
@@ -48,6 +53,9 @@ TChain.can.next = function() {
 		this.tick()
 	} else if (T.state == 'active') {
 		T.task()
+	} else if (T.state == 'pending') {
+		this.pos++
+		this.tick()
 	} else if (T.state == 'cancel') {
 		T.task()
 	}

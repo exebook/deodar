@@ -1,4 +1,9 @@
-function noCopyIntoSelf(idir, odir) {
+taskDelDir = function() {
+	var me = this
+	var idir = me.idir +'/'+ me.iname
+	try { fs.rmdirSync(idir) } catch (e) { log('каталог не хочет удаляться'), log(e) }
+	me.state = 'done'
+	me.chain.tick()
 }
 
 taskCopyDir = function() {
@@ -42,12 +47,14 @@ taskCopyDir = function() {
 				op: me.op, idir: idir, odir: odir
 			})
 		}
-		me.chain.progress.total.max = me.chain.tasks.length
+//			me.chain.tasks.push({ task: taskDelDir, chain: me.chain, op: me.op, idir: idir })
+		me.chain.progress.total.max += list.length
 		if (list.length > 0) {
 			me.chain.tasks[me.chain.tasks.length - 1].id = me.id
 			me.id = undefined
 		}
-		me.state = 'done'
+		if (me.op == 'move') { me.state = 'pending', me.task = taskDelDir }
+		else me.state = 'done'
 	}
 	me.chain.tick()
 	return

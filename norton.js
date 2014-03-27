@@ -29,6 +29,8 @@ TNorton.can.init = function(panelW, panelH) {
 	this.input.setText('')
 	this.actor = this.left
 	var a = '~', b = '.'
+	a = '/v/deodar/aaa'
+	b = '/v/deodar/bbb'
 	a = expandPath(a)
 	b = expandPath(b)
 	this.panelReduce = 0
@@ -58,8 +60,8 @@ TNorton.can.init = function(panelW, panelH) {
 	this.react(0, keycode.F3, this.viewFile, { arg: TTextView, role:['panel'] })
 	this.react(0, keycode.F4, this.viewFile, { arg: TFileEdit, role:['panel'] })
 	this.react(1, keycode.F4, this.editFileInput, { arg: TFileEdit, role:['panel'] })
-	this.react(0, keycode.F5, this.commandCopy, {  role:['panel'] })
-	this.react(0, keycode.F6, this.commandMove, {  role:['panel'] })
+	this.react(0, keycode.F5, this.commandCopy, { arg: 'copy', role:['panel'] })
+	this.react(0, keycode.F6, this.commandCopy, { arg: 'move', role:['panel'] })
 	this.react(0, keycode.F7, this.commandMakeDir, { role:['panel'] })
 	this.react(0, keycode.F8, this.commandDelete, { role:['panel'] })
 
@@ -426,11 +428,11 @@ TNorton.can.commandDelete = function() {
 	return true
 }
 
-TNorton.can.commandCopy = function() {
+TNorton.can.commandCopy = function(arg) {
 	if (this.actor == this.left || this.actor == this.right) {
 		var dest = this.left
 		if (this.actor == this.left) dest = this.right
-		promptCopyFile('copy', this.actor, dest)
+		promptCopyFile(arg, this.actor, dest)
 	}
 	return true
 }

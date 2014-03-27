@@ -56,6 +56,15 @@ function initCopy(me) {
 	return true
 }
 
+taskDelFile = function() {
+	var me = this
+	if (me.state == 'active') {
+		try { fs.unlinkSync(me.ifile) } catch (e) { log('что то с удалением') }
+		me.state = 'done'
+	} else { me.state = 'canceled', log('taskDelFile странно себя ведёт') }
+	me.chain.tick()
+}
+
 taskCopyFile = function() {
 	var me = this
 	if (me.state == 'cancel') { return cancelMe(me) } 
@@ -82,6 +91,10 @@ taskCopyFile = function() {
 			me.state = 'done'
 			fs.closeSync(me.fin)
 			fs.closeSync(me.fout)
+			if (me.op == 'move') {
+				me.state = 'active'
+				me.task = taskDelFile
+			}
 			me.chain.tick()
 			return
 		}
