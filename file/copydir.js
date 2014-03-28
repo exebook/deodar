@@ -6,6 +6,15 @@ taskDelDir = function() {
 	me.chain.tick()
 }
 
+taskMoveDir = function() {
+	var me = this
+	function completed(err) {
+		if (err) me.task = taskCopyDir; else me.state = 'done'
+		me.chain.tick()
+	}
+	if (me.state == 'active') fs.rename(me.idir + '/' + me.iname, me.odir + '/' + me.oname, completed)
+}
+
 taskCopyDir = function() {
 	var me = this
 	// проверим самосебяние

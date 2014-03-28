@@ -65,11 +65,22 @@ taskDelFile = function() {
 	me.chain.tick()
 }
 
+taskMoveFile = function() {
+	var me = this
+	function completed(err) {
+		if (err) me.task = taskCopyFile; else me.state = 'done'
+		me.chain.tick()
+	}
+	if (me.state == 'active') fs.rename(me.idir + '/' + me.iname, me.odir + '/' + me.oname, completed)
+}
+
 taskCopyFile = function() {
 	var me = this
 	if (me.state == 'cancel') { return cancelMe(me) } 
 	else if (me.state == 'active') {
-		if (me.fsize == undefined) if (initCopy(me) == false) return
+		if (me.fsize == undefined) {
+			if (initCopy(me) == false) return
+		}
 		nextRead()
 		return
 	}

@@ -11,6 +11,7 @@ TNorton.can.init = function(panelW, panelH) {
 	this.input = TEdit.create()
 	this.output.fileman = this
 	this.input.multiLine = false
+	this.input.shortcuts.enable('multi', false)
 
 	this.add(this.label)
 	this.add(this.output)
@@ -28,9 +29,7 @@ TNorton.can.init = function(panelW, panelH) {
 	this.input.pos(0, panelH); this.input.size(panelW * 2, 1)
 	this.input.setText('')
 	this.actor = this.left
-	var a = '~', b = '.'
-	a = '/v/deodar/aaa'
-	b = '/v/deodar/bbb'
+	var a = '.', b = '~'
 	a = expandPath(a)
 	b = expandPath(b)
 	this.panelReduce = 0
@@ -87,6 +86,13 @@ TNorton.can.init = function(panelW, panelH) {
 	this.react(101, keycode.RIGHT, this.input.shiftSel.bind(this.input), 
 		{arg:'wordright', role:['panel', 'input']})
 	this.react(100, keycode['c'], this.output.kill.bind(this.output), { role:['panel','input'] })
+
+	this.react(1, keycode.PAGE_UP, 
+		this.output.scrollHistory.bind(this.output), { arg: 'up', role: ['input', 'output'] })
+	this.react(1, keycode.PAGE_DOWN, 
+		this.output.scrollHistory.bind(this.output), { arg: 'down', role:['input','output'] })
+	this.react(100, keycode.END, 
+		this.output.scrollHistory.bind(this.output), { arg: 'home', role:['input','output'] })
 
 	this.shortcuts.enable('all', false)
 	this.shortcuts.enable('panel', true)

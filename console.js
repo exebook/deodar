@@ -35,12 +35,16 @@ TConsole.can.init = function() {
 		//else 
 		return {w:this.w, h:this.h}
 	}
+	var me = this
 	this.pal = getColor.console
 	//[].concat(this.pal)
 	//this.pal[1] = 0
 	this.size(1, 1)
 	this.terminal = new Terminal(1, 1, '');
 	this.terminal.buffer.setMode('crlf',true);
+	this.terminal.buffer.on('lineremove', function(lineno) {
+		me.saveScrollLine(lineno)
+	})
 	this.sel = TSelection.create()
 //	var O = this.terminal.writer
 //	for (var i in O) log(i, typeof O[i])
@@ -48,6 +52,7 @@ TConsole.can.init = function() {
 	this.title = this.defaultTitle
 	this.scrollBuf = []
 	this.scrollMax = 4096
+	this.scrollDelta = 0
 	this.react(0, keycode.UP, this.specialKey, { arg: 'up' })
 	this.react(0, keycode.DOWN, this.specialKey, { arg: 'down' })
 	this.react(0, keycode.LEFT, this.specialKey, { arg: 'left' })
@@ -73,6 +78,9 @@ TConsole.can.init = function() {
 	this.react(0, keycode.F11, this.specialKey, { arg: 'f11' })
 	this.react(0, keycode.F12, this.specialKey, { arg: 'f12' })
 	this.react(1, keycode.INSERT, this.commandPaste)
+	
+//	this.react(1, keycode.PAGE_UP, this.scrollHistory, { arg: 'up' })
+//	this.react(1, keycode.PAGE_DOWN, this.scrollHistory, { arg: 'down' })
 }
 
 TConsole.can.commandPaste = function() {
@@ -131,7 +139,6 @@ TConsole.can.respawn = function(cmd, args, cwd, callback) {
 		name: 'xterm-color', cols: wh.w, rows: wh.h, cwd: cwd, env: process.env });
 	this.term.on('error', function(a) {})
 	this.term.on('close', function(a) {})
-	this.terminal.buffer.on('lineremove', this.saveScrollLine.bind(this))
 	this.term.on('data', function(Data) {
 		me.terminal.writer.write(Data)
 		me.title = me.term.process
@@ -143,12 +150,6 @@ TConsole.can.respawn = function(cmd, args, cwd, callback) {
 		me.repaint()
 		if (callback != undefined) callback()
 	});
-}
-
-TConsole.can.saveScrollLine = function(line) {
-	var S = this.terminal.buffer._buffer.str
-	var A = this.terminal.buffer._buffer.attr
-//	log(S[line])
 }
 
 TConsole.can.kill = function() {
@@ -219,15 +220,43 @@ TConsole.can.onKey = function(k) {
 	}
 }
 
+TConsole.can.scrollHistory = function(arg) {
+	if (arg == 'home') this.scrollDelta = 0
+	if (arg == 'up') this.scrollDelta += this.h >> 1
+	if (arg == 'down') this.scrollDelta -= this.h >> 1
+	if (this.scrollDelta < 0) this.scrollDelta = 0
+	if (this.scrollDelta > this.scrollBuf.length - 1 - this.h) 
+		this.scrollDelta = this.scrollBuf.length - 1 - this.h
+	this.repaint()
+	return true
+}
+
+TConsole.can.saveScrollLine = function(line) {
+	var S = this.terminal.buffer._buffer.str
+	var A = this.terminal.buffer._buffer.attr
+	this.scrollBuf.push({ str: S[line] + '', attr: [].concat(A[line]) })
+	while (this.scrollBuf.length > this.scrollMax) this.scrollBuf.splice(0, 1)
+}
+
+TConsole.can.getLine = function(line) {
+	if (line >= 0) return {
+		str: this.terminal.buffer._buffer.str[line],
+		attr: this.terminal.buffer._buffer.attr[line]
+	}
+	var Y = this.scrollBuf.length + line
+	return this.scrollBuf[Y - 1]
+}
+
 TConsole.can.draw = function(state) {
 	dnaof(this, state)
 	var S = this.terminal.buffer._buffer.str
 	var A = this.terminal.buffer._buffer.attr
-	var sel = this.sel.get()
-	for (var y = 0; y < this.terminal.buffer.height; y++) {
-		if (y >= this.h - 0) break
-		if (S[y] == undefined) continue
-		var s = S[y], a = A[y]
+	var sel = this.sel.get(), s, a
+	for (var Y = 0; Y < this.terminal.buffer.height; Y++) {
+		if (Y >= this.h - 0) break
+		var y = Y - this.scrollDelta, L = this.getLine(Y - this.scrollDelta)
+		s = L.str, a = L.attr
+		if (s == undefined) continue
 		var F, B, f = 7, b = 0
 		B = concolor[16]
 		F = concolor[7]
@@ -236,8 +265,8 @@ TConsole.can.draw = function(state) {
 			var ch = s.charAt(x)
 			if (a != undefined) {
 				if (a[x] != undefined) {
-					if (a[x].fg != null) f = A[y][x].fg
-					if (a[x].bg != null) B = concolor[A[y][x].bg]; else B = concolor[16]
+					if (a[x].fg != null) f = a[x].fg
+					if (a[x].bg != null) B = concolor[a[x].bg]; else B = concolor[16]
 					var bold = (a[x].bold == true)
 					if (bold) F = concolor[f + 8]; else
 					F = concolor[f]
@@ -245,12 +274,12 @@ TConsole.can.draw = function(state) {
 			}
 			var fc = F, bc = B
 			if (sel) {
-				if (y >= sel.a.y && y <= sel.b.y) {
+				if (Y >= sel.a.y && Y <= sel.b.y) {
 					if (sel.a.y != sel.b.y || (x >= sel.a.x && x <= sel.b.x)) 
 						bc = concolor[7], fc = concolor[0]
 				}
 			}
-			this.set(x, y, ch, fc, bc)
+			this.set(x, Y, ch, fc, bc)
 		}
 	}
 	if (state.focused)  with(this.terminal.buffer.cursor) this.caret = { x: x, y: y }
@@ -277,11 +306,9 @@ TConsole.can.size = function(w, h) {
 }
 
 TConsole.can.copyTextBlock = function(B) {
-	var S = this.terminal.buffer._buffer.str
-	var A = this.terminal.buffer._buffer.attr
 	var txt = []
-	for (var y = B.a.y; y <= B.b.y; y++) {
-		var s = S[y]
+	for (var Y = B.a.y; Y <= B.b.y; Y++) {
+		var s = this.getLine(Y - this.scrollDelta).str
 		if (B.a.y == B.b.y) s = s.substr(B.a.x, B.b.x - B.a.x + 1)
 		txt.push(s)
 	}
@@ -294,6 +321,9 @@ TConsole.can.onCursor = function(hand) {
 }
 
 TConsole.can.onMouse = function(hand) {
+	if (hand.button == 3) {
+		this.scrollHistory(hand.down ? 'down' : 'up')
+	}
 	if ((hand.button == 0 || hand.button == 3) && this.working() == false) {
 		this.parent.actor = this.fileman.input
 		return

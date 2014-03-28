@@ -123,8 +123,14 @@ taskCopyItem = function() {
 	try {
 		var stat = fs.statSync(this.idir +'/'+ this.iname)
 		if (stat.isFile() == true) {
+			if (this.op == 'move') {
+				this.task = taskMoveFile.bind(this)
+			} else
 			this.task = taskCopyFile.bind(this)
 		} else if (stat.isDirectory() == true) {
+			if (this.op == 'move') {
+				this.task = taskMoveDir.bind(this)
+			} else
 			this.task = taskCopyDir.bind(this)
 		} else this.state = 'canceled' // unknown inode
 	} catch (e) { this.state = 'canceled' }
