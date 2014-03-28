@@ -153,11 +153,14 @@ TConsole.can.respawn = function(cmd, args, cwd, callback) {
 }
 
 TConsole.can.kill = function() {
-	try {
-		process.kill(this.term.pid, 'SIGKILL')
-		this.errorLog('\n\n\n\nПопытка прервать процесс:', this.term.pid, this.lastCmd, 'и все его подпроцессы')
-	} catch (e) {
-		log(e)
+	if (this.working()) {
+		try {
+			process.kill(this.term.pid, 'SIGKILL')
+			this.errorLog('\n\n\n\nПопытка прервать процесс:', this.term.pid, this.lastCmd,
+				'и все его подпроцессы')
+		} catch (e) {
+			log(e)
+		}
 	}
 }
 

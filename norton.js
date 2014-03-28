@@ -93,6 +93,8 @@ TNorton.can.init = function(panelW, panelH) {
 		this.output.scrollHistory.bind(this.output), { arg: 'down', role:['input','output'] })
 	this.react(100, keycode.END, 
 		this.output.scrollHistory.bind(this.output), { arg: 'home', role:['input','output'] })
+	this.react(101, keycode['o'], 
+		this.output.fitSize.bind(this.output), { arg: 'home', role:['panel', 'input','output'] })
 
 	this.shortcuts.enable('all', false)
 	this.shortcuts.enable('panel', true)
@@ -220,11 +222,12 @@ TNorton.can.setLabel = function(s) {
 
 TNorton.can.size = function(w, h) {
 	dnaof(this, w, h)
-	var W = w >> 1, H = h - 1
+	var W = w >> 1, H = h - 1, outmode = false
+	if (this.output.working()) outmode = true
 	this.output.pos(0, 0)
-	this.output.size(w, h-1)
+	this.output.size(w, outmode ? h : h-1)
 	this.left.pos(0, 0);
-	if (this.input.visible() != true) H++
+	if (outmode) H++
 	this.left.size(W, H - this.panelReduce);
 	this.right.pos(W, 0)
 	this.right.size(w-W, H - this.panelReduce);
@@ -234,6 +237,7 @@ TNorton.can.size = function(w, h) {
 	this.input.size(w - this.label.w, 1)
 	if (this.viewer != undefined) this.viewer.size(w, h)
 }
+
 TNorton.can.cwd = function() {
 	if (this.actor == this.right) return this.right.list.path
 	return this.left.list.path
@@ -319,14 +323,12 @@ TNorton.can.execDone = function(command) {
 	this.shortcuts.enable('all', false)
 	this.shortcuts.enable('input', true)
 	this.show(this.input)
-	this.output.size(this.output.w, this.output.h - 1)
-	this.left.size(this.left.w, this.left.h - 1)
-	this.right.size(this.right.w, this.right.h - 1)
 	if (this.flip) this.exitOutputMode()
 	this.actor = this.preCommandFocus
 	//if (this.right.list.items.length < smallDirectorySize) 
 	this.right.list.reload()
 	this.left.list.reload()
+	this.size(this.w, this.h)
 }
 
 TNorton.can.execute = function(command) {
@@ -334,7 +336,6 @@ TNorton.can.execute = function(command) {
 		this.enterOutputMode(true)
 		return
 	}
-	//TODO: check if pipes "cat | grep" in command work
 	var cwd = this.cwd()
 //	var args = command.split(' ')
 //	command = args.shift()
@@ -344,6 +345,9 @@ TNorton.can.execute = function(command) {
 	this.flip = this.enterOutputMode(true)
 	this.repaint()
 	this.actor = this.output
+//	лучше сделать все эти ресайзы в особом колбэке (при первых полученых даных с терминала)
+//	а то ведь может комманда вобще ничего не выведет на экран
+//	а так можно будет просто вызвать size(this.w, this.h)
 	this.output.size(this.output.w, this.output.h + 1)
 	this.left.size(this.left.w, this.left.h + 1)
 	this.right.size(this.right.w, this.right.h + 1)
