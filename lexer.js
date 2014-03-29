@@ -8,9 +8,10 @@ function initKeywords() {
 
 	"console log process fs",
 
-	"THolder TConsole TChain TCopyProgress TBeginCopyDialog TController varTDeodar TDeleteDialog TNorton TFileList TFileDetail TFilePanel TControl TButton TLabel TInput TDoneBar TDialog TOkCancel TInputBox TMessageBox TGLXVision TMouse TEdit TGroup TDesktop TObject TKeyInput TList TSelection TText TKeyCode THelp TDriveList TDriveMenu TTextView TScrollBar TModalTextView TFileEdit TView TWindow",
+	"THolder TConsole TController varTDeodar TDriveMenu TDeleteDialog TSearch TResults TFindWindow TNorton TFileList TFileDetail TFilePanel TControl TButton TLabel TInput TDoneBar TScrollBar TDialog TOkCancel TInputBox TExitSaveCancel TMessageBox TGLXVision TMouse TEdit TGroup TDesktop TObject TKeyInput TList TQuickFind TSelection TText TTextView TKeyCode THelp TDriveList TModalTextView TFileEdit TView TWindow",
 
 	"init true false null arguments length callee NaN self Infinity void this  default undefined"]
+	
 	var keywords = {}
 	for (var i = 0; i < keywordSource.length; i++) {
 		var list = keywordSource[i].split(' ')

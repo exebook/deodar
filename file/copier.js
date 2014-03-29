@@ -1,82 +1,3 @@
-// внимание, написаное ниже не совсем верно, на самом деле задачи выполняются по-очереди
-
-//  основа для очереди задач
-//  на каждом шаге очереди запускается
-//  шаг каждой из висящих задач
-//  некоторые задачи при выполнении
-//  разворачиваются на подзадачи
-//  по завершении могут запускать
-//  задачи из очереди ожидания - очередные
-//  могут создавать новые задачи
-//  например по завершении копирования
-//  файла может запускаться его удаление
-//  бывают задачи созданые пользователем
-//  они называются задания
-//  у этих заданий есть общий ход выполнения
-//  он же прогрессбар, у некоторых подзадач он тоже может быть
-
-TChain = kindof(TObject)
-TChain.can.init = function() {
-	dnaof(this)
-	this.tasks = []
-	this.pos = 0
-}
-
-TChain.can.next = function() {
-	this.progress.repaint()
-	if (this.pos == this.tasks.length) {
-		for (var i = this.tasks.length - 1; i >= 0; i--) {
-			if (this.tasks[i].state == 'pending') { this.tasks[i].state = 'active', this.pos = i; break }
-		}
-	}
-	if (this.pos == this.tasks.length) {
-		this.progress.getDesktop().hideModal()
-		this.sPanel.list.reload()
-		this.dPanel.list.reload()
-		return
-	}
-	var T = this.tasks[this.pos]
-	if (T.state == undefined) {
-		T.state = 'active'
-		T.chain = this
-		T.task = T.task.bind(T)
-	}
-	
-	if (T.state == 'done') {
-		if (T.id != undefined) this.sPanel.list.selectItem(T.id, false)
-		this.tasks.splice(this.pos, 1)
-		this.progress.total.pos++
-		this.tick()
-	} else if (T.state == 'canceled') {
-		this.pos++
-		this.progress.total.pos++
-		this.tick()
-	} else if (T.state == 'active') {
-		T.task()
-	} else if (T.state == 'pending') {
-		this.pos++
-		this.tick()
-	} else if (T.state == 'cancel') {
-		T.task()
-	}
-}
-
-
-TChain.can.cancel = function() {
-	this.tasks.splice(this.pos + 1, this.tasks.length - this.pos - 1)
-	var T = this.tasks[this.pos]
-	if (T) {
-		if (T.state == 'active') T.state = 'cancel'
-		else {
-			this.tasks.splice(this.pos, 1)
-		}
-	}
-}
-
-TChain.can.tick = function() {
-	setImmediate(this.next.bind(this))
-//	setTimeout(this.next.bind(this), 100)
-}
 
 TCopyProgress = kindof(TDialog)
 TCopyProgress.can.init = function (interrupt) {
@@ -137,6 +58,17 @@ taskCopyItem = function() {
 	this.chain.tick()
 }
 
+function taskSync() {
+	if (this.state == 'cancel') {
+		this.state = 'canceled'
+		this.chain.tick()
+		return
+	}
+	this.state = 'done'
+	this.chain.tick()
+	glxwin.native_sh('sync')
+}
+
 promptCopyFile = function(operation, sPanel, dPanel, do_after) {
 	var list = [], 
 		it = sPanel.list.items,
@@ -187,6 +119,7 @@ promptCopyFile = function(operation, sPanel, dPanel, do_after) {
 		chain.sPanel = sPanel
 		chain.dPanel = dPanel
 		sPanel.getDesktop().showModal(chain.progress)
+		chain.tasks.push({ task: taskSync, chain: chain, state: 'pending' })
 		for (var i = 0; i < list.length; i++) {
 			var iname = list[i].name, oname = list[i].name
 			if (list[i].oname) oname = list[i].oname
@@ -196,6 +129,22 @@ promptCopyFile = function(operation, sPanel, dPanel, do_after) {
 				op: operation, idir: sPanel.list.path, odir: odir
 			})
 		}
+
+		chain.onPaint = function() {
+			this.progress.repaint()
+		}
+		
+		chain.onFinish = function() {
+			this.progress.getDesktop().hideModal()
+			this.sPanel.list.reload()
+			this.dPanel.list.reload()
+		}
+		
+		chain.onTask = function(T) {
+		if (T.id != undefined) this.sPanel.list.selectItem(T.id, false)
+			this.progress.total.pos++
+		}
+		
 		chain.tick()
 	}
 }

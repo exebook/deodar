@@ -1,17 +1,21 @@
+theme = {
+	viewer: 'syntaxCyan',
+	editor: 'syntaxGreen'
+	// ещё темы смотри intervision/palette
+}
+
 TNorton = kindof(TGroup)
 TNorton.can.init = function(panelW, panelH) {
 	panelW >>= 1
 	panelH--
 	dnaof(this)
 	this.name = 'TNorton'
-	this.output = TConsole.create(1,1)//panelW * 2, panelH-1)
+	this.output = TConsole.create(1,1)
 	this.left = TFilePanel.create(); this.left.name = 'Left'; this.left.list.name = 'LeftList'
 	this.right = TFilePanel.create(); this.right.name = 'Right'
 	this.label = TLabel.create('c:\\')
-	this.input = TEdit.create()
+	this.input = TInput.create()
 	this.output.fileman = this
-	this.input.multiLine = false
-	this.input.shortcuts.enable('multi', false)
 
 	this.add(this.label)
 	this.add(this.output)
@@ -39,6 +43,8 @@ TNorton.can.init = function(panelW, panelH) {
 	this.pos(0, 0)
 	this.size(2 * panelW, panelH + 1)
 
+	this.react(10, keycode.F7, this.userFindModal, { arg:this, role:['panel', 'input'] })
+	this.react(100, keycode['f'], this.userFindModal, { arg:this, role:['panel', 'input'] })
 	this.react(10, keycode.F1, showHelp, { arg:this, role:['panel', 'input'] })
 	this.react(0, keycode.TAB, this.switchPanel, {role:['panel']})
 	this.react(100, keycode['o'], this.outputFlip, {role:['panel', 'input', 'output']})
@@ -402,12 +408,15 @@ TNorton.can.viewFile = function(viewClass) {
 			var panel = this.actor
 			if (items[sid].dir == false && items[sid].hint != true) {
 				var colors
-				if (viewClass === TFileEdit) colors = getColor.syntaxCyan
-				if (viewClass === TTextView) colors = getColor.syntaxCyan
+				require('./intervision/palette')
+				if (viewClass === TFileEdit) colors = getColor[theme.editor]
+				if (viewClass === TTextView) colors = getColor[theme.viewer]
 				this.viewer = viewFile(this.getDesktop(), path + '/' 
 					+ items[sid].name, viewClass, colors)
-				this.viewer.onHide = function() {
-					panel.list.reload()
+				if (this.viewer) {
+					this.viewer.onHide = function() {
+						panel.list.reload()
+					}
 				}
 			} else log('not a file')
 		}

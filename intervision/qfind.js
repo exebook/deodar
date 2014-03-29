@@ -24,7 +24,12 @@ TQuickFind.can.init = function(char, list) {
 	this.add(this.input)
 	this.react(0, keycode.ESCAPE, this.close)
 	this.altIsDown = true
-	with (keycode) this.closeKeys = [UP, DOWN, LEFT, RIGHT]
+	with (keycode) this.closeKeys = [UP, DOWN, LEFT, RIGHT], this.transKeys = [TAB, ENTER]
+}
+
+TQuickFind.can.close = function() {
+	this.list.showFocused = false
+	dnaof(this)
 }
 
 TQuickFind.can.title = function() {
@@ -60,7 +65,8 @@ TQuickFind.can.onKey = function(hand) {
 		this.close()
 		return
 	}
-	if (hand.down && (hand.char == undefined || hand.key == keycode.ENTER) && !hand.mod.shift) {
+	if (hand.down && (hand.char == undefined 
+	|| this.transKeys.indexOf(hand.key) >= 0) && !hand.mod.shift) {
 		this.close()
 		this.getDesktop().onKey(hand)
 		return false

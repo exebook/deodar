@@ -3,7 +3,6 @@
 	Срочно
 	
 	sync в конце
-	поиск в файлах
 	инфо панель
 	номера строк в редакторе (на пустых строках?)
 	детальный список
@@ -12,19 +11,27 @@
 	сравнение списков
 
 	глюки
+	возврат строчки: разделять добавление и стирание
+	после переменования одного файла его надо выделить
 	зависла (пропала полоска ввода) после запуска gedit через bash+&+bg
 	enter  в начале строки косит отступ
 	control-del в правке если удалил только пробелы и табы должен продолжить на след. строке
+		*продолжает удивлять при удалении слова в конце строки
 	
 	идеи
 	собрать сводку использования клавиш в правщике
 	замораживать курсор при долгой неактивности
 	в правщике при поиск-замена показывать список функций и выбирать одну из них, можно править свою 
+	если нет в шрифте нужного знака проверить и установить запасной в момент загрузки шрифта
+	отображать состояние точки на ободке
+	разделить TFileList от TDirList, использовать TFileList в поиске
 	
 	перестройка
 	x11clip основной цикл перенести в пакет	
 	
 	Сделано
+	таб в квике
+	поиск в файлах
 	глобальную горячую клавишу прекратить текущий (зависший) процесс
 	скрол в терминале
 	квик
@@ -37,9 +44,15 @@
 	настройки в файле (запоминание положения)
 */
 
+deodarVersion = {
+	label: 'Исходная',
+	sub: 'с поиском, зелёная правка',
+	time: 'Начало 2014',
+	abstract: 'Выбрано направление развития, соединены опорные технологии (Xlib, freetype, OpenGL, GLX, Xinput, Xcursor, Node.js, x11clip), созданы основные части, панели, редактор, работа с деревом.',
+	people: ['Яков Нивин'],
+}
 
 spawn = require('child_process').spawn
-require('./lexer')
 //actor==panel cursor->actor
 fs = require('fs');
 
@@ -53,6 +66,7 @@ glxwin = require('./glxwin/glxwin.js')
 //for (var i = 0; i < 2000; i++)
 // console.log(glxwin.clipGet())
 //return
+require('./lexer')
 require('./intervision')
 require('./panel')
 require('./editfile')
@@ -60,9 +74,11 @@ require('./makedir')
 require('./filedel')
 require('./norton')
 require('./console')
+require('./file/chain')
 require('./file/copyfile')
 require('./file/copydir')
 require('./file/copier')
+require('./find')
 require('./drivemenu')
 var x11clip = require('./x11clip')
 clipboardSet = x11clip.copy
@@ -179,7 +195,9 @@ TDeodar.can.init = function() {
 
 var A = TDeodar.create()
 A.show()
+
 A.desktop.main.output.colorLog('   *  ^2Рабочая среда ^0"^5Деодар^0", лицензия: ^1Unlicense^0, автор: Яков Нивин  *')
+with (deodarVersion) A.desktop.main.output.colorLog('   *  ^3' + label + '^0, ^4' + sub + '^0, ^5' + time)
 glxwin.mainLoop()
 
 /* TODO:

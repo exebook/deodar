@@ -42,6 +42,7 @@ TConsole.can.init = function() {
 	this.size(1, 1)
 	this.terminal = new Terminal(1, 1, '');
 	this.terminal.buffer.setMode('crlf',true);
+	this.terminal.buffer.setMode('wrap',false);
 	this.terminal.buffer.on('lineremove', function(lineno) {
 		me.saveScrollLine(lineno)
 	})

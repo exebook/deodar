@@ -2,7 +2,7 @@ TDriveMenu = kindof(TDialog)
 TDriveMenu.can.init = function(panel) {
 	dnaof(this, 40, 1)
 	this.panel = panel
-	this.title = 'Телепорт:'
+	this.title = 'Скачок:'
 	this.list = TDriveList.create()
 	this.list.columns = 1
 	var list = [
