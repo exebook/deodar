@@ -101,9 +101,44 @@ TNorton.can.init = function(panelW, panelH) {
 		this.output.scrollHistory.bind(this.output), { arg: 'home', role:['input','output'] })
 	this.react(101, keycode['o'], 
 		this.output.fitSize.bind(this.output), { arg: 'home', role:['panel', 'input','output'] })
+	this.react(100, keycode['r'], this.reloadPanel, { role: ['panel'] })
+	this.react(100, keycode['p'], this.hidePanel, { role: ['panel'] })
+	this.react(100, keycode['u'], this.swapPanels, { role: ['panel', 'input'] })
 
 	this.shortcuts.enable('all', false)
 	this.shortcuts.enable('panel', true)
+}
+
+TNorton.can.swapPanels = function () {
+	var swap = function(list, a, b) {
+		for (i in list) { var n = list[i], tmp = a[n]; a[n] = b[n]; b[n] = tmp }
+	}
+	swap(['x', 'y', 'w', 'h'], this.right, this.left)
+	// помни: они могут быть разного размера
+	this.repaint()
+}
+
+TNorton.can.hidePanel = function () {
+	if (this.actor == this.left) { 
+		if (this.right.visible()) this.hide(this.right); 
+		else this.show(this.right)
+	}
+	if (this.actor == this.right) {
+		if (this.left.visible()) this.hide(this.left); 
+		else this.show(this.left)
+	}
+	this.repaint()
+}
+
+TNorton.can.reloadPanel = function() {
+log('ctrl r')
+	if (this.actor == this.left || this.actor == this.right) {
+		log('reloadin')
+		this.actor.list.reload()
+		this.actor.list.onItem(this.actor.list.sid)
+		this.repaint()
+	}
+	return true
 }
 
 TNorton.can.smartBackSpace = function() {

@@ -43,21 +43,6 @@ TInputAndPanels.can.onKey1 = function (char, key, down, physical) {
 				repaint()
 				return true
 			}
-		} else if (key == 30 && key_modifiers[0] == true) { // Control-U
-			var swap = function(list, a, b) { for (i in list) { var n = list[i], tmp = a[n]; a[n] = b[n]; b[n] = tmp } }
-			swap(['x', 'y', 'w', 'h'], this.right, this.left)
-			repaint()
-		} else if (key == 33 && key_modifiers[0] == true) { // Control-P
-			if (this.actor == this.left) { if (this.right.visible()) this.hide(this.right); else this.show(this.right) }
-			if (this.actor == this.right) { if (this.left.visible()) this.hide(this.left); else this.show(this.left) }
-			repaint()
-			
-		} else if (key == 27 && key_modifiers[0] == true) { // Control-R
-			if (this.actor.name == 'TFilePanel') {
-				this.actor.list.reload()
-				this.actor.list.onItem(this.actor.list.sid)
-				repaint()
-			}
 		}
 	}
 	this.actor.onKey(key, down, physical)
