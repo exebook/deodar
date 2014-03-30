@@ -1,64 +1,4 @@
-function taskFindFile() {
-	if (this.state == 'cancel') {
-		this.state = 'canceled'
-		return
-	}
-	this.chain.onFile(this.name)
-	this.state = 'done'
-	this.chain.tick()
-}
-
-function taskFindDir() {
-	if (this.state == 'cancel') {
-		this.state = 'canceled'
-		return
-	}
-	if (this.state == 'active') {
-		this.state = 'done'
-		this.chain.onDir(this.name)
-		var list = fs.readdirSync(this.name)
-		for (var i = 0; i < list.length; i++) {
-			this.chain.tasks.push({
-				task: taskFindItem, chain: this.chain, name: this.name + '/' + list[i]
-			})
-		}
-		this.chain.tick()
-	}
-}
-
-function taskFindItem() {
-	if (this.state == 'cancel') {
-		this.state = 'canceled'
-		return
-	}
-	try {
-		var stat = fs.statSync(this.name)
-		if (stat.isFile() == true) {
-			this.task = taskFindFile.bind(this)
-		} else if (stat.isDirectory() == true) {
-			this.task = taskFindDir.bind(this)
-		} else log('what is this:', this.name), this.state = 'canceled' // unknown inode
-	} catch (e) { this.state = 'canceled' }
-	this.chain.tick()
-}
-
-
-TSearch = kindof(TObject)
-TSearch.can.init = function(hand) {
-	var c = TChain.create()
-	c.onPaint = function() {  }
-	c.onTask = function() {  }
-	c.onFinish = function() {  }
-	c.search = this
-	this.chain = c
-}
-
-TSearch.can.start = function(hand) {
-	this.hand = hand
-	this.chain.tasks.push({ task: taskFindItem, chain: this.chain, name: hand.startDir })
-	this.chain.tick()
-}
-
+require('./task')
 
 TResults = kindof(TList)
 TResults.can.init = function() {
@@ -73,6 +13,7 @@ TResults.can.init = function() {
 TFindWindow = kindof(TWindow)
 TFindWindow.can.init = function(startDir) {
 	dnaof(this)
+	this.working = false
 	this.startDir = startDir
 	this.search = TSearch.create()
 	this.search.chain.onFile = this.onFile.bind(this)
@@ -84,11 +25,12 @@ TFindWindow.can.init = function(startDir) {
 	this.add(this.input)
 	this.add(this.results)
 	this.actor = this.input
-	this.react(0, keycode.ESCAPE, this.close)
-	this.react(0, keycode.ENTER, this.startSearch)
+	this.react(0, keycode.ESCAPE, this.cancelClose)
+	this.react(0, keycode.ENTER, this.pressEnter)
 	this.react(0, keycode.UP, this.results.moveCursor.bind(this.results), {arg:'up'})
 	this.react(0, keycode.DOWN, this.results.moveCursor.bind(this.results), {arg:'down'})
-	this.bottom_title = 'для поиска в содержимом файлов начните запрос с кавычек \' или " '
+	this.react(0, keycode.F4, this.startEdit)
+	this.bottomTitle = 'для поиска в содержимом файлов начните запрос со знака \' или " '
 	this.history = []
 }
 
@@ -100,8 +42,9 @@ TFindWindow.can.size = function(w, h) {
 	this.results.pos(1, 1)
 }
 
-TFindWindow.can.onDir = function(file) {
+TFindWindow.can.onDir = function(dir) {
 	this.scanned++
+	this.repaint()
 }
 
 TFindWindow.can.onFile = function(file) {
@@ -119,20 +62,58 @@ TFindWindow.can.onFile = function(file) {
 		this.matched++
 		if (file.length > this.w - 1)
 			file = file.substr(this.startDir.length + 1, file.length)
-		this.results.items.push({ name: pathCompress(file, this.results.w - 1) })
+		this.results.items.push({ name: pathCompress(file, this.results.w - 1), file: file })
 		this.results.sid = this.results.items.length - 1
 		this.results.scrollIntoView()
 		this.repaint()
 	}
+	this.repaint()
 }
 
 TFindWindow.can.onFinish = function() {
+	this.working = false
 	this.repaint()
 }
 
 TFindWindow.can.title = function() {
-	if (this.matched) return 'Найдено: ' + this.matched + ' в ' + this.scanned + ' просмотреных'
+	if (this.working) return 'Найдено: ' + this.matched + ' в ' + this.scanned + ' просмотреных'
 	return 'Поиск файлов'
+}
+
+TFindWindow.can.pressEnter = function() {
+	if (this.working) {
+		if (this.search.chain) this.search.chain.cancel()
+		this.working = false
+	}
+	if (this.input.getText().length > 0) return this.startSearch()
+	var list = this.panel.list
+	var it = list.items, match = false
+	var s = this.results.items[this.results.sid]
+	if (s == undefined) return
+	s = s.file
+	for (var i = 0; i < it.length; i++) {
+		if (list.path + '/' + it[i].name == s) {
+			list.sid = i
+			list.scrollIntoView()
+			match = true
+			break
+		}
+	}
+	if (match == false) {
+		var L = s.split('/')
+		var name = L.pop(), path = L.join('/')
+		list.load(path)
+		it = list.items
+		for (var i = 0; i < it.length; i++) {
+			if (it[i].name == name) {
+				list.sid = i
+				list.scrollIntoView()
+				break
+			}
+		}
+	}
+	this.close()
+	return true
 }
 
 TFindWindow.can.startSearch = function() {
@@ -140,6 +121,7 @@ TFindWindow.can.startSearch = function() {
 	this.scanned = 0
 	this.matched = 0
 	this.contents = false
+	this.working = true
 	if (this.search.chain) this.search.chain.cancel()
 	this.query = this.input.getText()
 	if (this.query[0] == '"' || this.query[0] == "'") {
@@ -152,9 +134,33 @@ TFindWindow.can.startSearch = function() {
 	return true
 }
 
+TFindWindow.can.cancelClose = function() {
+	if (this.working) {
+		if (this.search.chain) this.search.chain.cancel()
+		this.working = false
+		return true
+	}
+	this.close()
+	return true
+}
+
+TFindWindow.can.startEdit = function() {
+	var list = this.panel.list
+	var it = list.items, match = false
+	var s = this.results.items[this.results.sid]
+	if (s == undefined) return true
+	log('EDIT', s.file)
+	this.panel.parent.viewFileName(TFileEdit, s.file)
+	return true
+}
+
 TNorton.can.userFindModal = function() {
+	var panel = this.left
+	if (this.actor == this.right) panel = this.right
 	if (this.find == undefined)
-		this.find = TFindWindow.create(this.actor.list.path)
+		this.find = TFindWindow.create(panel.list.path)
+	else this.find.startDir = panel.list.path
+	this.find.panel = panel
 	this.find.pos(5, 3)
 	this.find.size(this.w - 10, this.h - 6)
 	this.getDesktop().showModal(this.find)

@@ -174,6 +174,7 @@ TFileList.can.load = function(path) {
 	this.path = path
 	this.items = loadDir(this.path, this.sortMode, this.showDotfiles)
 	this.sid = 0
+	this.d = 0
 	this.parent.onLoad()
 	return true
 //		if (new_sid == undefined) this.sid = 0; else sid = new_sid
@@ -323,7 +324,7 @@ TFilePanel.can.onLoad = function() {
 	for (var i = 0; i < it.length; i++) if (typeof it[i].size == 'number') size += it[i].size
 	var count = it.length
 	if (count > 0 && this.path != '/') count --
-	if (count == 0) this.bottom_title = 'пустая папка'; else
-	this.bottom_title = readableSize(size, ' байтов', 'склонения') + ' в ' + count +' '+ numDeclension('в', 'м', count, 'файл')
+	if (count == 0) this.bottomTitle = 'пустая папка'; else
+	this.bottomTitle = readableSize(size, ' байтов', 'склонения') + ' в ' + count +' '+ numDeclension('в', 'м', count, 'файл')
 }
 

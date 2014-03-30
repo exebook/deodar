@@ -14,7 +14,7 @@ TQuickFind.can.init = function(char, list) {
 	this.pal = getColor.window
 	this.size(30, 3)
 	this.error = false
-	this.bottom_title = 'Escape: отмена'
+	this.bottomTitle = 'Escape: отмена'
 	this.input = TInput.create('^' + char)
 	this.input.sel.clear()
 	this.input.text.onChange = this.onChange.bind(this)

@@ -402,17 +402,21 @@ TNorton.can.exitOutputMode = function() {
 	this.getDesktop().display.caretReset()
 }
 
+TNorton.can.viewFileName = function(viewClass, name) {
+	var colors
+	require('./intervision/palette')
+	if (viewClass === TFileEdit) colors = getColor[theme.editor]
+	if (viewClass === TTextView) colors = getColor[theme.viewer]
+	this.viewer = viewFile(this.getDesktop(), name, viewClass, colors)
+	return true
+}
+
 TNorton.can.viewFile = function(viewClass) {
 	if (this.actor == this.left || this.actor == this.right) {
 		with (this.actor.list) {
 			var panel = this.actor
-			if (items[sid].dir == false && items[sid].hint != true) {
-				var colors
-				require('./intervision/palette')
-				if (viewClass === TFileEdit) colors = getColor[theme.editor]
-				if (viewClass === TTextView) colors = getColor[theme.viewer]
-				this.viewer = viewFile(this.getDesktop(), path + '/' 
-					+ items[sid].name, viewClass, colors)
+			if (items[sid].dir == false && items[sid].hint != true) { // сделай isFile()
+				this.viewFileName(viewClass, path + '/' + items[sid].name)
 				if (this.viewer) {
 					this.viewer.onHide = function() {
 						panel.list.reload()

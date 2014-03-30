@@ -78,7 +78,7 @@ require('./file/chain')
 require('./file/copyfile')
 require('./file/copydir')
 require('./file/copier')
-require('./find')
+require('./find/find')
 require('./drivemenu')
 var x11clip = require('./x11clip')
 clipboardSet = x11clip.copy

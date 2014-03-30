@@ -5,7 +5,7 @@ TCopyProgress.can.init = function (interrupt) {
 	dnaof(this, 55, 10)
 	$.title = 'Исполнение задач'
 	$.filename = TLabel.create('$file')
-	$.totalname = TLabel.create('Общий ход:')
+	$.totalname = TLabel.create('Общий ход')
 	$.file = TDoneBar.create()
 	$.total = TDoneBar.create()
 

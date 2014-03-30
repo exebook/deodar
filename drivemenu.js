@@ -2,15 +2,17 @@ TDriveMenu = kindof(TDialog)
 TDriveMenu.can.init = function(panel) {
 	dnaof(this, 40, 1)
 	this.panel = panel
-	this.title = 'Скачок:'
+	this.title = 'Скачок'
 	this.list = TDriveList.create()
 	this.list.columns = 1
 	var list = [
 		{ key:49, title:'~ (HOME)', path:'~' }, { key:58, title:'/media', path:'/media' }
 	]
+	this.sourceFile = undefined
 	if (fs.existsSync(expandPath('~/.deodar/driveMenu.js'))) {
 		var js = expandPath('~/.deodar/driveMenu.js')
 		list = eval(fs.readFileSync(js).toString())
+		this.sourceFile = js
 	}
 	var me = this
 	var width = 0
@@ -29,9 +31,16 @@ TDriveMenu.can.init = function(panel) {
 	this.add(this.list, width, list.length)
 	this.addRow()
 	this.size(width + this.border * 3 * 2 + 4, this.addY + 2)
-	this.bottom_title = 'Esc-отмена'
+	this.bottomTitle = 'Esc-отмена,F4-правка'
 	this.react(0, keycode.ESCAPE, this.close)
 	this.react(0, keycode.ENTER, this.onEnter)
+	this.react(0, keycode.F4, this.editSource)
+}
+
+TDriveMenu.can.editSource = function () {
+	if (this.sourceFile)
+		this.panel.parent.viewFileName(TFileEdit, this.sourceFile)
+	return true
 }
 
 TDriveMenu.can.pathSelect = function (item) {
