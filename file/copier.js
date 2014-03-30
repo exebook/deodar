@@ -42,7 +42,7 @@ TBeginCopyDialog.can.init = function(W, title, message, dest, callback) {
 
 taskCopyItem = function() {
 	try {
-		var stat = fs.statSync(this.idir +'/'+ this.iname)
+		var stat = fs.lstatSync(this.idir +'/'+ this.iname)
 		if (stat.isFile() == true) {
 			if (this.op == 'move') {
 				this.task = taskMoveFile.bind(this)
@@ -59,14 +59,17 @@ taskCopyItem = function() {
 }
 
 function taskSync() {
+	var me = this
 	if (this.state == 'cancel') {
 		this.state = 'canceled'
 		this.chain.tick()
 		return
 	}
-	this.state = 'done'
-	this.chain.tick()
-	glxwin.native_sh('sync')
+	this.chain.progress.filename.title = 'Сброс из памяти'
+	require('child_process').exec('sync', function() {
+		me.state = 'done'
+		me.chain.tick()
+	})
 }
 
 promptCopyFile = function(operation, sPanel, dPanel, do_after) {
@@ -104,7 +107,7 @@ promptCopyFile = function(operation, sPanel, dPanel, do_after) {
 			var odir = sPanel.list.path
 			if (typed.charAt(0) == '/') odir = ''
 			var isDir = false
-			try { isDir = fs.statSync(odir + '/' + typed).isDirectory() } catch (e) {}
+			try { isDir = fs.lstatSync(odir + '/' + typed).isDirectory() } catch (e) {}
 			if (!isDir) {
 				if (list.length == 1) { list[0].oname = typed }
 				else { log('что поделать, нельзя списать много файлов в один'); return }

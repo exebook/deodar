@@ -43,7 +43,7 @@ function initCopy(me) {
 	me.buf = new Buffer(copyBufferSize)
 	me.fpos = 0
 	try {
-		var stat = fs.statSync(me.ifile)
+		var stat = fs.lstatSync(me.ifile)
 		me.fin = fs.openSync(me.ifile, 'r')
 		me.fsize = stat.size
 	} catch (e) { return cancelMe(me) }

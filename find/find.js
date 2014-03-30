@@ -30,7 +30,7 @@ TFindWindow.can.init = function(startDir) {
 	this.react(0, keycode.UP, this.results.moveCursor.bind(this.results), {arg:'up'})
 	this.react(0, keycode.DOWN, this.results.moveCursor.bind(this.results), {arg:'down'})
 	this.react(0, keycode.F4, this.startEdit)
-	this.bottomTitle = 'для поиска в содержимом файлов начните запрос со знака \' или " '
+	this.bottomTitle = 'Для поиска в содержимом файлов начните запрос со знака \' или " '
 	this.history = []
 }
 
@@ -52,7 +52,7 @@ TFindWindow.can.onFile = function(file) {
 	this.scanned++
 	var name = file.split('/').pop()
 	if (this.contents) {
-		try { var size = fs.statSync(file).size } catch (e) { return }
+		try { var size = fs.lstatSync(file).size } catch (e) { return }
 		if (size < 100 * 1024) var s = fs.readFileSync(file).toString()
 		if (s) match = s.indexOf(q) >= 0
 	} else if (name.indexOf(q) >= 0) {
@@ -71,6 +71,7 @@ TFindWindow.can.onFile = function(file) {
 }
 
 TFindWindow.can.onFinish = function() {
+	this.bottomTitle = 'Поиск завершён, F4 правка файла'
 	this.working = false
 	this.repaint()
 }
@@ -149,7 +150,6 @@ TFindWindow.can.startEdit = function() {
 	var it = list.items, match = false
 	var s = this.results.items[this.results.sid]
 	if (s == undefined) return true
-	log('EDIT', s.file)
 	this.panel.parent.viewFileName(TFileEdit, s.file)
 	return true
 }
