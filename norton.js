@@ -355,7 +355,7 @@ TNorton.can.onItemEnter = function(list, item) {
 		}
 	}
 	if (item.flags.indexOf('x') >= 0) {
-		if (this.input.getText() == '') this.input.setText(item.name);
+		if (this.input.getText() == '') this.input.setText('./' + item.name);
 		this.pressEnter()
 	}
 }
@@ -366,9 +366,12 @@ TNorton.can.execDone = function(command) {
 	this.show(this.input)
 	if (this.flip) this.exitOutputMode()
 	this.actor = this.preCommandFocus
-	//if (this.right.list.items.length < smallDirectorySize) 
-	this.right.list.reload()
-	this.left.list.reload()
+	if (this.right.list.items.length < 300)//smallDirectorySize) 
+		this.right.list.reload()
+	if (this.left.list.items.length < 300)//smallDirectorySize) 
+		this.left.list.reload()
+	// else: может как то пометить в ободке окна что список не 
+	// обновлён и человек нажал control-R?
 	this.size(this.w, this.h)
 }
 
@@ -386,7 +389,8 @@ TNorton.can.execute = function(command) {
 	this.flip = this.enterOutputMode(true)
 	this.repaint()
 	this.actor = this.output
-//	лучше сделать все эти ресайзы в особом колбэке (при первых полученых даных с терминала)
+//	лучше сделать все эти ресайзы в особом 
+//  колбэке (при первых полученых даных с терминала)
 //	а то ведь может комманда вобще ничего не выведет на экран
 //	а так можно будет просто вызвать size(this.w, this.h)
 	this.output.size(this.output.w, this.output.h + 1)

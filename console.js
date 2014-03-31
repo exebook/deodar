@@ -42,9 +42,9 @@ TConsole.can.init = function() {
 	this.size(1, 1)
 	this.terminal = new Terminal(1, 1, '');
 	this.terminal.buffer.setMode('crlf',true);
-	this.terminal.buffer.setMode('wrap',false);
-	this.terminal.buffer.on('lineremove', function(lineno) {
-		me.saveScrollLine(lineno)
+//	this.terminal.buffer.setMode('wrap',false);
+	this.terminal.buffer.on('lineremove', function(lineno, line) {
+		me.saveScrollLine(lineno, line)
 	})
 	this.sel = TSelection.create()
 //	var O = this.terminal.writer
@@ -235,10 +235,14 @@ TConsole.can.scrollHistory = function(arg) {
 	return true
 }
 
-TConsole.can.saveScrollLine = function(line) {
-	var S = this.terminal.buffer._buffer.str
-	var A = this.terminal.buffer._buffer.attr
+TConsole.can.saveScrollLine = function(line, data) {
+	var S = data.str
+	S = this.terminal.buffer._buffer.str
+	var A = data.attr
+	A = this.terminal.buffer._buffer.attr
+//	log('S=', S.length, 'A=', A)//JSON.stringify(A).replace(/\n/g,''))
 	this.scrollBuf.push({ str: S[line] + '', attr: [].concat(A[line]) })
+//	this.scrollBuf.push({ str: S, attr: A })
 	while (this.scrollBuf.length > this.scrollMax) this.scrollBuf.splice(0, 1)
 }
 
@@ -248,7 +252,7 @@ TConsole.can.getLine = function(line) {
 		attr: this.terminal.buffer._buffer.attr[line]
 	}
 	var Y = this.scrollBuf.length + line
-	return this.scrollBuf[Y - 1]
+	return this.scrollBuf[Y - 0]
 }
 
 TConsole.can.draw = function(state) {

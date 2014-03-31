@@ -3,7 +3,7 @@ promptEditFile = function(panel, callback) {
 	var win = TInputBox.create(55, 'Правка', 'Имя файла для правки', function() {
 		var file = path + '/' + win.input.getText()
 		if (fs.existsSync(file)) {
-			if (!fs.statSync(file).isFile()) { 
+			if (!fs.lstatSync(file).isFile()) { 
 				messageBox(panel.getDesktop(), '"' + win.input.getText() + '" существует, и это не файл', 'Обстоятельтво')
 				return
 			}
