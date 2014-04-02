@@ -1,8 +1,3 @@
-theme = {
-	viewer: 'syntaxCyan',
-	editor: 'syntaxGreen'
-	// ещё темы смотри intervision/palette
-}
 
 TNorton = kindof(TGroup)
 TNorton.can.init = function(panelW, panelH) {
@@ -34,6 +29,7 @@ TNorton.can.init = function(panelW, panelH) {
 	this.input.setText('')
 	this.actor = this.left
 	var a = '.', b = '~'
+	a = '/v/deodar/find'
 	a = expandPath(a)
 	b = expandPath(b)
 	this.panelReduce = 0
@@ -104,9 +100,20 @@ TNorton.can.init = function(panelW, panelH) {
 	this.react(100, keycode['r'], this.reloadPanel, { role: ['panel'] })
 	this.react(100, keycode['p'], this.hidePanel, { role: ['panel'] })
 	this.react(100, keycode['u'], this.swapPanels, { role: ['panel', 'input'] })
-
+	this.react(100, keycode['['], this.dropPath, {arg:'left',role:['panel','input']})
+	this.react(100, keycode[']'], this.dropPath, {arg:'right',role:['panel','input']})
 	this.shortcuts.enable('all', false)
 	this.shortcuts.enable('panel', true)
+}
+
+TNorton.can.dropPath = function(arg) {
+	var s
+	if (arg == 'left') s = this.left.list.path
+	else s = this.right.list.path
+	this.input.setText(this.input.getText() + s + ' ')
+	this.input.sel.clear()
+	this.repaint()
+	return true
 }
 
 TNorton.can.swapPanels = function () {
@@ -454,7 +461,8 @@ TNorton.can.viewFile = function(viewClass) {
 	if (this.actor == this.left || this.actor == this.right) {
 		with (this.actor.list) {
 			var panel = this.actor
-			if (items[sid].dir == false && items[sid].hint != true) { // сделай isFile()
+			if (items[sid].dir == false && items[sid].hint != true) {
+				// сделай isFile()
 				this.viewFileName(viewClass, path + '/' + items[sid].name)
 				if (this.viewer) {
 					this.viewer.onHide = function() {

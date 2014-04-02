@@ -1,4 +1,3 @@
- 
 promptMakeDir = function(panel) {
 	var path = panel.list.path
 	var mkdirDialog = TInputBox.create(55, 'Новая папка', 'Создать каталог', function() {

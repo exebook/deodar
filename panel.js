@@ -28,11 +28,6 @@ function loadDir(path, sort, dots) {
 	return L
 }
 
-var hilite = [
-	{name:'c', ext:['.cpp','.c','.h'], fg:0xb1c},
-	{name:'js', ext:['.js'], fg:0xf3e},
-]
-
 TFileList = kindof(TList)
 
 TFileList.can.init = function() {
@@ -42,6 +37,7 @@ TFileList.can.init = function() {
 	this.path = '~'
 	this.showDotfiles = false
 	this.detail = {}
+	this.mode = 'detail' //'brief'
 	this.react(0, keycode.ENTER, this.onEnter, { })
 	this.react(100, keycode['\\'], this.goToRoot)
 	this.react(100, keycode.F3, this.setSortMode, { arg:'name' })
@@ -59,9 +55,33 @@ TFileList.can.goToRoot = function() {
 	return true
 }
 
-TFileList.can.hilitePrint = function(x, y, w, item, F, B, itemSelected) {
+
+theme = {
+	viewer: 'syntaxCyan',
+	editor: 'syntaxCyan',
+	fileList: {
+		text: 0xff0,
+		back: 0x700, 
+		dir: 0xfff,
+		textHint: 0x88f,
+		backHint: 0x00f,
+		textHintFocused: 0,
+		backHintFocused: 0,
+		focused: 0x880,
+		textExec: 0x0f0,
+		textSelected: 0x0ff,
+		hilite: [
+			{ name: 'c', ext: ['.cpp','.c','.h'], text: 0xb1c },
+			{ name: 'js', ext: ['.js'], text: 0xf3e },
+		]
+		
+	}
+}
+
+TFileList.can.fileHilite = function(item) {
+	var F, B
 	var s = item.name
-	if (item.flags != undefined && !item.dir && item.flags.indexOf('x') >= 0) F = 0xf0
+	var hilite = theme.fileList.hilite
 	if (item.dir != true) {
 		for (var i = 0; i < hilite.length; i++) {
 			var h = hilite[i]
@@ -69,36 +89,66 @@ TFileList.can.hilitePrint = function(x, y, w, item, F, B, itemSelected) {
 			for (var j = 0; j < h.ext.length; j++) {
 				var n = s.indexOf(h.ext[j])
 				if (n >= 0 && n == s.length - h.ext[j].length) {
-					if (h.fg != undefined) F = h.fg
-					if (h.bg != undefined) B = h.bg
+					if (h.text != undefined) F = h.text
+					if (h.back != undefined) B = h.back
 					ok = true; break
 				}
 			}
 			if (ok) break
 		}
 	}
-	if (itemSelected) F = 0x0ff
+	return [F, B]
+}
+
+function blend(color, level, back) { // 0 - full color, f - full back
+	var R = (color & 0xf)
+	var G = (color & 0xf0) >> 4
+	var B = (color & 0xf00) >> 8
+	var r = (back & 0xf)
+	var g = (back & 0xf0) >> 4
+	var b = (back & 0xf00) >> 8
+	function lvl(B, A, level) {
+		if (A < B) return Math.ceil(((B - A) / 16) * level) + A
+		return Math.ceil(B - ((A - B) / 16) * (15 - level))
+	}
+	R = lvl(R, r, level)
+	G = lvl(G, g, level)
+	B = lvl(B, b, level)
+	log(color.toString(16), back.toString(16), R, G, B)
+	return Math.floor((R + (G << 4) + (B << 8)))
+}
+
+TFileList.can.hilitePrint = function(x, y, w, item, F, B, itemSelected) {
+	var C = this.fileHilite(item)
+	if (C[0]) F = C[0]; if (C[1]) B = C[1]
+	if (itemSelected) F = theme.fileList.textSelected
 	var text = item.name.substr(0, w)
 	this.print(x, y, text, F, B)
 	if (item.name.length > text.length) {
 		var a = text.charAt(text.length - 1), b = text.charAt(text.length - 2)
 		if (a == ' ') a = '_'; if (b == ' ') b = '_'
-		this.print(x + w - 1, y, a, 0x8000 | F, B),
-		this.print(x + w - 2, y, b, 0x4000 | F, B)
+		var b1= blend(F, 4, B), b2 = blend(F, 8, B)
+		log(b1.toString(16), b2.toString(16))
+		this.print(x + w - 1, y, a, b1, B),
+		this.print(x + w - 2, y, b, b2, B)
 	}
 }
 
 TFileList.can.drawItem = function(A) {
-	var F = this.pal[0], B = this.pal[1]
-	if (A.focused) B = this.pal[6]
+	var F = theme.fileList.text, B = theme.fileList.back
+	if (A.focused) B = theme.fileList.focused
 	this.rect(A.x, A.y, A.w, 1, ' ', undefined, B)
-	if (A.item.dir && A.item.name != '..') F = this.pal[2]
+	if (A.item.dir && A.item.name != '..') F = theme.fileList.dir
 	if (A.item.hint) {
-		F = this.pal[0], B = this.pal[3]; if (A.focused) F = this.pal[4], B = this.pal[5]
+		F = theme.fileList.textHint, B = theme.fileList.backHint
+		if (A.focused) F = theme.fileList.textHintFocused, B = theme.fileList.backHintFocused
 		var text = A.item.name.substr(0, this.w)
-		this.print(Math.floor(this.w / 2) - Math.ceil(A.item.name.length / 2), Math.floor(this.h / 2)-1, text, F, B)
+		this.print(
+			Math.floor(this.w / 2) - Math.ceil(A.item.name.length / 2),
+			Math.floor(this.h / 2)-1, text, F, B)
 		return false
 	}
+	if (A.item.flags != undefined && !A.item.dir && A.item.flags.indexOf('x') >= 0) F = theme.fileList.textExec
 	this.hilitePrint(A.x, A.y, A.w, A.item, F, B, A.selected)
 	return true
 }
@@ -137,8 +187,7 @@ TFileList.can.onEnter = function () {
 		return true
 	} else {
 		this.parent.parent.onItemEnter(this, this.items[this.sid])
-//		if (this.items[this.sid].flags.indexOf('x') >= 0) {
-//			this.parent.parent.execute(this.items[this.sid].name);
+//		if (this.items[this.sid].flags.indexOf('x') >= 0) { this.parent.parent.execute(this.items[this.sid].name);
 //		}
 	}
 	return false
@@ -181,11 +230,12 @@ TFileList.can.load = function(path) {
 }
 
 TFileList.can.reload = function() {
-	var s = this.items[this.sid].name
+	var s = this.items[this.sid].name, d = this.d
 	this.load(this.path)
 	this.sid = 0
-	for (var i = 0; i < this.items.length; i++) if (this.items[i].name == s) { this.sid = i; this.onItem(i); break }
+	for (var i = 0; i < this.items.length; i++) if (this.items[i].name == s) { this.sid = i; this.onItem(i); this.d = d; break }
 	this.onItem(0);
+	this.scrollIntoView()
 }
 
 TFileList.can.onItem = function() {
@@ -312,16 +362,19 @@ TFilePanel.can.draw = function(state) {
 TFilePanel.can.onLoad = function() {
 	if (this.root == undefined) {
 		this.title = this.list.path;
-		if (this.list.path != '/') this.list.items.unshift({name:'..', dir:true, size:0})
+		if (this.list.path != '/') this.list.items.unshift(
+			{name:'..', dir:true, size:0})
 	} else {
-		if (this.list.path != '/' && this.list.path != this.root.path) this.list.items.unshift({name:'..', dir:true, size:0})
+		if (this.list.path != '/' && this.list.path != this.root.path)
+			this.list.items.unshift({name:'..', dir:true, size:0})
 		var s = this.list.path
 		var j = s.indexOf(this.root.path)
 		if (j >= 0) s = s.substr(j + this.root.path.length, s.length)
 		this.title = this.root.title.replace(/\^/g, '') + s
 	}
 	var size = 0, it = this.list.items
-	for (var i = 0; i < it.length; i++) if (typeof it[i].size == 'number') size += it[i].size
+	for (var i = 0; i < it.length; i++) 
+		if (typeof it[i].size == 'number') size += it[i].size
 	var count = it.length
 	if (count > 0 && this.path != '/') count --
 	if (count == 0) this.bottomTitle = 'пустая папка'; else

@@ -4,7 +4,8 @@ promptEditFile = function(panel, callback) {
 		var file = path + '/' + win.input.getText()
 		if (fs.existsSync(file)) {
 			if (!fs.lstatSync(file).isFile()) { 
-				messageBox(panel.getDesktop(), '"' + win.input.getText() + '" существует, и это не файл', 'Обстоятельтво')
+				messageBox(panel.getDesktop(), '"' + win.input.getText() 
+				+ '" существует, и это не файл', 'Обстоятельтво')
 				return
 			}
 		} else {

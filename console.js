@@ -1,6 +1,19 @@
 var Terminal = require('./terminal.js');
 // git clone https://github.com/c3ks/terminal.js
 
+var newRemoveLine = true
+
+Terminal.TermBuffer.prototype._removeLine= function (line, count) {
+	var i;
+	if(count === undefined)
+		count = 1;
+	for(i = 0; i < count; i++)
+		this.emit('lineremove', line, {str: this._buffer.str[i], attr: this._buffer.attr[i] });
+	count = this._buffer.str.splice(line, count).length;
+	this._buffer.attr.splice(line, count);
+	return count;
+}
+
 require('./concolor.js')
 var concolor = consoleColors;
 var pty = require('pty.js');
@@ -44,7 +57,9 @@ TConsole.can.init = function() {
 	this.terminal.buffer.setMode('crlf',true);
 //	this.terminal.buffer.setMode('wrap',false);
 	this.terminal.buffer.on('lineremove', function(lineno, line) {
-		me.saveScrollLine(lineno, line)
+		if (newRemoveLine)
+		me.saveScrollLineNew(lineno, line)
+		else me.saveScrollLine(lineno, line)
 	})
 	this.sel = TSelection.create()
 //	var O = this.terminal.writer
@@ -243,6 +258,11 @@ TConsole.can.saveScrollLine = function(line, data) {
 //	log('S=', S.length, 'A=', A)//JSON.stringify(A).replace(/\n/g,''))
 	this.scrollBuf.push({ str: S[line] + '', attr: [].concat(A[line]) })
 //	this.scrollBuf.push({ str: S, attr: A })
+	while (this.scrollBuf.length > this.scrollMax) this.scrollBuf.splice(0, 1)
+}
+
+TConsole.can.saveScrollLineNew = function(line, data) {
+	this.scrollBuf.push({ str: data.str, attr: data.attr })
 	while (this.scrollBuf.length > this.scrollMax) this.scrollBuf.splice(0, 1)
 }
 

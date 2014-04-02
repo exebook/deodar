@@ -1,4 +1,15 @@
 
+lexer = {
+	sym: '\'`~!@#$%^&*()-+={[}]:;"?/>.<,\\|', num: '1234567890', spc: ' \n\r\t',
+	cnorm: 0, csym: 1, cnum: 2, cstr: 3, cid: 4, ckey: 5,
+	charType:function(c) {
+		if (this.sym.indexOf(c) >= 0) return this.csym
+		if (this.spc.indexOf(c) >= 0) return this.cnorm
+		if (this.num.indexOf(c) >= 0) return this.cnum
+		return this.cid
+	}
+}
+
 function initKeywords() {
 
 	keywordSource = [
@@ -23,19 +34,6 @@ function initKeywords() {
 }
 
 keywords = initKeywords()
-
-
-lexer = {
-	sym: '\'`~!@#$%^&*()-+={[}]:;"?/>.<,\\|', num: '1234567890', spc: ' \n\r\t',
-	cnorm: 0, csym: 1, cnum: 2, cstr: 3, cid: 4, ckey: 5,
-	charType:function(c) {
-		if (this.sym.indexOf(c) >= 0) return this.csym
-		if (this.spc.indexOf(c) >= 0) return this.cnorm
-		if (this.num.indexOf(c) >= 0) return this.cnum
-		return this.cid
-	}
-}
-
 
 colorizeString = function(text) {
 	var sym = '\'`~!@#$%^&*()-+={[}]:;"?/>.<,\\|', num = '1234567890', spc = ' \n\r\t'
