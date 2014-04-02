@@ -2,7 +2,6 @@ function checkConfig() {
 	var file = expandPath('~/.deodar/driveMenu.js')
 	
 	if (fs.existsSync(file) == false) {
-		log('must create')
 		try {
 				var templateDriveMenu = [
 				'var list = [',

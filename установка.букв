@@ -1,0 +1,25 @@
+sudo apt-get install npm curl git clang g++
+sudo apt-get install libx11-dev libxcursor-dev mesa-common-dev libfreetype6-dev libgl1-mesa-dev
+sudo npm install -g n
+sudo n 0.10.26
+node --version
+0.10.26
+sudo npm install -g node-gyp
+
+git clone https://github.com/exebook/deodar
+cd deodar
+git clone https://github.com/exebook/glxwin
+git clone https://github.com/exebook/x11clip
+git clone https://github.com/exebook/dnaof
+git clone https://github.com/exebook/intervision
+
+cd x11clip
+node-gyp configure build
+cd ..
+
+cd glxwin
+node-gyp configure build
+cd ..
+
+git clone https://github.com/c3ks/terminal.js
+npm install pty.js
