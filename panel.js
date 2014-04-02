@@ -114,7 +114,7 @@ function blend(color, level, back) { // 0 - full color, f - full back
 	R = lvl(R, r, level)
 	G = lvl(G, g, level)
 	B = lvl(B, b, level)
-	log(color.toString(16), back.toString(16), R, G, B)
+//	log(color.toString(16), back.toString(16), R, G, B)
 	return Math.floor((R + (G << 4) + (B << 8)))
 }
 
@@ -128,7 +128,7 @@ TFileList.can.hilitePrint = function(x, y, w, item, F, B, itemSelected) {
 		var a = text.charAt(text.length - 1), b = text.charAt(text.length - 2)
 		if (a == ' ') a = '_'; if (b == ' ') b = '_'
 		var b1= blend(F, 4, B), b2 = blend(F, 8, B)
-		log(b1.toString(16), b2.toString(16))
+//		log(b1.toString(16), b2.toString(16))
 		this.print(x + w - 1, y, a, b1, B),
 		this.print(x + w - 2, y, b, b2, B)
 	}

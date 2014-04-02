@@ -29,7 +29,7 @@ TNorton.can.init = function(panelW, panelH) {
 	this.input.setText('')
 	this.actor = this.left
 	var a = '.', b = '~'
-	a = '/v/deodar/find'
+//	a = '/v/deodar/find'
 	a = expandPath(a)
 	b = expandPath(b)
 	this.panelReduce = 0
