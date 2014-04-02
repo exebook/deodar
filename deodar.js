@@ -67,7 +67,7 @@
 
 deodarVersion = {
 	label: 'Исходная',
-	sub: 'с поиском, зелёная правка',
+	sub: 'описана установка',
 	time: 'Начало 2014',
 	abstract: 'Выбрано направление развития, соединены опорные технологии (Xlib, freetype, OpenGL, GLX, Xinput, Xcursor, Node.js, x11clip), созданы основные части, панели, редактор, работа с деревом.',
 	people: ['Яков Нивин'],
@@ -83,10 +83,6 @@ log = console.log
 require('./dnaof')
 
 glxwin = require('./glxwin/glxwin.js')
-//var w = TGLXWin.create(undefined, '/usr/share/fonts/truetype/ttf-dejavu/DejaVuSansMono.ttf')
-//for (var i = 0; i < 2000; i++)
-// console.log(glxwin.clipGet())
-//return
 require('./lexer')
 require('./intervision')
 require('./panel')
@@ -139,6 +135,12 @@ applyEnterRules = function(s) {
 		}
 	}
 }
+
+try {
+	var dir = expandPath('~/.deodar')
+	if (fs.existsSync(dir) == false) fs.mkdirSync(dir)
+} catch (e) { log('Не удаётся создать каталог настроек ' + dir, e) }
+
 
 TController = kindof(TDesktop)
 

@@ -1,3 +1,27 @@
+function checkConfig() {
+	var file = expandPath('~/.deodar/driveMenu.js')
+	
+	if (fs.existsSync(file) == false) {
+		log('must create')
+		try {
+				var templateDriveMenu = [
+				'var list = [',
+				"{ key:keycode['`'], title:'^~ (HOME)', path:'~', onSelect: function(){",
+				"	this.list.showDotfiles = true",
+				"}},",
+				"{ key:'m', title:'/^media', path:'/media/ya' },",
+				"{ key:'/', title:'корень (^/)', path:'/' },",
+				"{ key:'e', title:'конфиги (/^etc)', path:'/etc' },",
+				"]",
+				"list // return last expression"
+				]
+				fs.writeFileSync(file, templateDriveMenu.join('\n'))
+		} catch (e) { log('no js create', e) }
+	}
+}
+
+checkConfig()
+	
 TDriveMenu = kindof(TDialog)
 TDriveMenu.can.init = function(panel) {
 	dnaof(this, 40, 1)
