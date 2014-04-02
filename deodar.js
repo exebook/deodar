@@ -76,12 +76,9 @@ deodarVersion = {
 spawn = require('child_process').spawn
 //actor==panel cursor->actor
 fs = require('fs');
-
 TODO = false
 log = console.log
-
 require('./dnaof')
-
 glxwin = require('./glxwin/glxwin.js')
 require('./lexer')
 require('./intervision')
@@ -96,8 +93,14 @@ require('./file/copyfile')
 require('./file/copydir')
 require('./file/copier')
 require('./find/find')
-require('./drivemenu')
 var x11clip = require('./x11clip')
+
+try {
+	var dir = expandPath('~/.deodar')
+	if (fs.existsSync(dir) == false) fs.mkdirSync(dir)
+} catch (e) { log('Не удаётся создать каталог настроек ' + dir, e) }
+require('./drivemenu')
+
 clipboardSet = x11clip.copy
 
 clipboardGet = function(callback) {
@@ -135,12 +138,6 @@ applyEnterRules = function(s) {
 		}
 	}
 }
-
-try {
-	var dir = expandPath('~/.deodar')
-	if (fs.existsSync(dir) == false) fs.mkdirSync(dir)
-} catch (e) { log('Не удаётся создать каталог настроек ' + dir, e) }
-
 
 TController = kindof(TDesktop)
 
