@@ -22,7 +22,7 @@
 Полностью поддерживает Юникодный ввод с клавиатуры, исходные файлы в UTF-8.
 
 Как установить из исходников:
-https://raw.githubusercontent.com/exebook/deodar/master/%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0.%D0%B1%D1%83%D0%BA%D0%B2
+https://raw.githubusercontent.com/exebook/deodar/master/установка.букв
 
 [drag]: https://raw.github.com/exebook/deodar/master/picture/peek.png
 
