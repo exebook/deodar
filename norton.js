@@ -107,7 +107,13 @@ TNorton.can.init = function(panelW, panelH) {
 	this.shortcuts.enable('panel', true)
 }
 
-TNorton.can.copyFullPath = function(arg) {
+TNorton.can.copyFullPath = function() {
+	var s, list
+	if (this.actor == this.left) list = this.left.list
+	else list = this.right.list
+	s = list.items[list.sid].name
+	if (s) s = list.path + '/' + s; else s = list.path
+	clipboardSet(s)
 }
 
 TNorton.can.dropPath = function(arg) {
