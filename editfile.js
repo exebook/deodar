@@ -1,6 +1,6 @@
 promptEditFile = function(panel, callback) {
 	var path = panel.list.path
-	var win = TInputBox.create(55, 'Правка', 'Имя файла для правки', function() {
+	var win = TInputBox.create(55, 'Правка', 'Имя файла', function() {
 		var file = path + '/' + win.input.getText()
 		if (fs.existsSync(file)) {
 			if (!fs.lstatSync(file).isFile()) { 
