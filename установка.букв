@@ -23,3 +23,9 @@ cd ..
 
 git clone https://github.com/c3ks/terminal.js
 npm install pty.js
+
+если 'npm install pty.js' выдаёт странную ошибку, то можно установить pty.js с github:
+git clone https://github.com/chjj/pty.js
+cd pty.js
+npm install nan extend
+node-gyp configure build

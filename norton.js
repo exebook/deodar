@@ -102,8 +102,12 @@ TNorton.can.init = function(panelW, panelH) {
 	this.react(100, keycode['u'], this.swapPanels, { role: ['panel', 'input'] })
 	this.react(100, keycode['['], this.dropPath, {arg:'left',role:['panel','input']})
 	this.react(100, keycode[']'], this.dropPath, {arg:'right',role:['panel','input']})
+	this.react(101, keycode.INSERT, this.copyFullPath, { role:['panel','input'] })
 	this.shortcuts.enable('all', false)
 	this.shortcuts.enable('panel', true)
+}
+
+TNorton.can.copyFullPath = function(arg) {
 }
 
 TNorton.can.dropPath = function(arg) {

@@ -16,7 +16,11 @@ Terminal.TermBuffer.prototype._removeLine= function (line, count) {
 
 require('./concolor.js')
 var concolor = consoleColors;
-var pty = require('pty.js');
+try {
+	var pty = require('pty.js');
+} catch (e) {
+	var pty = require('./pty.js');
+}
 
 function cvt(s) {
 	var f = Math.round

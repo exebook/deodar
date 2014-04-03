@@ -9,7 +9,12 @@ promptEditFile = function(panel, callback) {
 				return
 			}
 		} else {
-			fs.writeFileSync(file, '')
+			try {
+				fs.writeFileSync(file, '')
+			} catch (e) {
+				messageBox(panel.getDesktop(), '"' + win.input.getText() 
+				+ '" не существует, и не получается создать', 'Обстоятельтво')
+			}
 			panel.list.reload()
 		}
 		var it = panel.list.items
