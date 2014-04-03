@@ -36,6 +36,7 @@ function initKeywords() {
 keywords = initKeywords()
 
 colorizeString = function(text) {
+	var c
 	var sym = '\'`~!@#$%^&*()-+={[}]:;"?/>.<,\\|', num = '1234567890', spc = ' \n\r\t'
 	var COLOR = [], state = 'norm', C
 	var cnorm = 0, csym = 1, cnum = 2, cstr = 3, cid = 4, ckey = 5
@@ -49,7 +50,7 @@ colorizeString = function(text) {
 		}
 	}
 	for (var i = 0; i < s.length; i++) {
-		var c = s[i]
+		c = s[i]
 		if (c == '"') { scanStr('"'); continue
 		} else if (c == "'") { scanStr("'"); continue
 		} else if (sym.indexOf(c) >=0) { C = csym; state = 'sym' 
