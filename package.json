@@ -1,0 +1,25 @@
+{
+  "name": "deodar",
+  "version": "0.1.0",
+  "description": "Классическая двухпанельная рабочая среда (коммандер) для О.С. Линукс",
+  "main": "deodar.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/exebook/deodar"
+  },
+  "keywords": [
+    "orthodox file manager"
+  ],
+  "author": "exebook",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/exebook/deodar/issues"
+  },
+  "homepage": "https://github.com/exebook/deodar",
+  "dependencies": {
+    "vt": "~0.1.1"
+  }
+}
