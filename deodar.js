@@ -16,6 +16,7 @@
 	как сделать файл исполняемым?
 	control-Z для запущеных из input
 	после выхода из редактора пропадает выделение файлов
+	page-up  в поиске
 
 Подумать
 	останавливать ли поиск при запуске редактора
@@ -82,6 +83,7 @@ TODO = false
 log = console.log
 require('./dnaof')
 glxwin = require('./glxwin/glxwin.js')
+execSync = glxwin.native_sh
 require('./lexer')
 require('./intervision')
 require('./panel')
@@ -191,16 +193,63 @@ TController.can.onMouse = function(hand) {
 var TDeodar = kindof(TGLXVision)
 
 TDeodar.can.init = function() {
-	dnaof(this, TController, 110, 33)
+	dnaof(this, fontPath, 18, TController, 110, 33)
 	DESK = this.desktop
 }
 
-var A = TDeodar.create()
-A.show()
+var knownGoodFonts = [
+	'DejaVuSansMono.ttf',
+	'DejaVuSansMono-Oblique.ttf',
+	'LiberationMono-Italic.ttf',
+	'LiberationMono-BoldItalic.ttf',
+	'LiberationMono-Bold.ttf',
+	'LiberationMono-Regular.ttf',
+	'FreeMono.ttf',
+	'FreeMonoBold.ttf',
+	'UbuntuMono-R.ttf',
+	'UbuntuMono-B.ttf',
+	'UbuntuMono-BI.ttf',
+	'UbuntuMono-RI.ttf'
+]
+var favouriteFont = 'FreeMono.ttf', fontPath
 
-A.desktop.main.output.colorLog('   *  ^2Рабочая среда ^0"^5Деодар^0", лицензия: ^1Unlicense^0, автор: Яков Нивин  *')
-with (deodarVersion) A.desktop.main.output.colorLog('   *  ^3' + label + '^0, ^4' + sub + '^0, ^5' + time)
-glxwin.mainLoop()
+function taskFont() {
+	var me = this
+	require('child_process').exec('fc-list', function(a, b, c) {
+		var L = b.split('\n'), R = []
+		for (var i = 0; i < L.length; i++) {
+			if (L[i].toLowerCase().indexOf('mono') >= 0) {
+				var s = L[i].split(':')[0]
+				for (var f = 0; f < knownGoodFonts.length; f++) {
+					if (s.indexOf(knownGoodFonts[f]) >= 0)
+					if (R.indexOf(s) < 0) R.push(s)
+					if (s.indexOf(favouriteFont) >= 0) fontPath = s
+				}
+			}
+		}
+		if (!fontPath) fontPath = R[0]
+		me.state = 'done'
+		me.chain.tick()
+	})
+}
+
+function taskDeodarCreate() {
+	var A = TDeodar.create()
+	A.show()
+	A.desktop.main.output.colorLog('   *  ^2Рабочая среда ^0"^5Деодар^0", '
+	+ 'лицензия: ^1Unlicense^0, автор: Яков Нивин  *')
+	with (deodarVersion) A.desktop.main.output.colorLog(
+		'   *  ^3' + label + '^0, ^4' + sub + '^0, ^5' + time)
+	glxwin.mainLoop()
+	this.state = 'done'
+	this.chain.tick()
+}
+
+var mainChain = TChain.create()
+mainChain.tasks.push({task:taskFont, chain:mainChain})
+mainChain.tasks.push({task:taskDeodarCreate, chain:mainChain})
+mainChain.tick()
+
 
 /* TODO:
 -- groupers (like folding with files in cur dir, and also open subdirs as folds)

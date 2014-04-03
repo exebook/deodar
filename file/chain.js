@@ -50,6 +50,9 @@ TChain.can.next = function() {
 	}
 }
 
+TChain.can.onTask = function() {}
+TChain.can.onPaint = function() {}
+TChain.can.onFinish = function() {}
 
 TChain.can.pause = function(){
 	this.paused = true

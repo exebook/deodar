@@ -134,13 +134,16 @@ promptCopyFile = function(operation, sPanel, dPanel, do_after) {
 		}
 
 		chain.onPaint = function() {
+			//if (this.progress) 
 			this.progress.repaint()
 		}
 		
 		chain.onFinish = function() {
-			this.progress.getDesktop().hideModal()
-			this.sPanel.list.reload()
-			this.dPanel.list.reload()
+			//if (this.progress) {
+				this.progress.getDesktop().hideModal()
+				this.sPanel.list.reload()
+				this.dPanel.list.reload()
+			//}
 		}
 		
 		chain.onTask = function(T) {
