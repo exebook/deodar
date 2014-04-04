@@ -37,7 +37,6 @@ for (var t = 0; t < knownGoodFonts.length; t++)
 		var s = knownGoodFonts[t]; s = s.substr(1, s.length)
 		favouriteFont = s
 		knownGoodFonts[t] = s
-		log('favouriteFont', favouriteFont)
 	}
 
 function parseFontFindData(L) {

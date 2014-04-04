@@ -103,7 +103,7 @@ require('./file/copydir')
 require('./file/copier')
 require('./find/find')
 var fontfind = require('./fontfind')
-var useX11clipboard = false
+var useX11clipboard = true
 
 if (useX11clipboard) {
 	var x11clip = require('./x11clip')
