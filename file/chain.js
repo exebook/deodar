@@ -14,6 +14,7 @@ TChain.can.init = function() {
 }
 var x = 0
 TChain.can.next = function() {
+//	if (this.tasks.length == 0) return // видимо отмена была
 	if (this.paused) return
 	this.onPaint()
 	if (this.pos == this.tasks.length) {
@@ -37,9 +38,11 @@ TChain.can.next = function() {
 		this.tasks.splice(this.pos, 1)
 		this.tick()
 	} else if (T.state == 'canceled') {
-		this.pos++
-		this.onTask(T)
-		this.tick()
+		this.cancelDone()
+//		this.pos++
+//		this.onTask(T)
+		//this.tick()
+		return // вот и всё?
 	} else if (T.state == 'active') {
 		T.task()
 	} else if (T.state == 'pending') {
@@ -73,8 +76,12 @@ TChain.can.cancel = function() {
 			this.tasks.splice(this.pos, 1)
 		}
 	}
+}
+
+TChain.can.cancelDone = function() {
 	this.tasks = []
 	this.pos = 0
+	this.onFinish()
 }
 
 TChain.can.tick = function() {
