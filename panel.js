@@ -59,6 +59,7 @@ TFileList.can.goToRoot = function() {
 theme = {
 	viewer: 'syntaxCyan',
 	editor: 'syntaxCyan',
+	syntaxCyan: {},
 	fileList: {
 		text: 0xff0,
 		back: 0x700, 
@@ -265,11 +266,12 @@ TFileDetail.can.init = function() {
 }
 //	$.bg = 0x0f0
 
+
 TFileDetail.can.draw = function(state) {
 	dnaof(this, state)
-	this.rect(0, 0, this.w, 1, '─', this.pal[0] | 0x8000) ;
+	this.rect(0, 0, this.w, 1, graphChar['─'], this.pal[0] | 0x8000) ;
 	if (this.filelist.column_x != undefined) for (var i = 1; i < this.filelist.column_x.length; i++)
-		this.print(this.filelist.column_x[i], 0, '┴', this.pal[0] | 0x8000)
+		this.print(this.filelist.column_x[i], 0, graphChar['┴'], this.pal[0] | 0x8000)
 	var x = Math.floor(this.filelist.w / 2)
 	if (this.sel != undefined) {
 		this.rect(x - (this.sel.length >> 1) - 1, 0, this.sel.length + 2, 1, ' ', this.pal[3], 0x880)

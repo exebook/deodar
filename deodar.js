@@ -2,7 +2,7 @@
 /*
 Срочно
 	няшные меню+статус бар
-	инфо панель
+	инфо панель, и чтобы показывала ооочень длиные имена файлов
 	номера строк в редакторе (на пустых строках?)
 	детальный список
 	таб дополняет если что то набрано в инпуте
@@ -28,6 +28,7 @@
 	возврат строчки: разделять добавление и стирание
 	после переменования одного файла его надо выделить
 	после копирования обновить панель назначения
+	resize окна не должен скролить вывод
 
 Идеи
 	альт-колесо ходить по меткам
@@ -81,6 +82,9 @@ spawn = require('child_process').spawn
 fs = require('fs');
 TODO = false
 log = console.log
+require('./file/mask')
+//process.exit()
+
 require('./dnaof')
 glxwin = require('./glxwin/glxwin.js')
 execSync = glxwin.native_sh
@@ -97,23 +101,35 @@ require('./file/copyfile')
 require('./file/copydir')
 require('./file/copier')
 require('./find/find')
-var x11clip = require('./x11clip')
+var fontfind = require('./fontfind')
+var useX11clipboard = false
+
+if (useX11clipboard) {
+	var x11clip = require('./x11clip')
+	clipboardSet = x11clip.copy
+	
+	clipboardGet = function(callback) {
+		x11clip.pasteCallback = callback
+		'inter hint clipboardSet'
+		x11clip.paste()
+	}
+	x11clip.start()
+	x11clip.mainLoop()
+} else {
+	var globalClipboard = ''
+	clipboardSet = function(text) {
+		globalClipboard = text
+	}
+	clipboardGet = function(callback) {
+		callback(globalClipboard)
+	}
+}
 
 try {
 	var dir = expandPath('~/.deodar')
 	if (fs.existsSync(dir) == false) fs.mkdirSync(dir)
 } catch (e) { log('Не удаётся создать каталог настроек ' + dir, e) }
 require('./drivemenu')
-
-clipboardSet = x11clip.copy
-
-clipboardGet = function(callback) {
-	x11clip.pasteCallback = callback
-	'inter hint clipboardSet'
-	x11clip.paste()
-}
-x11clip.start()
-x11clip.mainLoop()
 
 var enterRule = [ 
  { ext: 'asm', tty: 'fasm' },
@@ -192,49 +208,13 @@ TController.can.onMouse = function(hand) {
 
 var TDeodar = kindof(TGLXVision)
 
-TDeodar.can.init = function() {
+TDeodar.can.init = function(fontPath) {
 	dnaof(this, fontPath, 18, TController, 110, 33)
 	DESK = this.desktop
 }
 
-var knownGoodFonts = [
-	'DejaVuSansMono.ttf',
-	'DejaVuSansMono-Oblique.ttf',
-	'LiberationMono-Italic.ttf',
-	'LiberationMono-BoldItalic.ttf',
-	'LiberationMono-Bold.ttf',
-	'LiberationMono-Regular.ttf',
-	'FreeMono.ttf',
-	'FreeMonoBold.ttf',
-	'UbuntuMono-R.ttf',
-	'UbuntuMono-B.ttf',
-	'UbuntuMono-BI.ttf',
-	'UbuntuMono-RI.ttf'
-]
-var favouriteFont = 'FreeMono.ttf', fontPath
-
-function taskFont() {
-	var me = this
-	require('child_process').exec('fc-list', function(a, b, c) {
-		var L = b.split('\n'), R = []
-		for (var i = 0; i < L.length; i++) {
-			if (L[i].toLowerCase().indexOf('mono') >= 0) {
-				var s = L[i].split(':')[0]
-				for (var f = 0; f < knownGoodFonts.length; f++) {
-					if (s.indexOf(knownGoodFonts[f]) >= 0)
-					if (R.indexOf(s) < 0) R.push(s)
-					if (s.indexOf(favouriteFont) >= 0) fontPath = s
-				}
-			}
-		}
-		if (!fontPath) fontPath = R[0]
-		me.state = 'done'
-		me.chain.tick()
-	})
-}
-
 function taskDeodarCreate() {
-	var A = TDeodar.create()
+	var A = TDeodar.create(this.chain.fontPath)
 	A.show()
 	A.desktop.main.output.colorLog('   *  ^2Рабочая среда ^0"^5Деодар^0", '
 	+ 'лицензия: ^1Unlicense^0, автор: Яков Нивин  *')
@@ -246,7 +226,7 @@ function taskDeodarCreate() {
 }
 
 var mainChain = TChain.create()
-mainChain.tasks.push({task:taskFont, chain:mainChain})
+mainChain.tasks.push({task:fontfind.taskFontSelect, chain:mainChain})
 mainChain.tasks.push({task:taskDeodarCreate, chain:mainChain})
 mainChain.tick()
 
