@@ -57,7 +57,9 @@ TSearch.can.init = function(hand) {
 
 TSearch.can.start = function(hand) {
 	this.hand = hand
-	this.chain.tasks.push({ task: taskFindItem, chain: this.chain, name: hand.startDir })
+	var s = fs.realpathSync(hand.startDir)
+	log('real', s)
+	this.chain.tasks.push({ task: taskFindItem, chain: this.chain, name: s })
 	this.chain.tick()
 }
 

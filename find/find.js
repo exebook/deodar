@@ -60,9 +60,10 @@ TFindWindow.can.onFile = function(file) {
 	}
 	if (match) {
 		this.matched++
+		var path = file
 		if (file.length > this.w - 1)
 			file = file.substr(this.startDir.length + 1, file.length)
-		this.results.items.push({ name: pathCompress(file, this.results.w - 1), file: file })
+		this.results.items.push({ name: pathCompress(file, this.results.w - 1), file: file, path: path })
 		this.results.sid = this.results.items.length - 1
 		this.results.scrollIntoView()
 		this.repaint()
@@ -91,7 +92,7 @@ TFindWindow.can.pressEnter = function() {
 	var it = list.items, match = false
 	var s = this.results.items[this.results.sid]
 	if (s == undefined) return
-	s = s.file
+	s = s.path
 	for (var i = 0; i < it.length; i++) {
 		if (list.path + '/' + it[i].name == s) {
 			list.sid = i
@@ -150,7 +151,7 @@ TFindWindow.can.startEdit = function() {
 	var it = list.items, match = false
 	var s = this.results.items[this.results.sid]
 	if (s == undefined) return true
-	this.panel.parent.viewFileName(TFileEdit, s.file)
+	this.panel.parent.viewFileName(TFileEdit, s.path)
 	return true
 }
 
