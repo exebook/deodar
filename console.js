@@ -58,7 +58,7 @@ TConsole.can.init = function() {
 	//this.pal[1] = 0
 	this.size(1, 1)
 	this.terminal = new Terminal(1, 1, '');
-	this.terminal.buffer.setMode('crlf',true);
+//	this.terminal.buffer.setMode('crlf',true);
 //	this.terminal.buffer.setMode('wrap',false);
 	this.terminal.buffer.on('lineremove', function(lineno, line) {
 		if (newRemoveLine)
@@ -160,6 +160,7 @@ TConsole.can.respawn = function(cmd, args, cwd, callback) {
 	this.term.on('error', function(a) {})
 	this.term.on('close', function(a) {})
 	this.term.on('data', function(Data) {
+		if (debugConsoleOutput) fs.appendFileSync('/v/deodar/console.buf', Data)
 		me.terminal.writer.write(Data)
 		me.title = me.term.process
 		me.repaint()

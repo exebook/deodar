@@ -53,8 +53,8 @@ taskCopyItem = function() {
 				this.task = taskMoveDir.bind(this)
 			} else
 			this.task = taskCopyDir.bind(this)
-		} else this.state = 'canceled' // unknown inode
-	} catch (e) { this.state = 'canceled' }
+		} else this.state = 'done' // unknown inode
+	} catch (e) { this.state = 'done' }
 	this.chain.tick()
 }
 

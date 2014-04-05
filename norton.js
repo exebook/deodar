@@ -59,6 +59,7 @@ TNorton.can.init = function(panelW, panelH) {
 	this.react(0, keycode.UP, this.historyNavigate, { arg: 'up', role:['input'] })
 	this.react(0, keycode.DOWN, this.historyNavigate, { arg: 'down', role:['input'] })
 	this.react(0, keycode.F3, this.viewFile, { arg: TTextView, role:['panel'] })
+	this.react(10, keycode.F3, this.viewFile, { arg: THexView, role:['panel'] })
 	this.react(0, keycode.F4, this.viewFile, { arg: TFileEdit, role:['panel'] })
 	this.react(1, keycode.F4, this.editFileInput, { arg: TFileEdit, role:['panel'] })
 	this.react(0, keycode.F5, this.commandCopy, { arg: 'copy', role:['panel'] })
@@ -459,7 +460,7 @@ TNorton.can.exitOutputMode = function() {
 }
 
 TNorton.can.viewFileName = function(viewClass, name) {
-	var colors
+	var colors = getColor[theme.viewer]
 	require('./intervision/palette')
 	if (viewClass === TFileEdit) colors = getColor[theme.editor]
 	if (viewClass === TTextView) colors = getColor[theme.viewer]
