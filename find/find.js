@@ -20,7 +20,7 @@ TFindWindow.can.init = function(startDir) {
 	this.search.chain.onDir = this.onDir.bind(this)
 	this.search.chain.onFinish = this.onFinish.bind(this)
 	this.name = 'TFindWindow'
-	this.input = TInput.create('edit.js')
+	this.input = TInput.create(handyContext.lastSearchQuery)
 	this.results = TResults.create()
 	this.add(this.input)
 	this.add(this.results)
@@ -45,6 +45,7 @@ TFindWindow.can.size = function(w, h) {
 TFindWindow.can.onDir = function(dir) {
 	this.scanned++
 	this.repaint()
+	return dir.split('/').pop()[0] != '.'
 }
 
 TFindWindow.can.onFile = function(file) {
@@ -130,6 +131,7 @@ TFindWindow.can.startSearch = function() {
 		this.contents = true
 		this.query = this.query.substr(1, this.query.length)
 	}
+	handyContext.lastSearchQuery = this.query
 	this.input.setText('')
 	this.history.push(this.query)
 	this.search.start({startDir: this.startDir})
@@ -160,7 +162,7 @@ TNorton.can.userFindModal = function() {
 	if (this.actor == this.right) panel = this.right
 	if (this.find == undefined)
 		this.find = TFindWindow.create(panel.list.path)
-	else this.find.startDir = panel.list.path
+	else this.find.startDir = panel.list.path, this.find.input.setText(handyContext.lastSearchQuery)
 	this.find.panel = panel
 	this.find.pos(5, 3)
 	this.find.size(this.w - 10, this.h - 6)

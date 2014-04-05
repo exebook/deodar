@@ -1,6 +1,7 @@
 function taskFindFile() {
 	if (this.state == 'cancel') {
 		this.state = 'canceled'
+		this.chain.tick()
 		return
 	}
 	this.chain.onFile(this.name)
@@ -11,19 +12,22 @@ function taskFindFile() {
 function taskFindDir() {
 	if (this.state == 'cancel') {
 		this.state = 'canceled'
+		this.chain.tick()
 		return
 	}
 	if (this.state == 'active') {
 		this.state = 'done'
-		this.chain.onDir(this.name)
-		try {
-			var list = fs.readdirSync(this.name)
-			for (var i = 0; i < list.length; i++) {
-				this.chain.tasks.push({
-					task: taskFindItem, chain: this.chain, name: this.name + '/' + list[i]
-				})
-			}
-		} catch (e) { 'пропуск' }
+		var processDir = this.chain.onDir(this.name)
+		if (processDir) {
+			try {
+				var list = fs.readdirSync(this.name)
+				for (var i = 0; i < list.length; i++) {
+					this.chain.tasks.push({
+						task: taskFindItem, chain: this.chain, name: this.name + '/' + list[i]
+					})
+				}
+			} catch (e) { 'пропуск' }
+		}
 		this.chain.tick()
 	}
 }
@@ -31,6 +35,7 @@ function taskFindDir() {
 function taskFindItem() {
 	if (this.state == 'cancel') {
 		this.state = 'canceled'
+		this.chain.tick()
 		return
 	}
 	try {
@@ -39,8 +44,8 @@ function taskFindItem() {
 			this.task = taskFindFile.bind(this)
 		} else if (stat.isDirectory() == true) {
 			this.task = taskFindDir.bind(this)
-		} else this.state = 'canceled' // пропуск других inode
-	} catch (e) { this.state = 'canceled' }
+		} else this.state = 'done' // пропуск других inode
+	} catch (e) { this.state = 'done' }
 	this.chain.tick()
 }
 
@@ -58,7 +63,6 @@ TSearch.can.init = function(hand) {
 TSearch.can.start = function(hand) {
 	this.hand = hand
 	var s = fs.realpathSync(hand.startDir)
-	log('real', s)
 	this.chain.tasks.push({ task: taskFindItem, chain: this.chain, name: s })
 	this.chain.tick()
 }

@@ -38,6 +38,7 @@ TChain.can.next = function() {
 		this.tasks.splice(this.pos, 1)
 		this.tick()
 	} else if (T.state == 'canceled') {
+	log('canceled')
 		this.cancelDone()
 //		this.pos++
 //		this.onTask(T)
