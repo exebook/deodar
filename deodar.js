@@ -31,6 +31,7 @@ debugConsoleOutput = true
 	после копирования обновить панель назначения
 	после удаления выделяется другой файл, однако, подробности не обновляются
 	resize окна не должен скролить вывод
+	подробности о файле не обновляются если н прямо в имя щёлкнуть
 
 Идеи
 	альт-колесо ходить по меткам
@@ -216,6 +217,7 @@ TDeodar.can.init = function(fontPath) {
 }
 
 function taskDeodarCreate() {
+///	this.chain.fontPath = '/v/deodar/ext/mplus-1m-regular.ttf'
 	var A = TDeodar.create(this.chain.fontPath)
 	A.show()
 	A.desktop.main.output.colorLog('   *  ^2Рабочая среда ^0"^5Деодар^0", '

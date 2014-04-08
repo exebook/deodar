@@ -358,23 +358,25 @@ TNorton.can.pressEnter = function() {
 }
 
 TNorton.can.onItemEnter = function(list, item) {
-	if (applyEnterRules) {
-		var X = applyEnterRules(item.name)
-		if (X) {
-			if (X.spawn) {
-				spawn(X.spawn, [list.path + '/' + X.name])
-				return
-			}
-			if (X.tty) {
-				this.historyAdd(X.tty + ' ' + X.name)
-				this.execute(X.tty + ' ' + X.name)
-				return
+	if (list.parent.visible()) {
+		if (applyEnterRules) {
+			var X = applyEnterRules(item.name)
+			if (X) {
+				if (X.spawn) {
+					spawn(X.spawn, [list.path + '/' + X.name])
+					return
+				}
+				if (X.tty) {
+					this.historyAdd(X.tty + ' ' + X.name)
+					this.execute(X.tty + ' ' + X.name)
+					return
+				}
 			}
 		}
-	}
-	if (item.flags.indexOf('x') >= 0) {
-		if (this.input.getText() == '') this.input.setText('./' + item.name);
-		this.pressEnter()
+		if (item.flags.indexOf('x') >= 0) {
+			if (this.input.getText() == '') this.input.setText('./' + item.name);
+			this.pressEnter()
+		}
 	}
 }
 

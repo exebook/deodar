@@ -6,7 +6,7 @@
 */
 
 var knownGoodFonts = [ // можно пометить предпочитаемый фонт звёздочкой, например '*consola.ttf'
-	'DejaVuSansMono.ttf',
+	'*DejaVuSansMono.ttf',
 	'DejaVuSansMono-Oblique.ttf',
 	'LiberationMono-Italic.ttf',
 	'LiberationMono-BoldItalic.ttf',
@@ -25,7 +25,7 @@ var knownGoodFonts = [ // можно пометить предпочитаемы
 	'fixedU1.ttf',
 	'fixed7.ttf',
 	'consolai.ttf',
-	'*consola.ttf',
+	'consola.ttf',
 	'consolab.ttf',
 	'consolaz.ttf',
 	'Inconsolata.otf',
