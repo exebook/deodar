@@ -102,17 +102,28 @@ promptCopyFile = function(operation, sPanel, dPanel, do_after) {
 
 	function copyFunc() {
 		var typed = copyDialog.to.getText(), oname
-		var odir = dPanel.list.path
+		var odir = dPanel.list.path, mask, maskDir
 		if (dPanel.list.path != typed) { // что то ввели
 			var odir = sPanel.list.path
-			if (typed.charAt(0) == '/') odir = ''
-			var isDir = false
-			try { isDir = fs.lstatSync(odir + '/' + typed).isDirectory() } catch (e) {}
-			if (!isDir) {
-				if (list.length == 1) { list[0].oname = typed }
-				else { log('что поделать, нельзя списать много файлов в один'); return }
+			maskDir = typed.split('/')
+			mask = maskDir.pop()
+			maskDir = maskDir.join('/')
+			if (maskDir.length > 0) return
+			if (mask.indexOf('*') >= 0 || mask.indexOf('?') >= 0) {
+				for (var i = 0; i < list.length; i++) {
+					list[i].oname = maskNewName(list[i].name, mask)
+				}
+				if (list.length == 1) typed = list[0].oname
 			} else {
-				odir = sPanel.list.path + '/' + typed
+				if (typed.charAt(0) == '/') odir = ''
+				var isDir = false
+				try { isDir = fs.lstatSync(odir + '/' + typed).isDirectory() } catch (e) {}
+				if (!isDir) {
+					if (list.length == 1) { list[0].oname = typed }
+					else { log('что поделать, нельзя списать много файлов в один'); return }
+				} else {
+					odir = sPanel.list.path + '/' + typed
+				}
 			}
 		}
 		chain = TChain.create()
@@ -123,6 +134,7 @@ promptCopyFile = function(operation, sPanel, dPanel, do_after) {
 		chain.dPanel = dPanel
 		sPanel.getDesktop().showModal(chain.progress)
 		chain.tasks.push({ task: taskSync, chain: chain, state: 'pending' })
+		
 		for (var i = 0; i < list.length; i++) {
 			var iname = list[i].name, oname = list[i].name
 			if (list[i].oname) oname = list[i].oname

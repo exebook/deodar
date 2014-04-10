@@ -46,6 +46,10 @@ TFileList.can.init = function() {
 	this.react(100, keycode['.'], this.showDots, { })
 	this.react(100, keycode.PAGE_UP, this.goUpLevel, { })
 	this.react(100, keycode.PAGE_DOWN, this.goDownLevel, { })
+	this.react(0, keycode.NUM_PLUS, this.maskSelectionAdd)
+	this.react(0, keycode.NUM_MINUS, this.maskSelectionRemove)
+	this.react(100, keycode['s'], this.maskSelectionAdd)
+	this.react(100, keycode['d'], this.maskSelectionRemove)
 }
 
 TFileList.can.goToRoot = function() {
@@ -99,24 +103,6 @@ TFileList.can.fileHilite = function(item) {
 		}
 	}
 	return [F, B]
-}
-
-function blend(color, level, back) { // 0 - full color, f - full back
-	var R = (color & 0xf)
-	var G = (color & 0xf0) >> 4
-	var B = (color & 0xf00) >> 8
-	var r = (back & 0xf)
-	var g = (back & 0xf0) >> 4
-	var b = (back & 0xf00) >> 8
-	function lvl(B, A, level) {
-		if (A < B) return Math.ceil(((B - A) / 16) * level) + A
-		return Math.ceil(B - ((A - B) / 16) * (15 - level))
-	}
-	R = lvl(R, r, level)
-	G = lvl(G, g, level)
-	B = lvl(B, b, level)
-//	log(color.toString(16), back.toString(16), R, G, B)
-	return Math.floor((R + (G << 4) + (B << 8)))
 }
 
 TFileList.can.hilitePrint = function(x, y, w, item, F, B, itemSelected) {
@@ -234,7 +220,8 @@ TFileList.can.reload = function() {
 	var s = this.items[this.sid].name, d = this.d
 	this.load(this.path)
 	this.sid = 0
-	for (var i = 0; i < this.items.length; i++) if (this.items[i].name == s) { this.sid = i; this.onItem(i); this.d = d; break }
+	for (var i = 0; i < this.items.length; i++) 
+		if (this.items[i].name == s) { this.sid = i; this.onItem(i); this.d = d; break }
 	this.onItem(0);
 	this.scrollIntoView()
 }

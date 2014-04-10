@@ -77,8 +77,8 @@ TNorton.can.init = function(panelW, panelH) {
 		{arg:'wordleft', role:['input', 'panel']})
 	this.react(100, keycode.RIGHT, this.input.handleCursorKey.bind(this.input),
 		{arg:'wordright', role:['input', 'panel']})
-	this.react(0, keycode.HOME, this.input.handleCursorKey.bind(this.input), {arg:'home', role:['input']})
-	this.react(0, keycode.END, this.input.handleCursorKey.bind(this.input), {arg:'end', role:['input']})
+	this.react(0, keycode.HOME, this.keyChooser, {arg:'home', role:['input','panel']})
+	this.react(0, keycode.END, this.keyChooser, {arg:'end', role:['input','panel']})
 
 	this.react(1, keycode.HOME, this.input.shiftSel.bind(this.input), {arg:'home', role:['input']})
 	this.react(1, keycode.END, this.input.shiftSel.bind(this.input), {arg:'end', role:['input']})
@@ -106,6 +106,15 @@ TNorton.can.init = function(panelW, panelH) {
 	this.react(101, keycode.INSERT, this.copyFullPath, { role:['panel','input'] })
 	this.shortcuts.enable('all', false)
 	this.shortcuts.enable('panel', true)
+}
+
+TNorton.can.keyChooser = function(arg) {
+	if (this.input.getText().length > 0)
+		this.input.handleCursorKey(arg)
+	else if (this.actor == this.left || this.actor == this.right)
+		this.actor.list.moveCursor(arg)
+
+	return true
 }
 
 TNorton.can.copyFullPath = function() {
@@ -310,7 +319,9 @@ function visibleChar(c) {
 
 TNorton.can.onKey = function (K) {
 	if (this.actor == this.right || this.actor == this.left) {
-		if (K.char != undefined && K.mod.control == false && K.mod.alt == false && visibleChar(K.char) && this.input.visible()) {
+		if (K.char != undefined && K.mod.control == false
+			&& K.key != keycode.NUM_PLUS && K.key != keycode.NUM_MINUS
+			&& K.mod.alt == false && visibleChar(K.char) && this.input.visible()) {
 			return this.input.onKey(K)
 		}
 	}
