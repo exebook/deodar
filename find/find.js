@@ -20,7 +20,9 @@ TFindWindow.can.init = function(startDir) {
 	this.search.chain.onDir = this.onDir.bind(this)
 	this.search.chain.onFinish = this.onFinish.bind(this)
 	this.name = 'TFindWindow'
-	this.input = TInput.create(handyContext.lastSearchQuery)
+	var s = handyContext.lastFindQuery
+	if (!s) s = ''
+	this.input = TInput.create(s)
 	this.results = TResults.create()
 	this.add(this.input)
 	this.add(this.results)
@@ -29,6 +31,8 @@ TFindWindow.can.init = function(startDir) {
 	this.react(0, keycode.ENTER, this.pressEnter)
 	this.react(0, keycode.UP, this.results.moveCursor.bind(this.results), {arg:'up'})
 	this.react(0, keycode.DOWN, this.results.moveCursor.bind(this.results), {arg:'down'})
+	this.react(0, keycode.PAGE_UP, this.results.moveCursor.bind(this.results), {arg:'pageup'})
+	this.react(0, keycode.PAGE_DOWN, this.results.moveCursor.bind(this.results), {arg:'pagedown'})
 	this.react(0, keycode.F4, this.startEdit)
 	this.bottomTitle = 'Для поиска в содержимом файлов начните запрос со знака \' или " '
 	this.history = []
@@ -54,10 +58,15 @@ TFindWindow.can.onFile = function(file) {
 	var name = file.split('/').pop()
 	if (this.contents) {
 		try { var size = fs.lstatSync(file).size } catch (e) { return }
-		if (size < 100 * 1024) var s = fs.readFileSync(file).toString()
+		try {
+			if (size < 100 * 1024)
+				var s = fs.readFileSync(file).toString()
+		} catch (e) { return }
 		if (s) match = s.indexOf(q) >= 0
-	} else if (name.indexOf(q) >= 0) {
-		match = true
+	} else {
+		if (name.indexOf(q) >= 0) {
+			match = true
+		} else match = maskMatch(file, q)
 	}
 	if (match) {
 		this.matched++
@@ -127,6 +136,7 @@ TFindWindow.can.startSearch = function() {
 	this.working = true
 	if (this.search.chain) this.search.chain.cancel()
 	this.query = this.input.getText()
+	handyContext.lastFindQuery = this.query
 	if (this.query[0] == '"' || this.query[0] == "'") {
 		this.contents = true
 		this.query = this.query.substr(1, this.query.length)
@@ -162,7 +172,12 @@ TNorton.can.userFindModal = function() {
 	if (this.actor == this.right) panel = this.right
 	if (this.find == undefined)
 		this.find = TFindWindow.create(panel.list.path)
-	else this.find.startDir = panel.list.path, this.find.input.setText(handyContext.lastSearchQuery)
+	else {
+		this.find.startDir = panel.list.path
+		var s = handyContext.lastFindQuery
+		if (!s) s = ''
+		this.find.input.setText(s)
+	}
 	this.find.panel = panel
 	this.find.pos(5, 3)
 	this.find.size(this.w - 10, this.h - 6)
