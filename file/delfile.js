@@ -13,13 +13,19 @@ TDeleteDialog.can.init = function(message, callback) {
 		return true
 	})
 	$.add($.ok, 10, 1)
-	$.cancel = TButton.create(9, 'Отмена', function() { $.close(); return true })
+	$.cancel = TButton.create(9, 'Отмена', function() {
+		$.close()
+		$.panel.showFocused = false
+		return true
+	})
 	$.add($.cancel, 10, 1)
 	$.size($.w, $.addY + 3)
 }
 
 promptDeleteFile = function(panel) {
-	var list = [], sel = panel.list.selection, it = panel.list.items, sid = panel.list.sid, path = panel.list.path
+	var
+		list = [], sel = panel.list.selection, it = panel.list.items,
+		sid = panel.list.sid, path = panel.list.path
 	if (sel.length == 0) {
 		if (it[sid].dir && it[sid].name == '..') return
 		list.push(it[sid].name)
@@ -40,5 +46,6 @@ promptDeleteFile = function(panel) {
 		panel.list.sid = sid
 		panel.repaint()
 	})
+	delDialog.panel = panel
 	panel.getDesktop().showModal(delDialog)
 }

@@ -1,5 +1,5 @@
 
-lexer = {
+JSLexer = {
 	sym: '\'`~!@#$%^&*()-+={[}]:;"?/>.<,\\|', num: '1234567890', spc: ' \n\r\t',
 	cnorm: 0, csym: 1, cnum: 2, cstr: 3, cid: 4, ckey: 5,
 	charType:function(c) {
@@ -10,9 +10,8 @@ lexer = {
 	}
 }
 
-function initKeywords() {
-
-	keywordSource = [
+function initJSKeywords() {
+	var keywordSource = [
 	"break export return case for switch comment function continue if typeof import var delete in do label while else new with abstract implements protected boolean instanceOf public byte int short char interface static double long synchronized native throws final  transient float package goto private catch enum throw class extends try const finally debugger super alert isFinite personalbar Anchor isNan Plugin Area java print JavaArray prompt Array JavaClass prototype assign JavaObject Radio blur JavaPackage ref Boolean RegExp Button Link releaseEvents  location Reset caller Location resizeBy captureEvents locationbar resizeTo Checkbox Math routeEvent clearInterval menubar scroll clearTimeout MimeType scrollbars close moveBy scrollBy closed moveTo scrollTo confirm name Select constructor Date navigate setInterval defaultStatus navigator setTimeout document Navigator status Document netscape statusbar Element Number stop escape Object String eval onBlur Submit FileUpload onError sun find onFocus taint focus onLoad Text Form onUnload Textarea Frame open toolbar Frames opener top Function Option toString getClass outerHeight unescape Hidden OuterWidth untaint history Packages unwatch History pageXoffset valueOf home pageYoffset watch Image parent window parseFloat Window InnerHeight parseInt InnerWidth Password",
 
 	"$ dnaof create kindof me can hand", 
@@ -33,9 +32,8 @@ function initKeywords() {
 	return keywords
 }
 
-keywords = initKeywords()
-
-colorizeString = function(text) {
+JSLexer.colorizeString = function(text) {
+	if (this.keywords == undefined) this.keywords = initJSKeywords()
 	var c
 	var sym = '\'`~!@#$%^&*()-+={[}]:;"?/>.<,\\|', num = '1234567890', spc = ' \n\r\t'
 	var COLOR = [], state = 'norm', C
@@ -46,11 +44,17 @@ colorizeString = function(text) {
 		while (true) {
 			COLOR.push(cstr)
 			if (++i == s.length || (s[i] == Q && esc != true)) break
-			var esc = (s[i] == '\\')
+			var esc = (s[i] == '\\' && esc != true)
 		}
 	}
 	for (var i = 0; i < s.length; i++) {
 		c = s[i]
+		if (c == '0' && s[i + 1] == 'x') {
+			COLOR.push(cnum)
+			COLOR.push(cnum)
+			i += 2
+			state = num
+		}
 		if (c == '"') { scanStr('"'); continue
 		} else if (c == "'") { scanStr("'"); continue
 		} else if (sym.indexOf(c) >=0) { C = csym; state = 'sym' 
@@ -65,7 +69,7 @@ colorizeString = function(text) {
 		if (c == cid && a == undefined) a = i
 		if (c != cid && a != undefined) {
 			var k = text.substr(a, i - a)
-			var keyw = keywords[k]
+			var keyw = this.keywords[k]
 			if (keyw != undefined) for (;a<i;a++) COLOR[a] = ckey + keyw
 			var a = undefined
 		}
