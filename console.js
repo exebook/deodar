@@ -3,16 +3,16 @@ var Terminal = require('./terminal.js');
 
 var newRemoveLine = true
 
-//Terminal.TermBuffer.prototype._removeLine= function (line, count) {
-//	var i;
-//	if(count === undefined)
-//		count = 1;
-//	for(i = 0; i < count; i++)
-//		this.emit('lineremove', line, {str: this._buffer.str[i], attr: this._buffer.attr[i] });
-//	count = this._buffer.str.splice(line, count).length;
-//	this._buffer.attr.splice(line, count);
-//	return count;
-//}
+Terminal.TermBuffer.prototype._removeLine= function (line, count) {
+	var i;
+	if(count === undefined)
+		count = 1;
+	for(i = 0; i < count; i++)
+		this.emit('lineremove', line, {str: this._buffer.str[i], attr: this._buffer.attr[i] });
+	count = this._buffer.str.splice(line, count).length;
+	this._buffer.attr.splice(line, count);
+	return count;
+}
 
 require('./concolor.js')
 var concolor = consoleColors;
