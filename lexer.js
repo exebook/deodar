@@ -1,39 +1,26 @@
-
-JSLexer = {
-	sym: '\'`~!@#$%^&*()-+={[}]:;"?/>.<,\\|', num: '1234567890', spc: ' \n\r\t',
-	cnorm: 0, csym: 1, cnum: 2, cstr: 3, cid: 4, ckey: 5,
-	charType:function(c) {
-		if (this.sym.indexOf(c) >= 0) return this.csym
-		if (this.spc.indexOf(c) >= 0) return this.cnorm
-		if (this.num.indexOf(c) >= 0) return this.cnum
-		return this.cid
-	}
+TLexer = kindof(TObject)
+TLexer.can.init = function() {
+	this.sym = '\'`~!@#$%^&*()-+={[}]:;"?/>.<,\\|'
+	this.num = '1234567890'
+	this.spc = ' \n\r\t'
+	this.cnorm = 0
+	this.csym = 1
+	this.cnum = 2
+	this.cstr = 3
+	this.cid = 4
+	this.ckey = 5
+	if (this.initKeywords) this.initKeywords()
 }
 
-function initJSKeywords() {
-	var keywordSource = [
-	"break export return case for switch comment function continue if typeof import var delete in do label while else new with abstract implements protected boolean instanceOf public byte int short char interface static double long synchronized native throws final  transient float package goto private catch enum throw class extends try const finally debugger super alert isFinite personalbar Anchor isNan Plugin Area java print JavaArray prompt Array JavaClass prototype assign JavaObject Radio blur JavaPackage ref Boolean RegExp Button Link releaseEvents  location Reset caller Location resizeBy captureEvents locationbar resizeTo Checkbox Math routeEvent clearInterval menubar scroll clearTimeout MimeType scrollbars close moveBy scrollBy closed moveTo scrollTo confirm name Select constructor Date navigate setInterval defaultStatus navigator setTimeout document Navigator status Document netscape statusbar Element Number stop escape Object String eval onBlur Submit FileUpload onError sun find onFocus taint focus onLoad Text Form onUnload Textarea Frame open toolbar Frames opener top Function Option toString getClass outerHeight unescape Hidden OuterWidth untaint history Packages unwatch History pageXoffset valueOf home pageYoffset watch Image parent window parseFloat Window InnerHeight parseInt InnerWidth Password",
-
-	"$ dnaof create kindof me can hand", 
-
-	"console log process fs",
-
-	"THolder TConsole TController varTDeodar TDriveMenu TDeleteDialog TSearch TResults TFindWindow TNorton TFileList TFileDetail TFilePanel TControl TButton TLabel TInput TDoneBar TScrollBar TDialog TOkCancel TInputBox TExitSaveCancel TMessageBox TGLXVision TMouse TEdit TGroup TDesktop TObject TKeyInput TList TQuickFind TSelection TText TTextView TKeyCode THelp TDriveList TModalTextView TFileEdit TView TWindow",
-
-	"init true false null arguments length callee NaN self Infinity void this  default undefined"]
-	
-	var keywords = {}
-	for (var i = 0; i < keywordSource.length; i++) {
-		var list = keywordSource[i].split(' ')
-		for (var a = 0; a < list.length; a++) {
-			keywords[list[a]] = i
-		}
-	}
-	return keywords
+TLexer.can.charType = function(c) {
+	if (this.sym.indexOf(c) >= 0) return this.csym
+	if (this.spc.indexOf(c) >= 0) return this.cnorm
+	if (this.num.indexOf(c) >= 0) return this.cnum
+	return this.cid
 }
 
-JSLexer.colorizeString = function(text) {
-	if (this.keywords == undefined) this.keywords = initJSKeywords()
+TLexer.can.colorizeString = function(text) {
+//	if (this.keywords == undefined) this.keywords = this.initKeywords()
 	var c
 	var sym = '\'`~!@#$%^&*()-+={[}]:;"?/>.<,\\|', num = '1234567890', spc = ' \n\r\t'
 	var COLOR = [], state = 'norm', C
@@ -77,6 +64,66 @@ JSLexer.colorizeString = function(text) {
 	return COLOR
 }
 
+TJSLexer = kindof(TLexer)
+TJSLexer.can.init = function() {
+	this.dna()
+	this.lineComment = '//'
+}
+
+TJSLexer.can.initKeywords = function() {
+	var keywordSource = [
+	"break export return case for switch comment function continue if typeof import var delete in do label while else new with abstract implements protected boolean instanceOf public byte int short char interface static double long synchronized native throws final  transient float package goto private catch enum throw class extends try const finally debugger super alert isFinite personalbar Anchor isNan Plugin Area java print JavaArray prompt Array JavaClass prototype assign JavaObject Radio blur JavaPackage ref Boolean RegExp Button Link releaseEvents  location Reset caller Location resizeBy captureEvents locationbar resizeTo Checkbox Math routeEvent clearInterval menubar scroll clearTimeout MimeType scrollbars close moveBy scrollBy closed moveTo scrollTo confirm name Select constructor Date navigate setInterval defaultStatus navigator setTimeout document Navigator status Document netscape statusbar Element Number stop escape Object String eval onBlur Submit FileUpload onError sun find onFocus taint focus onLoad Text Form onUnload Textarea Frame open toolbar Frames opener top Function Option toString getClass outerHeight unescape Hidden OuterWidth untaint history Packages unwatch History pageXoffset valueOf home pageYoffset watch Image parent window parseFloat Window InnerHeight parseInt InnerWidth Password",
+
+	"$ dnaof create kindof me can hand", 
+
+	"console log process fs",
+
+	"THolder TConsole TController varTDeodar TDriveMenu TDeleteDialog TSearch TResults TFindWindow TNorton TFileList TFileDetail TFilePanel TControl TButton TLabel TInput TDoneBar TScrollBar TDialog TOkCancel TInputBox TExitSaveCancel TMessageBox TGLXVision TMouse TEdit TGroup TDesktop TObject TKeyInput TList TQuickFind TSelection TText TTextView TKeyCode THelp TDriveList TModalTextView TFileEdit TView TWindow",
+
+	"init true false null arguments length callee NaN self Infinity void this  default undefined"]
+	
+	var keywords = {}
+	for (var i = 0; i < keywordSource.length; i++) {
+		var list = keywordSource[i].split(' ')
+		for (var a = 0; a < list.length; a++) {
+			keywords[list[a]] = i
+		}
+	}
+	this.keywords = keywords
+}
+
+JSLexer = TJSLexer.create()
+
+TASMLexer = kindof(TLexer)
+TASMLexer.can.init = function() {
+	this.dna()
+	this.lineComment = ';'
+}
+
+TASMLexer.can.initKeywords = function() {
+	var keywordSource = [
+	"mov add inc push pop div ret call leave enter lea rep sub shl shr cmp jz jmp syscall and jle",
+	"macro local label include if else end eq equ db db dw dd rb rd rq rw entry reverse common forward byte word dword qword",
+	"ah al bh bl ch cl dh dl si di sp bp ax bx cx dx eax ebx ecx edx esi edi esp ebp"
+	+ ' rax rbx rcx rdx rsi rdi rbp rsp r8 r9 r10 r11 r12 r13 r14 r15 r16',
+	"segment writeable readable executable format",
+	""]
+	
+/*
+*/
+
+
+	var keywords = {}
+	for (var i = 0; i < keywordSource.length; i++) {
+		var list = keywordSource[i].split(' ')
+		for (var a = 0; a < list.length; a++) {
+			keywords[list[a]] = i
+		}
+	}
+	this.keywords = keywords
+}
+
+ASMLexer = TASMLexer.create()
 
 return
 var s = 'TView.can.onSomething = function(_id, id1, x, y) { return "abc" + \'x\\\'z\' + 123}'

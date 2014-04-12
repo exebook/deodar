@@ -93,8 +93,8 @@ log = console.log
 require('./dnaof')
 glxwin = require('./glxwin/glxwin.js')
 execSync = glxwin.native_sh
-require('./lexer')
 require('./intervision')
+require('./lexer')
 require('./panel')
 require('./editfile')
 require('./makedir')

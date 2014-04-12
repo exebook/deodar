@@ -78,6 +78,7 @@ theme = {
 		hilite: [
 			{ name: 'c', ext: ['.cpp','.c','.h'], text: 0xb1c },
 			{ name: 'js', ext: ['.js'], text: 0xf3e },
+			{ name: 'asm', ext: ['.asm',, '.inc'], text: 0x80f },
 		]
 		
 	}
