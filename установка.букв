@@ -29,3 +29,6 @@ git clone https://github.com/chjj/pty.js
 cd pty.js
 npm install nan extend
 node-gyp configure build
+
+Если всё прошло успешно, запускается Деодар так:
+node deodar.js
