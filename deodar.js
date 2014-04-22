@@ -34,6 +34,7 @@ debugConsoleOutput = false
 	подробности о файле не обновляются если не прямо в имя щёлкнуть
 	при выходе из /usr/share/xfce4 наверх, дельта не обновлена (= 0)
 	градиента нет на исполняемых файлах
+	переменуя один файл вместо "1 штук" писать имя
 
 Идеи
 	альт-колесо ходить по меткам
@@ -142,6 +143,7 @@ try {
 require('./drivemenu')
 
 var enterRule = [ 
+ { ext: 'deo', deodar: true },
  { ext: 'asm', tty: 'fasm' },
  { ext: 'coffee', tty: 'coffee' },
  { ext: 'js', tty: 'node' },
@@ -163,6 +165,7 @@ applyEnterRules = function(s) {
 		var x = '.' + e.ext
 		var j = s.indexOf(x)
 		if (j >= 0 && j == s.length - x.length) {
+			if (e.deodar) return { deodar: e.deodar, name: s }
 			if (e.tty) return { tty: e.tty, name: s }
 			if (e.spawn) return { spawn: e.spawn, name: s }
 			return { name: s }

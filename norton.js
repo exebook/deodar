@@ -347,7 +347,7 @@ TNorton.can.runInBackground = function() {
 			var prog = require('child_process').spawn(s)
 			prog.on('error', function() { log('child error') })
 		} catch (e) {
-			messageBox(this.getDesktop(), 'Ошибка запуска', e.toString())
+			messageBox(this.getDesktop(), 'Ошибка запуска: ' + e.toString())
 		}
 	}
 	return true
@@ -373,11 +373,14 @@ TNorton.can.onItemEnter = function(list, item) {
 		if (applyEnterRules) {
 			var X = applyEnterRules(item.name)
 			if (X) {
-				if (X.spawn) {
+				if (X.deodar == true) {
+					var src = fs.readFileSync(list.path + '/' + X.name).toString()
+					var O = eval(src)
+					O(this)
+				} else if (X.spawn) {
 					spawn(X.spawn, [list.path + '/' + X.name])
 					return
-				}
-				if (X.tty) {
+				} else if (X.tty) {
 					this.historyAdd(X.tty + ' ' + X.name)
 					this.execute(X.tty + ' ' + X.name)
 					return

@@ -5,7 +5,7 @@ promptEditFile = function(panel, callback) {
 		if (fs.existsSync(file)) {
 			if (!fs.lstatSync(file).isFile()) { 
 				messageBox(panel.getDesktop(), '"' + win.input.getText() 
-				+ '" существует, и это не файл', 'Обстоятельтво')
+				+ '" существует, и это не файл')
 				return
 			}
 		} else {
@@ -13,7 +13,7 @@ promptEditFile = function(panel, callback) {
 				fs.writeFileSync(file, '')
 			} catch (e) {
 				messageBox(panel.getDesktop(), '"' + win.input.getText() 
-				+ '" не существует, и не получается создать', 'Обстоятельтво')
+				+ '" не существует, и не получается создать')
 			}
 			panel.list.reload()
 		}
