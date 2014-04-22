@@ -358,7 +358,8 @@ TConsole.can.onMouse = function(hand) {
 		this.scrollHistory(hand.down ? 'down' : 'up')
 	}
 	if ((hand.button == 0 || hand.button == 3) && this.working() == false) {
-		this.parent.actor = this.fileman.input
+		if (this.parent == this.norton) this.parent.actor = this.norton.input
+		else this.parent.actor == undefined
 		return
 	}
 	if (hand.down && hand.button == 1) {
@@ -369,7 +370,7 @@ TConsole.can.onMouse = function(hand) {
 		if (!this.sel.clean()) this.copyTextBlock(this.sel.get())
 		this.sel.clear()
 		if (this.working() == false) 
-			this.parent.actor = this.fileman.input
+			this.parent.actor = this.norton.input
 		return true
 	}
 	return true

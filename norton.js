@@ -10,7 +10,7 @@ TNorton.can.init = function(panelW, panelH) {
 	this.right = TFilePanel.create(); this.right.name = 'Right'
 	this.label = TLabel.create('c:\\')
 	this.input = TInput.create()
-	this.output.fileman = this
+	this.output.norton = this
 
 	this.add(this.label)
 	this.add(this.output)
@@ -481,6 +481,7 @@ TNorton.can.viewFileName = function(viewClass, name) {
 	if (viewClass === TFileEdit) colors = getColor[theme.editor]
 	if (viewClass === TTextView) colors = getColor[theme.viewer]
 	this.viewer = viewFile(this.getDesktop(), name, viewClass, colors)
+	this.viewer.norton = this
 	return true
 }
 
