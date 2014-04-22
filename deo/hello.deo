@@ -1,0 +1,4 @@
+(function (norton) {
+	norton.output.log('hello world!')
+	return 'ok'
+})

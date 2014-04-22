@@ -1,0 +1,12 @@
+var norton
+
+function callback(x) {
+	var msg = 'Вы, кажется,  нажали "Отмена" или ESCAPE'
+	if (x == true) msg = 'Вы, кажется, нажали "Ясно" или ENTER'
+	messageBox(norton.getDesktop(), msg)
+}
+
+(function (n) {
+	norton = n
+	messageBox(norton.getDesktop(), 'Всем привет!', callback)
+})

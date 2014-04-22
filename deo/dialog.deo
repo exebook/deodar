@@ -1,0 +1,29 @@
+TKeyCode1 = kindof(TDialog)
+TKeyCode1.can.init = function() {
+	dnaof(this, 40, 1)
+	this.title = 'Код клавиши:'
+	this.key = TLabel.create()
+	this.codes = [0,0,0,0,0,0,0]
+	var $ = this
+	this.key.title = function() { return $.codes.join('-') }
+	this.add(this.key, 30, 1)
+	this.addRow()
+	this.cancel = TButton.create(9, 'Закрыть', function() { $.close(); return true })
+	this.add(this.cancel, 10, 1)
+	this.size(this.w, this.addY + 3)
+}
+
+TKeyCode1.can.onKey = function(K) {
+	if (dnaof(this, K)) return true
+	if (K.down && K.physical) {
+		this.codes.push(K.key)
+		this.codes.shift()
+		this.repaint()
+	}
+}
+
+;(function (norton) {
+	var k = TKeyCode1.create()
+	norton.getDesktop().showModal(k)
+})
+
