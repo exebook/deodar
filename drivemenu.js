@@ -11,6 +11,9 @@ function checkConfig() {
 				"{ key:'m', title:'/^media', path:'/media/ya' },",
 				"{ key:'/', title:'корень (^/)', path:'/' },",
 				"{ key:'e', title:'конфиги (/^etc)', path:'/etc' },",
+				"{ key:keycode.TAB, title:'^^^TAB Тут-же', path:function() { ",
+				"	return this.parent.getOpposite(this).list.path",
+				"}},",
 				"]",
 				"list // return last expression"
 				]
@@ -24,6 +27,7 @@ checkConfig()
 TDriveMenu = kindof(TDialog)
 TDriveMenu.can.init = function(panel) {
 	dnaof(this, 40, 1)
+	var me = this
 	this.panel = panel
 	this.title = 'Скачок'
 	this.list = TDriveList.create()
@@ -34,10 +38,19 @@ TDriveMenu.can.init = function(panel) {
 	this.sourceFile = undefined
 	if (fs.existsSync(expandPath('~/.deodar/driveMenu.js'))) {
 		var js = expandPath('~/.deodar/driveMenu.js')
-		list = eval(fs.readFileSync(js).toString())
+		try {
+			var src = fs.readFileSync(js).toString()
+			list = eval(src)
+		} catch (e) {
+			messageBox(panel.getDesktop(), 'Ошибка загрузки "скачка": '+e, function() { 
+				if (js)
+					panel.parent.viewFileName(TFileEdit, js)
+				log('ok') 
+			})
+			return
+		}
 		this.sourceFile = js
 	}
-	var me = this
 	var width = 0
 	for (var i = 0; i < list.length; i++) {
 		var t = list[i].title
@@ -54,7 +67,7 @@ TDriveMenu.can.init = function(panel) {
 	this.add(this.list, width, list.length)
 	this.addRow()
 	this.size(width + this.border * 3 * 2 + 4, this.addY + 2)
-	this.bottomTitle = 'Esc-отмена,F4-правка'
+	this.bottomTitle = 'Esc:отмена,F4:правка'
 	this.react(0, keycode.ESCAPE, this.close)
 	this.react(0, keycode.ENTER, this.onEnter)
 	this.react(0, keycode.F4, this.editSource)
@@ -69,7 +82,9 @@ TDriveMenu.can.editSource = function () {
 TDriveMenu.can.pathSelect = function (item) {
 	this.close()
 	if (typeof item.onSelect == 'function') item.onSelect.apply(this.panel)
-	var path = item.path
+	var path
+	if (typeof item.path == 'function') path = item.path.apply(this.panel)
+	else path = item.path
 	var other = this.panel.parent.getOpposite(this.panel)
 	if (other != undefined) {
 		var o = other.list.path
@@ -90,6 +105,7 @@ TDriveMenu.can.onEnter = function() {
 
 showDriveMenu = function(Desktop, panel) {
 	var menu = TDriveMenu.create(panel)
+	if (menu.sourceFile == undefined) return
 	Desktop.showModal(menu, panel.x + (panel.w >> 1) - (menu.w >> 1), 3)
 }
 
