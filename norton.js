@@ -222,6 +222,7 @@ TNorton.can.pressAppendFocusedName = function() {
 	if (this.actor == this.right) list = this.right.list
 	var s = list.items[list.sid].name
 	if (s == '..') s = list.path
+	if (s.indexOf(' ') >=0) s = '"' + s + '"'
 	this.input.setText(this.input.getText() + s + ' ')
 	this.input.sel.clear()
 	return true

@@ -30,6 +30,7 @@ debugConsoleOutput = false
 	после переменования одного файла его надо выделить
 	после копирования обновить панель назначения
 	после удаления выделяется другой файл, однако, подробности не обновляются
+	после удаления положение выделялки в конце, а не в начале 
 	resize окна не должен скролить вывод
 	подробности о файле не обновляются если не прямо в имя щёлкнуть
 	при выходе из /usr/share/xfce4 наверх, дельта не обновлена (= 0)
@@ -148,7 +149,9 @@ var enterRule = [
  { ext: 'coffee', tty: 'coffee' },
  { ext: 'js', tty: 'node' },
  { ext: 'atr', tty: 'atari800' },
+ { ext: 'jpeg', spawn: 'xdg-open' },
  { ext: 'jpg', spawn: 'xdg-open' },
+ { ext: 'JPG', spawn: 'xdg-open' },
  { ext: 'avi', spawn: 'xdg-open' },
  { ext: 'wmv', spawn: 'xdg-open' },
  { ext: 'mov', spawn: 'xdg-open' },
@@ -157,6 +160,9 @@ var enterRule = [
  { ext: 'ogg', spawn: 'xdg-open' },
  { ext: 'pdf', spawn: 'xdg-open' },
  { ext: 'ogg', spawn: 'xdg-open' },
+ { ext: 'tif', spawn: 'xdg-open' },
+ { ext: 'gif', spawn: 'xdg-open' },
+ { ext: 'png', spawn: 'xdg-open' },
  ]
 
 applyEnterRules = function(s) {

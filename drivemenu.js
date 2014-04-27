@@ -85,11 +85,13 @@ TDriveMenu.can.pathSelect = function (item) {
 	var path
 	if (typeof item.path == 'function') path = item.path.apply(this.panel)
 	else path = item.path
-	var other = this.panel.parent.getOpposite(this.panel)
-	if (other != undefined) {
-		var o = other.list.path
-		if (o.indexOf(path) == 0) {
-			path = o
+	if (item.root) {
+		var other = this.panel.parent.getOpposite(this.panel)
+		if (other != undefined) {
+			var o = other.list.path
+			if (o.indexOf(path) == 0) {
+				path = o
+			}
 		}
 	}
 	this.panel.list.path = expandPath(path)
