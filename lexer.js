@@ -94,6 +94,27 @@ TJSLexer.can.initKeywords = function() {
 
 JSLexer = TJSLexer.create()
 
+TShellLexer = kindof(TLexer)
+TShellLexer.can.init = function() {
+	this.dna()
+	this.lineComment = '#'
+}
+
+TShellLexer.can.initKeywords = function() {
+	var keywordSource = [
+	"ls cp mkdir cd rm mv echo export set if fi env",
+	""]
+	
+	var keywords = {}
+	for (var i = 0; i < keywordSource.length; i++) {
+		var list = keywordSource[i].split(' ')
+		for (var a = 0; a < list.length; a++) {
+			keywords[list[a]] = i
+		}
+	}
+	this.keywords = keywords
+}
+
 TASMLexer = kindof(TLexer)
 TASMLexer.can.init = function() {
 	this.dna()
@@ -109,10 +130,6 @@ TASMLexer.can.initKeywords = function() {
 	"segment writeable readable executable format",
 	""]
 	
-/*
-*/
-
-
 	var keywords = {}
 	for (var i = 0; i < keywordSource.length; i++) {
 		var list = keywordSource[i].split(' ')
@@ -123,6 +140,7 @@ TASMLexer.can.initKeywords = function() {
 	this.keywords = keywords
 }
 
+ShellLexer = TShellLexer.create()
 ASMLexer = TASMLexer.create()
 
 return
