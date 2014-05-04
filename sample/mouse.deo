@@ -1,0 +1,29 @@
+TMouseDemo = kindof(TDialog)
+TMouseDemo.can.init = function() {
+	dnaof(this, 60, 1)
+	this.title = 'Код кнопки мышки:'
+	this.data1 = 'Нажимайте кнопки мышки'
+	var $ = this
+	this.cancel = TButton.create(9, 'Закрыть', function() { $.close(); return true })
+	this.add(this.cancel, 10, 1)
+	this.size(this.w, this.addY + 7)
+}
+
+TMouseDemo.can.draw = function(state) {
+	this.dna(state)
+	var y = 0, s = this.data1.split('"x"')
+	this.print(5, 4, s[0])
+	if (s[1]) this.print(5, 5, '"x"' + s[1])
+}
+
+TMouseDemo.can.onMouse = function(K) {
+	this.data1 = JSON.stringify(K)
+	this.repaint()
+	return this.dna(K)
+}
+
+;(function (norton) {
+	var k = TMouseDemo.create()
+	norton.getDesktop().showModal(k)
+})
+

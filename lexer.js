@@ -92,8 +92,6 @@ TJSLexer.can.initKeywords = function() {
 	this.keywords = keywords
 }
 
-JSLexer = TJSLexer.create()
-
 TShellLexer = kindof(TLexer)
 TShellLexer.can.init = function() {
 	this.dna()
@@ -142,6 +140,7 @@ TASMLexer.can.initKeywords = function() {
 
 ShellLexer = TShellLexer.create()
 ASMLexer = TASMLexer.create()
+JSLexer = TJSLexer.create()
 
 return
 var s = 'TView.can.onSomething = function(_id, id1, x, y) { return "abc" + \'x\\\'z\' + 123}'
