@@ -143,7 +143,7 @@ TConsole.can.respawn = function(cmd, args, cwd, callback) {
 	var me = this
 	var wh = me.termsize()
 	var s = '\u001b[01;32m' + cwd + '\u001b[00m>\u001b[01;34m' + cmd + '\u001b[00m'
-	this.terminal.writer.write(s + '\n')
+	this.terminal.writer.write('\n' + s + '\n')
 
 	if (cmd.indexOf('ls') == 0) cmd = cmd.replace(/^ls\b/, 'ls --color')
 	args = []
