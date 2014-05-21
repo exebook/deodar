@@ -126,7 +126,7 @@ TASMLexer.can.initKeywords = function() {
 	"ah al bh bl ch cl dh dl si di sp bp ax bx cx dx eax ebx ecx edx esi edi esp ebp"
 	+ ' rax rbx rcx rdx rsi rdi rbp rsp r8 r9 r10 r11 r12 r13 r14 r15 r16',
 	"segment writeable readable executable format",
-	"exe exi ent set get get2 chars log"]
+	"exe exi ent set get var pair draw show func chars log"]
 	
 	var keywords = {}
 	for (var i = 0; i < keywordSource.length; i++) {
