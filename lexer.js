@@ -121,12 +121,13 @@ TASMLexer.can.init = function() {
 
 TASMLexer.can.initKeywords = function() {
 	var keywordSource = [
-	"mov add inc push pop div ret call leave enter lea rep repe sub shl shr cmp jz jmp je jne syscall and jle cld std",
-	"macro virtual local label include if else end eq equ db db dw dd rb rd rq rw entry reverse common forward byte word dword qword",
+	"mov add inc push pop div ret call leave enter lea rep repe sub shl shr cmp jz jmp je jne syscall and jle cld std imul",
+	"lab cycle macro virtual local label include if else end eq equ db db dw dd rb rd rq rw entry reverse common forward byte word dword qword",
 	"ah al bh bl ch cl dh dl si di sp bp ax bx cx dx eax ebx ecx edx esi edi esp ebp"
 	+ ' rax rbx rcx rdx rsi rdi rbp rsp r8 r9 r10 r11 r12 r13 r14 r15 r16',
 	"segment writeable readable executable format",
-	"exe exi ent set get var pair draw show func chars log"]
+	"exe exi ent arg use set get var pair draw show func chars log puts",
+	"gset alloc global"]
 	
 	var keywords = {}
 	for (var i = 0; i < keywordSource.length; i++) {
