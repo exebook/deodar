@@ -22,8 +22,8 @@ TKeyCode1.can.onKey = function(K) {
 	}
 }
 
-;(function (norton) {
+module.exports = function (norton) {
 	var k = TKeyCode1.create()
 	norton.getDesktop().showModal(k)
-})
+}
 

@@ -128,7 +128,7 @@ promptCopyFile = function(operation, sPanel, dPanel, do_after) {
 		}
 		chain = TChain.create()
 		chain.progress = TCopyProgress.create(interrupt)
-		chain.progress.total.pos = 0
+		chain.progress.total.position = 0
 		chain.progress.total.max = list.length
 		chain.sPanel = sPanel
 		chain.dPanel = dPanel
@@ -160,7 +160,7 @@ promptCopyFile = function(operation, sPanel, dPanel, do_after) {
 		
 		chain.onTask = function(T) {
 		if (T.id != undefined) this.sPanel.list.selectItem(T.id, false)
-			this.progress.total.pos++
+			this.progress.total.position++
 		}
 		
 		chain.tick()

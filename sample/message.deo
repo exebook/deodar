@@ -6,7 +6,7 @@ function callback(x) {
 	messageBox(norton.getDesktop(), msg)
 }
 
-(function (n) {
+module.exports = function (n) {
 	norton = n
 	messageBox(norton.getDesktop(), 'Всем привет!', callback)
-})
+}

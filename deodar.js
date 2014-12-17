@@ -26,6 +26,7 @@ debugConsoleOutput = false
 	нужен свой или взятый от системы поиск файлов в путях чтобы запуск
 	програмы 'x' в текущей папке знал что запускать /bin/x или ./x (npm search pathfind?)
 	при наборе слова в правке, можно сразу подсвечивать похожие
+	хоткей для домашней директории
 
 Ашипки
 	случилось страшное, зашел в mus, (в другом део копировалось в муз), control+R, control+S(*talpa*), control+S(talpa*), F6->/x/music/talpa, control-A, F6->/x/music/iphone: вдруг скопировалось не только всё из папки муз но и из верхней частично
@@ -42,6 +43,10 @@ debugConsoleOutput = false
 	градиента нет на исполняемых файлах
 	переменуя один файл вместо "1 штук" писать имя
 	запуская новый процесс (console.spawn) прокрутить в конец консоль если она вверху
+	строчные каменты в строках срабатывают
+	правка из файл поиска может дать другой путь /x/v -> /v
+	Escape после control-O в правке создаёт путаницу!!!
+	F3 падает если в доступе отказано
 
 Идеи
 	альт-колесо ходить по меткам
@@ -53,6 +58,9 @@ debugConsoleOutput = false
 	в правщике при поиск-замена показывать список функций и выбирать одну из них, можно править свою 
 	разделить TFileList(как список любых файлов) от TDirList (именно показывает каталог), использовать TFileList для отражения итогов поиска
 	в лексер можно добавлять как кейворды имена из текущей папки
+	правка undo: после несколькоих секунд сделать новое событие
+	часть пути которая ln -s показывать другим цветом(везде где путь виден)
+	рисовать пробелы и табы только под выделением
 
 перестройка
 	
@@ -102,6 +110,7 @@ log = console.log
 //require('./file/mask')
 //process.exit()
 
+require('./pretty_error')
 require('./dnaof')
 glxwin = require('./glxwin/glxwin.js')
 execSync = glxwin.native_sh
@@ -155,6 +164,7 @@ var enterRule = [
  { ext: 'asm', tty: 'fasm' },
  { ext: 'coffee', tty: 'coffee' },
  { ext: 'js', tty: 'node' },
+ { ext: 'yy', tty: '/v/js/dotcall/yy' },
  { ext: 'atr', tty: 'atari800' },
  { ext: 'jpeg', spawn: 'xdg-open' },
  { ext: 'jpg', spawn: 'xdg-open' },
@@ -190,6 +200,8 @@ TController = kindof(TDesktop)
 
 TController.can.init = function(W, H) {
 	dnaof(this)
+	this.x = 0, this.y = 0
+//	this.pos(0, 0)
 /*	this.main = TList.create()
 	for (var i = 100; i < 320; i++) this.main.items.push(i + '')
 	for (var i = 0; i < this.main.items.length; i++) this.main.items[i] = {name: this.main.items[i]}
@@ -236,7 +248,7 @@ TController.can.onMouse = function(hand) {
 var TDeodar = kindof(TGLXVision)
 
 TDeodar.can.init = function(fontPath) {
-	dnaof(this, fontPath, 18, TController, 110, 33)
+	dnaof(this, fontPath, 15, TController, 88, 51)
 	DESK = this.desktop
 }
 

@@ -22,7 +22,8 @@ TLexer.can.charType = function(c) {
 TLexer.can.colorizeString = function(text) {
 //	if (this.keywords == undefined) this.keywords = this.initKeywords()
 	var c
-	var sym = '\'`~!@#$%^&*()-+={[}]:;"?/>.<,\\|', num = '1234567890', spc = ' \n\r\t'
+	var sym = '\'`~!@#$%^&*()-+={[}]:;"?/>.<,\\|≠≟≁∼≃≄⁰¹²³⁴⁵⁶⁷⁸⁹ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖʱʳˢᵗᵘᵛʷˣʸᶻ', num = '1234567890', spc = ' \n\r\t'
+	var sym2 = '⏚☎✚ᗰᙏᗲᗶᗼᙢᙕᙨᙜᘻ❶❷❸❹❺❻❼❽❾❿①②③④⑤⑥⑦⑧⑨⑩∆↟ꕉ⌶⫴⋃⨄ꔬ⧉ꗚ❄⩪△◬⟡⌑≞≂≈≀⍽★⬠⚂♻★⏀⚪⚫⬤⋀⋁↥⎇⌚⌛≣⦾⦿⬌⬊⬈⬉⬋⬍∞⧖∅⧗⌥⥹⊜∅⨃∇➮ꗝロ'
 	var COLOR = [], state = 'norm', C
 	var cnorm = 0, csym = 1, cnum = 2, cstr = 3, cid = 4, ckey = 5
 	s = text.split('')
@@ -33,7 +34,7 @@ TLexer.can.colorizeString = function(text) {
 			if (++i == s.length || (s[i] == Q && esc != true)) break
 			var esc = (s[i] == '\\' && esc != true)
 		}
-	}
+	} 
 	for (var i = 0; i < s.length; i++) {
 		c = s[i]
 		if (c == '0' && s[i + 1] == 'x') {
@@ -45,6 +46,7 @@ TLexer.can.colorizeString = function(text) {
 		if (c == '"') { scanStr('"'); continue
 		} else if (c == "'") { scanStr("'"); continue
 		} else if (sym.indexOf(c) >=0) { C = csym; state = 'sym' 
+		} else if (sym2.indexOf(c) >=0) { C = ckey; state = 'sym' 
 		} else if (spc.indexOf(c) >= 0) { C = cnorm; state = 'norm'
 		} else if (num.indexOf(c) >= 0) { if (state == 'id') C = cid; else C = cnum, state = 'num'
 		} else { C = cid, state = 'id' }
@@ -72,9 +74,9 @@ TJSLexer.can.init = function() {
 
 TJSLexer.can.initKeywords = function() {
 	var keywordSource = [
-	"break export return case for switch comment function continue if typeof import var delete in do label while else new with abstract implements protected boolean instanceOf public byte int short char interface static double long synchronized native throws final  transient float package goto private catch enum throw class extends try const finally debugger super alert isFinite personalbar Anchor isNan Plugin Area java print JavaArray prompt Array JavaClass prototype assign JavaObject Radio blur JavaPackage ref Boolean RegExp Button Link releaseEvents  location Reset caller Location resizeBy captureEvents locationbar resizeTo Checkbox Math routeEvent clearInterval menubar scroll clearTimeout MimeType scrollbars close moveBy scrollBy closed moveTo scrollTo confirm name Select constructor Date navigate setInterval defaultStatus navigator setTimeout document Navigator status Document netscape statusbar Element Number stop escape Object String eval onBlur Submit FileUpload onError sun find onFocus taint focus onLoad Text Form onUnload Textarea Frame open toolbar Frames opener top Function Option toString getClass outerHeight unescape Hidden OuterWidth untaint history Packages unwatch History pageXoffset valueOf home pageYoffset watch Image parent window parseFloat Window InnerHeight parseInt InnerWidth Password",
+	"break export return case for switch comment function continue if typeof instanceof import var delete in do label while else new with abstract implements protected boolean instanceOf public byte int short char interface static double long synchronized native throws final  transient float package goto private catch enum throw class extends try const finally debugger super alert isFinite personalbar Anchor isNan Plugin Area java print JavaArray prompt Array JavaClass prototype assign JavaObject Radio blur JavaPackage ref Boolean RegExp Button Link releaseEvents  location Reset caller Location resizeBy captureEvents locationbar resizeTo Checkbox Math routeEvent clearInterval menubar scroll clearTimeout MimeType scrollbars close moveBy scrollBy closed moveTo scrollTo confirm name Select constructor Date navigate setInterval defaultStatus navigator setTimeout document Navigator status Document netscape statusbar Element Number stop escape Object String eval onBlur Submit FileUpload onError sun find onFocus taint focus onLoad Text Form onUnload Textarea Frame open toolbar Frames opener top Function Option toString getClass outerHeight unescape Hidden OuterWidth untaint history Packages unwatch History pageXoffset valueOf home pageYoffset watch Image parent window parseFloat Window InnerHeight parseInt InnerWidth Password",
 
-	"$ dnaof create kindof me can hand", 
+	"$ dnaof create kindof me can hand it ⦙ ≀≀ ⌿⌚ ⌿⌛ α β γ δ ε ζ η θ ι κ λ μ ν ξ π ρ σ τ υ φ χ ψ ω",
 
 	"console log process fs",
 
@@ -124,10 +126,11 @@ TASMLexer.can.initKeywords = function() {
 	"mov add inc push pop div ret call leave enter lea rep repe sub shl shr cmp jz jmp je jne syscall and jle cld std imul",
 	"lab cycle macro virtual local label include if else end eq equ db db dw dd rb rd rq rw entry reverse common forward byte word dword qword",
 	"ah al bh bl ch cl dh dl si di sp bp ax bx cx dx eax ebx ecx edx esi edi esp ebp"
-	+ ' rax rbx rcx rdx rsi rdi rbp rsp r8 r9 r10 r11 r12 r13 r14 r15 r16',
+	+ ' rax rbx rcx rdx rsi rdi rbp rsp r8 r9 r10 r11 r12 r13 r14 r15 r16'
+	+ ' A B C D SP BP DI SI',
 	"segment writeable readable executable format",
-	"exe exi ent arg use set get var pair draw show func chars log puts",
-	"gset alloc global"]
+	"exe exi ent arg use set get var pair draw show func chars log puts ref setref",
+	"gset alloc global vmpush vmpop"]
 	
 	var keywords = {}
 	for (var i = 0; i < keywordSource.length; i++) {

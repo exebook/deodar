@@ -22,8 +22,8 @@ TMouseDemo.can.onMouse = function(K) {
 	return this.dna(K)
 }
 
-;(function (norton) {
+module.exports = function (norton) {
 	var k = TMouseDemo.create()
 	norton.getDesktop().showModal(k)
-})
+}
 

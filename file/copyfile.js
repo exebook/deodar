@@ -9,12 +9,12 @@ function taskCopyFileEmulate() {
 	} else if (this.state == 'active') {
 		if (this.progress == undefined) {
 			this.progress = 0
-			this.chain.progress.file.pos = 0
+			this.chain.progress.file.position = 0
 			this.chain.progress.file.max = 5
 			this.ifile = this.idir +'/'+ this.iname, this.ofile = this.odir
 		}
 		this.progress++
-		this.chain.progress.file.pos = this.progress
+		this.chain.progress.file.position = this.progress
 		if (this.progress == 5) {
 			this.state = 'done'
 		}
@@ -50,7 +50,7 @@ function initCopy(me) {
 	try { me.fout = fs.openSync(me.ofile, 'w') } 
 	catch (e) { return cancelMe(me) }
 	me.yield = 0
-	me.chain.progress.file.pos = 0
+	me.chain.progress.file.position = 0
 	me.chain.progress.file.max = me.fsize
 	me.chain.progress.filename.title = me.iname
 	return true
@@ -97,7 +97,7 @@ taskCopyFile = function() {
 	function writeDone(err, written, buf) {
 		if (err) return cancelMe(me)
 		me.fpos += written
-		me.chain.progress.file.pos = me.fpos
+		me.chain.progress.file.position = me.fpos
 		if (me.fpos == me.fsize) {
 			me.state = 'done'
 			fs.closeSync(me.fin)

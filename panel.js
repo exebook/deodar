@@ -38,6 +38,7 @@ TFileList.can.init = function() {
 	this.showDotfiles = false
 	this.detail = {}
 	this.mode = 'detail' //'brief'
+	this.columns = 2
 	this.react(0, keycode.ENTER, this.onEnter, { })
 	this.react(100, keycode['\\'], this.goToRoot)
 	this.react(100, keycode.F3, this.setSortMode, { arg:'name' })
@@ -62,7 +63,7 @@ TFileList.can.goToRoot = function() {
 
 theme = {
 	viewer: 'syntaxCyan',
-	editor: 'syntaxCyan',
+	editor: 'syntaxWhite',
 	syntaxCyan: {},
 	fileList: {
 		text: 0xff0,

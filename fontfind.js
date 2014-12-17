@@ -6,7 +6,9 @@
 */
 
 var knownGoodFonts = [ // можно пометить предпочитаемый фонт звёздочкой, например '*consola.ttf'
-	'*DejaVuSansMono.ttf',
+	'PTM75F_W.ttf',
+	'FiraMono-Regular.otf',
+	'DejaVuSansMono.ttf',
 	'DejaVuSansMono-Oblique.ttf',
 	'LiberationMono-Italic.ttf',
 	'LiberationMono-BoldItalic.ttf',
@@ -29,6 +31,7 @@ var knownGoodFonts = [ // можно пометить предпочитаемы
 	'consolab.ttf',
 	'consolaz.ttf',
 	'Inconsolata.otf',
+	'*FreeSerif.ttf',
 ], fontPattern = ['mono', 'consol', 'fix']
 var favouriteFont = '', fontPath
 
@@ -85,6 +88,16 @@ function taskFontSelect2() {
 }
 
 function taskFontSelect() {
+	this.chain.fontPath =
+// '/home/ya/.local/share/fonts/PTM55F_W.ttf'
+//'/usr/share/fonts/truetype/freefont/FreeSans.ttf'
+//'/x/fonts/freefont-20120503/sfd/GnuMono.ttf'
+'/home/ya/PTMono-Sym.ttf'
+//'/x/fonts/freefont-20120503/sfd/PTMono-Sym.ttf'
+//'/usr/share/fonts/truetype/unifont/unifont.ttf'
+	this.state = 'done'
+	this.chain.tick()
+	return
 	var me = this
 	require('child_process').exec('fc-list', function(err, data) {
 		data = data.split('\n')

@@ -4,8 +4,9 @@ TNorton.can.init = function(panelW, panelH) {
 	panelW >>= 1
 	panelH--
 	dnaof(this)
+	this.pos(0, 0)
 	this.name = 'TNorton'
-	this.output = TConsole.create(1,1)
+	this.output = TConsole.create()
 	this.left = TFilePanel.create(); this.left.name = 'Left'; this.left.list.name = 'LeftList'
 	this.right = TFilePanel.create(); this.right.name = 'Right'
 	this.label = TLabel.create('c:\\')
@@ -36,7 +37,6 @@ TNorton.can.init = function(panelW, panelH) {
 	this.left.list.load(a)
 	this.right.list.load(b)
 	this.updateInputLabel()
-	this.pos(0, 0)
 	this.size(2 * panelW, panelH + 1)
 
 	this.react(10, keycode.F7, this.userFindModal, { arg:this, role:['panel', 'input'] })
@@ -204,12 +204,6 @@ TNorton.can.showKeyCode = function() {
 TNorton.can.test = function() {
 }
 
-TNorton.can.escape =  function() {
-	if (this.input.getText().length > 0) this.input.setText(''); else this.outputFlip()
-	return true
-}
-
-
 TNorton.can.inputEdit = function(arg) {
 	if (this.actor == this.left || this.actor == this.right) {
 		if (arg == 'back') return this.input.commandBack()
@@ -375,9 +369,23 @@ TNorton.can.onItemEnter = function(list, item) {
 			var X = applyEnterRules(item.name)
 			if (X) {
 				if (X.deodar == true) {
-					var src = fs.readFileSync(list.path + '/' + X.name).toString()
-					var O = eval(src)
-					O(this)
+					//var src = fs.readFileSync(list.path + '/' + X.name).toString()
+					var src = list.path + '/' + X.name
+					delete require.cache[require.resolve(src)]
+					try {
+						var O = require(src)
+						O(this)
+					} catch (e) {
+						console.log('Plugin error:\n', e.stack)
+						this.output.log('Plugin error:\n', e.stack)
+						fs.writeFileSync('/var/tmp/deo.report', e.stack)
+						//(this.getDesktop(), name, viewClass, colors)
+						var D = this.viewFileName(TTextView, 
+						'/var/tmp/deo.report')
+						//messageBox(this.getDesktop(), e.stack)
+						//TODO: show dialog
+					}
+					return
 				} else if (X.spawn) {
 					spawn(X.spawn, [list.path + '/' + X.name])
 					return
@@ -438,7 +446,15 @@ TNorton.can.execute = function(command) {
 	this.output.respawn(command, '', cwd, f)
 }
 
+TNorton.can.escape =  function() {
+console.log('NORTON ESCAPE')
+	if (this.input.getText().length > 0) this.input.setText(''); 
+	else this.outputFlip()
+	return true
+}
+
 TNorton.can.outputFlip = function() {
+console.log('NORTON OUTPUT FLIP')
 	if (this.left.visible() || this.right.visible()) {
 		this.enterOutputMode()
 	} else {
