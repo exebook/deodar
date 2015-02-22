@@ -492,12 +492,13 @@ TNorton.can.exitOutputMode = function() {
 	this.getDesktop().display.caretReset()
 }
 
+globalConfigLoad = function() {
+}
+
 TNorton.can.viewFileName = function(viewClass, name) {
-	var colors = getColor[theme.viewer]
-	require('./intervision/palette')
-	if (viewClass === TFileEdit) colors = getColor[theme.editor]
-	if (viewClass === TTextView) colors = getColor[theme.viewer]
-	this.viewer = viewFile(this.getDesktop(), name, viewClass, colors)
+//	var colors = getColor[theme.editor]
+//	require('./intervision/palette')
+	this.viewer = viewFile(this.getDesktop(), name, viewClass)
 	this.viewer.norton = this
 	return true
 }

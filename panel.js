@@ -64,7 +64,7 @@ TFileList.can.goToRoot = function() {
 theme = {
 	viewer: 'syntaxCyan',
 	editor: 'syntaxWhite',
-	syntaxCyan: {},
+//	syntaxCyan: {},
 	fileList: {
 		text: 0xff0,
 		back: 0x700, 
@@ -79,6 +79,7 @@ theme = {
 		hilite: [
 			{ name: 'c', ext: ['.cpp','.c','.h'], text: 0xb1c },
 			{ name: 'js', ext: ['.js'], text: 0xf3e },
+			{ name: 'yy', ext: ['.yy'], text: 0x18c },
 			{ name: 'asm', ext: ['.asm',, '.inc'], text: 0x80f },
 		]
 		

@@ -1,3 +1,4 @@
+process.env.PATH += ':/home/ya/sh:.'
 debugConsoleOutput = false
 //        Начальный файл Рабочей Среды "Деодар"
 /*
@@ -49,6 +50,7 @@ debugConsoleOutput = false
 	F3 падает если в доступе отказано
 
 Идеи
+	чтобы не запускать ещё один деодар (в первом же открыты папки рабочие) сделать контрол-1 контрол-2 - вход в разные запомненые состояния панелей (достаточно запоминать имя папки справа и слева)
 	альт-колесо ходить по меткам
 	как бы запоминать sudo
 	замораживать курсор при долгой неактивности
@@ -110,7 +112,7 @@ log = console.log
 //require('./file/mask')
 //process.exit()
 
-require('./pretty_error')
+//require('./pretty_error')
 require('./dnaof')
 glxwin = require('./glxwin/glxwin.js')
 execSync = glxwin.native_sh
@@ -248,7 +250,7 @@ TController.can.onMouse = function(hand) {
 var TDeodar = kindof(TGLXVision)
 
 TDeodar.can.init = function(fontPath) {
-	dnaof(this, fontPath, 15, TController, 88, 51)
+	dnaof(this, fontPath, 23, TController, 37*2,40)
 	DESK = this.desktop
 }
 

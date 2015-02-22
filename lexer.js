@@ -22,8 +22,9 @@ TLexer.can.charType = function(c) {
 TLexer.can.colorizeString = function(text) {
 //	if (this.keywords == undefined) this.keywords = this.initKeywords()
 	var c
-	var sym = '\'`~!@#$%^&*()-+={[}]:;"?/>.<,\\|≠≟≁∼≃≄⁰¹²³⁴⁵⁶⁷⁸⁹ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖʱʳˢᵗᵘᵛʷˣʸᶻ', num = '1234567890', spc = ' \n\r\t'
-	var sym2 = '⏚☎✚ᗰᙏᗲᗶᗼᙢᙕᙨᙜᘻ❶❷❸❹❺❻❼❽❾❿①②③④⑤⑥⑦⑧⑨⑩∆↟ꕉ⌶⫴⋃⨄ꔬ⧉ꗚ❄⩪△◬⟡⌑≞≂≈≀⍽★⬠⚂♻★⏀⚪⚫⬤⋀⋁↥⎇⌚⌛≣⦾⦿⬌⬊⬈⬉⬋⬍∞⧖∅⧗⌥⥹⊜∅⨃∇➮ꗝロ'
+	var sym = '\'`~!@#$%^&*()-+={[}]:;"?/>.<,\\|≠≟≁∼≃≄⁰¹²³⁴⁵⁶⁷⁸⁹ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖʱʳˢᵗᵘᵛʷˣʸᶻⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ', num = '1234567890', spc = ' \n\r\t'
+	var sym2 = '⏚☎✚ᗰᙏᗲᗶᗼᙢᙕᙨᙜᘻ❶❷❸❹❺❻❼❽❾❿①②③④⑤⑥⑦⑧⑨⑩∆↟ꕉ⌶⫴⋃⨄ꔬ⧉ꗚ❄⩪△◬⟡⌑≞≂≈≀⍽★⬠⚂♻★⏀⚪⚫⬤⋀⋁↥⎇⌚⌛≣⦾⦿⬌⬊⬈⬉⬋⬍∞⧖∅⧗⌥⥹⊜∅⨃∇➮ꗝꗌꖇ⛁⛃⥹☛'
+
 	var COLOR = [], state = 'norm', C
 	var cnorm = 0, csym = 1, cnum = 2, cstr = 3, cid = 4, ckey = 5
 	s = text.split('')
@@ -76,9 +77,9 @@ TJSLexer.can.initKeywords = function() {
 	var keywordSource = [
 	"break export return case for switch comment function continue if typeof instanceof import var delete in do label while else new with abstract implements protected boolean instanceOf public byte int short char interface static double long synchronized native throws final  transient float package goto private catch enum throw class extends try const finally debugger super alert isFinite personalbar Anchor isNan Plugin Area java print JavaArray prompt Array JavaClass prototype assign JavaObject Radio blur JavaPackage ref Boolean RegExp Button Link releaseEvents  location Reset caller Location resizeBy captureEvents locationbar resizeTo Checkbox Math routeEvent clearInterval menubar scroll clearTimeout MimeType scrollbars close moveBy scrollBy closed moveTo scrollTo confirm name Select constructor Date navigate setInterval defaultStatus navigator setTimeout document Navigator status Document netscape statusbar Element Number stop escape Object String eval onBlur Submit FileUpload onError sun find onFocus taint focus onLoad Text Form onUnload Textarea Frame open toolbar Frames opener top Function Option toString getClass outerHeight unescape Hidden OuterWidth untaint history Packages unwatch History pageXoffset valueOf home pageYoffset watch Image parent window parseFloat Window InnerHeight parseInt InnerWidth Password",
 
-	"$ dnaof create kindof me can hand it ⦙ ≀≀ ⌿⌚ ⌿⌛ α β γ δ ε ζ η θ ι κ λ μ ν ξ π ρ σ τ υ φ χ ψ ω",
+	"$ dnaof create kindof me can hand it ⦙ ≀≀ ⌿⌚ ⌿⌛ α β γ δ ε ζ η θ ι κ λ μ ν ξ π ρ σ τ υ φ χ ψ ω ロ",
 
-	"console log process fs",
+	"console log process fs a b c",
 
 	"THolder TConsole TController varTDeodar TDriveMenu TDeleteDialog TSearch TResults TFindWindow TNorton TFileList TFileDetail TFilePanel TControl TButton TLabel TInput TDoneBar TScrollBar TDialog TOkCancel TInputBox TExitSaveCancel TMessageBox TGLXVision TMouse TEdit TGroup TDesktop TObject TKeyInput TList TQuickFind TSelection TText TTextView TKeyCode THelp TDriveList TModalTextView TFileEdit TView TWindow",
 
