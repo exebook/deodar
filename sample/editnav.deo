@@ -1,31 +1,25 @@
+module.exports = function(n) {
+	norton = n
+	checkConfig()
+	console.log('CONFIG CHECKED')
+	norton.output.log('YACH CHECK')
+}
+
 function checkConfig() {
-	var file = expandPath('~/.deodar/driveMenu.js')
-	
+	var file = expandPath('~/.deodar/editnav.js')
 	if (fs.existsSync(file) == false) {
 		try {
 				var templateDriveMenu = [
-				'var list = [',
-				"{ key:keycode['`'], title:'^~ (HOME)', path:'~', onSelect: function(){",
-				"	this.list.showDotfiles = true",
-				"}},",
-				"{ key:'m', title:'/^media', path:'/media/ya' },",
-				"{ key:'/', title:'корень (^/)', path:'/' },",
-				"{ key:'e', title:'конфиги (/^etc)', path:'/etc' },",
-				"{ key:keycode.TAB, title:'^^^TAB Тут-же', path:function() { ",
-				"	return this.parent.getOpposite(this).list.path",
-				"}},",
-				"]",
-				"list // return last expression"
+				'module.exports = {item1: "/path1","dir1":{item1:"/dir1/path1",item2:"/dir1/path2"}, dir2:{item1:"/dir2/path1",item2:"/dir2/path2"}, item2: "/path2"};\n' // return last expression"
 				]
 				fs.writeFileSync(file, templateDriveMenu.join('\n'))
 		} catch (e) { log('no js create', e) }
 	}
 }
 
-checkConfig()
 	
-TDriveMenu = kindof(TDialog)
-TDriveMenu.can.init = function(panel) {
+TObjectView = kindof(TDialog)
+TObjectView.can.init = function(panel) {
 	dnaof(this, 40, 1)
 	var me = this
 	this.panel = panel
@@ -73,13 +67,13 @@ TDriveMenu.can.init = function(panel) {
 	this.react(0, keycode.F4, this.editSource)
 }
 
-TDriveMenu.can.editSource = function () {
+TObjectView.can.editSource = function () {
 	if (this.sourceFile)
 		this.panel.parent.viewFileName(TFileEdit, this.sourceFile)
 	return true
 }
 
-TDriveMenu.can.pathSelect = function (item) {
+TObjectView.can.pathSelect = function (item) {
 	this.close()
 	if (typeof item.onSelect == 'function') item.onSelect.apply(this.panel)
 	var path
@@ -101,12 +95,12 @@ TDriveMenu.can.pathSelect = function (item) {
 	this.panel.parent.updateInputLabel()
 }
 
-TDriveMenu.can.onEnter = function() {
+TObjectView.can.onEnter = function() {
 	this.pathSelect(this.list.items[this.list.sid])
 }
 
 showDriveMenu = function(Desktop, panel) {
-	var menu = TDriveMenu.create(panel)
+	var menu = TObjectView.create(panel)
 	if (menu.sourceFile == undefined) return
 	Desktop.showModal(menu, panel.x + (panel.w >> 1) - (menu.w >> 1), 3)
 }

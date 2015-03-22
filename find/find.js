@@ -34,8 +34,14 @@ TFindWindow.can.init = function(startDir) {
 	this.react(0, keycode.PAGE_UP, this.results.moveCursor.bind(this.results), {arg:'pageup'})
 	this.react(0, keycode.PAGE_DOWN, this.results.moveCursor.bind(this.results), {arg:'pagedown'})
 	this.react(0, keycode.F4, this.startEdit)
+	this.react(0, keycode.TAB, this.focusInputLine)
 	this.bottomTitle = 'Для поиска в содержимом файлов начните запрос со знака \' или " '
 	this.history = []
+}
+
+TFindWindow.can.focusInputLine = function () {
+	this.actor = this.input
+	return true
 }
 
 TFindWindow.can.size = function(w, h) {
@@ -142,7 +148,8 @@ TFindWindow.can.startSearch = function() {
 		this.query = this.query.substr(1, this.query.length)
 	}
 	handyContext.lastSearchQuery = this.query
-	this.input.setText('')
+//	this.input.setText('')
+	this.input.shiftSel('all')
 	this.history.push(this.query)
 	this.search.start({startDir: this.startDir})
 	return true
@@ -181,6 +188,7 @@ TNorton.can.userFindModal = function() {
 	this.find.panel = panel
 	this.find.pos(5, 3)
 	this.find.size(this.w - 10, this.h - 6)
+	this.find.actor = this.find.input
 	this.getDesktop().showModal(this.find)
 }
 

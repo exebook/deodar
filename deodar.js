@@ -103,7 +103,7 @@ deodarVersion = {
 	abstract: 'Выбрано направление развития, соединены опорные технологии (Xlib, freetype, OpenGL, GLX, Xinput, Xcursor, Node.js, x11clip), созданы основные части, панели, редактор, работа с деревом.',
 	people: ['Яков Нивин'],
 }
-
+require('dotcall')
 spawn = require('child_process').spawn
 //actor==panel cursor->actor
 fs = require('fs');
@@ -111,18 +111,19 @@ TODO = false
 log = console.log
 //require('./file/mask')
 //process.exit()
-
 //require('./pretty_error')
 require('./dnaof')
+require('room')
 glxwin = require('./glxwin/glxwin.js')
 execSync = glxwin.native_sh
-require('./intervision')
+require('./intervision/intervision.yy')
 require('./lexer')
 require('./panel')
 require('./editfile')
 require('./makedir')
 require('./file/delfile')
 require('./norton')
+require('./guide')
 require('./console')
 require('./file/chain')
 require('./file/copyfile')
@@ -250,7 +251,10 @@ TController.can.onMouse = function(hand) {
 var TDeodar = kindof(TGLXVision)
 
 TDeodar.can.init = function(fontPath) {
-	dnaof(this, fontPath, 23, TController, 37*2,40)
+	dnaof(this, fontPath, 18, TController, 
+	44*2,52)
+	//37*2,40)
+	room.say('desktop created', this.desktop)
 	DESK = this.desktop
 }
 
