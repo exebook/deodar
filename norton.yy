@@ -33,7 +33,7 @@ TNorton.can.init = ➮(panelW, panelH) {
 //	a = '/v/deodar/find'
 	a = expandPath(a)
 	b = expandPath(b)
-	⚫panelReduce ⊜
+	⚫panelReduce = 0
 	⚫left.list.load(a)
 	⚫right.list.load(b)
 	⚫updateInputLabel()
@@ -209,7 +209,7 @@ TNorton.can.smartBackSpace = ➮{
 TNorton.can.panelsResize = ➮(arg) {
 	⌥ (arg ≟ 'up') ⚫panelReduce++
 	⌥ (arg ≟ 'down') ⚫panelReduce--
-	⌥ (⚫panelReduce < 0) ⚫panelReduce ⊜
+	⌥ (⚫panelReduce < 0) ⚫panelReduce = 0
 	⌥ (⚫panelReduce > ⚫h >> 1) ⚫panelReduce = ⚫h >> 1
 	∇ W = ⚫w >> 1, H = ⚫h - 1
 	⌥ (⚫input.visible() ≠ ⦿) H++

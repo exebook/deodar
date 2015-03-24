@@ -148,7 +148,7 @@ TFileList.can.drawItem = ➮(A) {
 }
 
 TFileList.can.goUpLevel = ➮ {
-	⚫sid ⊜
+	⚫sid = 0
 	⌥ (⚫path ≟ '/') $ ⦿
 	$ ⚫onEnter()
 }
@@ -216,8 +216,8 @@ TFileList.can.load = ➮(path) {
 	⚫selChanged()
 	⚫path = path
 	⚫items = loadDir(⚫path, ⚫sortMode, ⚫showDotfiles)
-	⚫sid ⊜
-	⚫d ⊜
+	⚫sid = 0
+	⚫d = 0
 	⚫parent.onLoad()
 	$ ⦿
 //		if (new_sid == undefined) this.sid = 0; else sid = new_sid
@@ -226,7 +226,7 @@ TFileList.can.load = ➮(path) {
 TFileList.can.reload = ➮{
 	∇ s = ⚫items[⚫sid].name, d = ⚫d
 	⚫load(⚫path)
-	⚫sid ⊜
+	⚫sid = 0
 	i ⬌ this.items 
 		⌥ (⚫itemsⁱ.name ≟ s) { ⚫sid = i ⦙ ⚫onItem(i) ⦙ ⚫d = d ⦙ @ }
 	⚫onItem(0) ⦙
@@ -240,7 +240,7 @@ TFileList.can.onItem = ➮{
 TFileList.can.selChanged = ➮{
 	⌥ (⚫selection ↥ ≟ 0) ⏀ ⚫detail.sel
 	⎇ {
-		∇ x ⊜
+		∇ x = 0
 		i ⬌ this.selection {
 			∇ n = ⚫selectionⁱ
 			⌥ (⬤ ⚫itemsⁿ.size ≟ 'number') x += ⚫itemsⁿ.size
@@ -366,7 +366,7 @@ TFilePanel.can.onLoad = ➮{
 		⌥ (j >= 0) s = s⩪(j + ⚫root.path ↥, s ↥)
 		⚫title = ⚫root.title.replace(/\^/g, '') + s
 	}
-	∇ size ⊜, it = ⚫list.items
+	∇ size = 0, it = ⚫list.items
 	i ⬌ it 
 		⌥ (⬤ itⁱ.size ≟ 'number') size += itⁱ.size
 	∇ count = it ↥
