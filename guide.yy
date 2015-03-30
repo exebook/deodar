@@ -1,3 +1,10 @@
+/*
+	TODO
+	⚫ gotofolder
+	⚫ remove key, duplicate key
+*/
+RECENT_ENTRIES ∆ 8
+
 TGuideList = kindof(TList)
 TGuideList.can.init = ➮ {
 	dnaof(⚪)
@@ -21,14 +28,30 @@ TGuideList.can.drawItem = ➮(X) {
 		⌥ (tⁱ ≟ '^') { lights ⬊(i) ⦙ ♻ }
 		s += tⁱ
 	}
-	⌥ (s ↥ > X.w) s = s⩪(0, X.w)
+	⌥ (s↥ > X.w) s = s⩪(0, X.w)
 	⚫rect(X.x, X.y, X.w, 1, ∅, ∅, B)
 	∇ x ⊜
+	❶ X.item.key
+	⌥ (①) ⚫print(x, X.y, ①, F, B)
+	x += 2
 	⚫print(x, X.y, s, F, B)
 	i ⬌ lights
 		⚫set(lightsⁱ + x, X.y, t[lightsⁱ+1],
 			⚫pal⁶, ⚫pal³)
 	$ ⦿
+}
+
+➮ removeOlderAndSort L {
+	R ∆ []
+	c ∆ 0
+	l ⬌ L {
+		❶ Lˡ
+		⌥ (①key) ♻
+		⌥ (++c > RECENT_ENTRIES) ♻
+		R ⬊ ①
+	}
+	l ⬌ L { ❶ Lˡ ⦙ ⌥ (①key) R ⬊ ① }
+	$ R
 }
 
 ∇ sourceFile = ∅
@@ -50,7 +73,18 @@ TGuide = kindof(TDialog)
 //		Lⁱ.name = t
 //		// TODO: улучшить
 //	}
+	L = removeOlderAndSort(L)
+//	L = L❄ (➮ { $ a.key ≟ ∅ })
 	$L
+}
+
+➮ saveList L {
+	∇ src = fs.readFileSync(sourceFile)≂
+	src = src.split('[')⁰ + '\n'
+		+ ꗌ(L,0,'  ')
+		+ '\n' + src.split(']')¹
+	src = src.replace(/\n\n/g, '\n')//откуда берутся?
+	fs.writeFileSync(sourceFile, src)
 }
 
 TGuide.can.init = ➮ (norton) {
@@ -70,30 +104,54 @@ TGuide.can.init = ➮ (norton) {
 	}
 	width += 2
 	⚫list.pal = ⚫pal
-	⚫add(⚫list, width, L↥)
+	listH ∆ L↥, maxH = norton.h - (⚫border * 3 * 2 + 4)
+	⌥ (listH > maxH) listH = maxH
+	⚫add(⚫list, width, listH)
 	⚫addRow()
 	⚫size(width + ⚫border * 3 * 2 + 4, ⚫addY + 2)
-	⚫bottomTitle = 'Esc:отмена,F4:правка?'
+	⚫bottomTitle = 'F5:задать,Tab:ветка'
 	⚫react(0, keycode.ESCAPE, ⚫close)
 	⚫react(10, keycode.ESCAPE, ⚫close)
 	⚫react(0, keycode.ENTER, ⚫onEnter)
 	⚫react(0, keycode.DELETE, ⚫onDelete)
 	⚫react(10, keycode.DELETE, ⚫onDelete)
 	⚫react(0, keycode.F4, ⚫editSource)
+	⚫react(0, keycode.F5, ⚫assignKey)
+	⚫react(0, keycode.TAB, ⚫gotoFolder)
 }
 
-➮ saveList L {
-	∇ src = fs.readFileSync(sourceFile)≂
-	src = src.split('[')⁰ + '\n'
-		+ ꗌ(L,0,'  ')
-		+ '\n' + src.split(']')¹
-	fs.writeFileSync(sourceFile, src)
+TGuide.can.gotoFolder = ➮ {
+	⌥ (⚫norton && ⚫norton.actor) {
+		s ∆ ⚫norton.actor.name
+		⌥ (s ≟ 'Right' || s ≟ 'Left') {
+			❶ ⚫norton.actor // panel
+			❷ ⚫list.items[⚫list.sid].path
+			② = ②substr(0, ②lastIndexOf('/'))
+			① list.path = expandPath(②)
+			⏀ ① root
+			① list.reload()
+			① parent.updateInputLabel()
+		}
+	}
+	⚫close()
+}
+
+TGuide.can.assignKey = ➮ {
+	me ∆ ⚪
+	L ∆ ⚫list
+	makeKeyChoose(⚫getDesktop(), ➮ {
+		∇ ch
+		⌥ (a) ch = a.char
+		L.items[L.sid].key = ch
+		me.L[L.sid].key = ch
+		saveList(me.L)
+	})
 }
 
 TGuide.can.onDelete = ➮{
 	L ∆ loadList()
 	L.splice(⚫list.sid, 1)
-	⚫list.items.splice(⚫list.sid, 1)
+	⚫list.items⨄(⚫list.sid, 1)
 	⌥ (⚫list.sid >= L ↥) ⚫list.sid--
 	saveList(L)
 	$⦿
@@ -148,11 +206,21 @@ TGuide.can.onKey = ➮ {
 		}
 	}
 	R ∆ dnaof(⚪, a)
-	⌥ (a.physical && a.down) {
-		s ∆ '->' + a.key + ', "' + a.char + '"'
-		ロ s
-		⚫title = s
+	⌥ (a.physical && a.down && a.char) {
+		L ∆ ⚫list.items
+		i ⬌ L ⌥ (Lⁱ.key ≟ a.char) {
+			⚫list.sid = i
+			⚫list.scrollIntoView()
+			⚫choosenItem = i
+			$⦿
+		}
+		⏀ ⚫choosenItem
 		R=⦿
+	}
+	⌥ (a.physical && !a.down && ⚫choosenItem ≠ ∅) {
+		i ∆ ⚫choosenItem
+		⏀ ⚫choosenItem
+		⚫onEnter()
 	}
 	$R
 }
@@ -161,10 +229,12 @@ TGuide.can.onKey = ➮ {
 
 showGuide = ➮(norton, curFile) {
 	∇ guide = TGuide.create(norton)
+	guide.norton = norton
 	guide.curFile = curFile
 	L ∆ guide.list.items
 	i ⬌ L {
 		⌥ (Lⁱ.path ≟ curFile) guide.list.sid = i
+		guide.list.scrollIntoView()
 	}
 	guide.list.startSid = guide.list.sid
 	⌥ (guide.list.items ↥ > 0)
@@ -181,3 +251,4 @@ room.listen('desktop created', ➮ {
 //	ロ 'Opening guide'
 //	showGuide(desk)
 //})
+	

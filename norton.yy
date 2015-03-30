@@ -180,7 +180,6 @@ TNorton.can.hidePanel = ➮ {
 }
 
 TNorton.can.reloadPanel = ➮{
-log('ctrl r')
 	⌥ (⚫actor ≟ ⚫left || ⚫actor ≟ ⚫right) {
 		log('reloadin')
 		⚫actor.list.reload()
@@ -249,6 +248,7 @@ fs.readFile(expandPath('~/.deodar/command_history.js'),
 	⌥(err ≠ ∅) commandHistory = []
 	⎇ commandHistory = eval(data≂)
 })
+
 TNorton.can.historyNavigate = ➮(arg) {
 	∇ L = commandHistory.list
 	⌥ (L ≟ ∅) $
@@ -519,7 +519,7 @@ TNorton.can.viewFileName = ➮(viewClass, name) {
 //	var colors = getColor[theme.editor]
 //	require('./intervision/palette')
 	⚫viewer = viewFile(⚫getDesktop(), name, viewClass)
-	⚫viewer.norton = ⚪
+	⌥ (⚫viewer) ⚫viewer.norton = ⚪
 	$ ⦿
 }
 

@@ -62,28 +62,9 @@ TFileList.can.goToRoot = ➮{
 
 
 theme = {
-	viewer: 'syntaxCyan',
+	viewer: 'syntaxWhite',
 	editor: 'syntaxWhite',
-//	syntaxCyan: {},
-	fileList: {
-		text: 0xff0,
-		back: 0x700, 
-		dir: 0xfff,
-		textHint: 0x88f,
-		backHint: 0x00f,
-		textHintFocused: 0,
-		backHintFocused: 0,
-		focused: 0x880,
-		textExec: 0x0f0,
-		textSelected: 0x0ff,
-		hilite: [
-			{ name: 'c', ext: ['.cpp','.c','.h'], text: 0xb1c },
-			{ name: 'js', ext: ['.js'], text: 0xf3e },
-			{ name: 'yy', ext: ['.yy'], text: 0x18c },
-			{ name: 'asm', ext: ['.asm',, '.inc'], text: 0x80f },
-		]
-		
-	}
+	fileList: getColor.fileList
 }
 
 TFileList.can.fileHilite = ➮(item) {
