@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/exebook/deodar",
   "dependencies": {
-    "vt": "~0.1.1"
+    "vt": "~0.1.1",
+    "dotcall": "~0.2.30",
+    "room": "~0.0.2"
   }
 }

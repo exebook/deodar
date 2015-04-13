@@ -1,5 +1,5 @@
 sudo apt-get install npm curl git clang g++
-sudo apt-get install libx11-dev libxcursor-dev mesa-common-dev libfreetype6-dev libgl1-mesa-dev
+sudo apt-get install libx11-dev libxcursor-dev mesa-common-dev libfreetype6-dev libgl1-mesa-dev libv8-3.14-dev
 sudo npm install -g n
 sudo n 0.10.26
 node --version
