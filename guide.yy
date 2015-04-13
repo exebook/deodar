@@ -9,14 +9,15 @@ TGuideList = kindof(TList)
 TGuideList.can.init = ➮ {
 	dnaof(⚪)
 	// Должно работать при зажатом ALT
-	⚫react(10, keycode.UP, ⚫moveCursor, { arg:'up', role:['move'] })
-	⚫react(10, keycode.DOWN, ⚫moveCursor, { arg:'down', role:['move'] })
-	⚫react(10, keycode.LEFT, ⚫moveCursor, { arg:'left', role:['move'] })
-	⚫react(10, keycode.RIGHT, ⚫moveCursor, { arg:'right', role:['move'] })
-	⚫react(10, keycode.HOME, ⚫moveCursor, { arg:'home', role:['move'] })
-	⚫react(10, keycode.END, ⚫moveCursor, { arg:'end', role:['move'] })
-	⚫react(10, keycode.PAGE_UP, ⚫moveCursor, { arg:'pageup', role:['move'] })
-	⚫react(10, keycode.PAGE_DOWN, ⚫moveCursor, { arg:'pagedown', role:['move'] })
+	❶ keycode
+	⚫react(10, ①UP, ⚫moveCursor, { arg:'up', role:['move'] })
+	⚫react(10, ①DOWN, ⚫moveCursor, { arg:'down', role:['move'] })
+	⚫react(10, ①LEFT, ⚫moveCursor, { arg:'left', role:['move'] })
+	⚫react(10, ①RIGHT, ⚫moveCursor, { arg:'right', role:['move'] })
+	⚫react(10, ①HOME, ⚫moveCursor, { arg:'home', role:['move'] })
+	⚫react(10, ①END, ⚫moveCursor, { arg:'end', role:['move'] })
+	⚫react(10, ①PAGE_UP, ⚫moveCursor, { arg:'pageup', role:['move'] })
+	⚫react(10, ①PAGE_DOWN, ⚫moveCursor, { arg:'pagedown', role:['move'] })
 }
 
 TGuideList.can.drawItem = ➮(X) {
@@ -30,7 +31,7 @@ TGuideList.can.drawItem = ➮(X) {
 	}
 	⌥ (s↥ > X.w) s = s⩪(0, X.w)
 	⚫rect(X.x, X.y, X.w, 1, ∅, ∅, B)
-	∇ x ⊜
+	x ∆ 0
 	❶ X.item.key
 	⌥ (①) ⚫print(x, X.y, ①, F, B)
 	x += 2
@@ -110,14 +111,15 @@ TGuide.can.init = ➮ (norton) {
 	⚫addRow()
 	⚫size(width + ⚫border * 3 * 2 + 4, ⚫addY + 2)
 	⚫bottomTitle = 'F5:задать,Tab:ветка'
-	⚫react(0, keycode.ESCAPE, ⚫close)
-	⚫react(10, keycode.ESCAPE, ⚫close)
-	⚫react(0, keycode.ENTER, ⚫onEnter)
-	⚫react(0, keycode.DELETE, ⚫onDelete)
-	⚫react(10, keycode.DELETE, ⚫onDelete)
-	⚫react(0, keycode.F4, ⚫editSource)
-	⚫react(0, keycode.F5, ⚫assignKey)
-	⚫react(0, keycode.TAB, ⚫gotoFolder)
+	❶ keycode
+	⚫react(0, ①ESCAPE, ⚫close)
+	⚫react(10, ①ESCAPE, ⚫close)
+	⚫react(0, ①ENTER, ⚫onEnter)
+	⚫react(0, ①DELETE, ⚫onDelete)
+	⚫react(10, ①DELETE, ⚫onDelete)
+	⚫react(0, ①F4, ⚫editSource)
+	⚫react(0, ①F5, ⚫assignKey)
+	⚫react(0, ①TAB, ⚫gotoFolder)
 }
 
 TGuide.can.gotoFolder = ➮ {
