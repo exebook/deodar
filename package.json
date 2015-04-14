@@ -1,9 +1,11 @@
 {
   "name": "deodar",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Классическая двухпанельная рабочая среда (коммандер) для О.С. Линукс",
   "main": "deodar.js",
   "scripts": {
+    "preinstall": "sudo apt-get install libx11-dev libxcursor-dev mesa-common-dev libfreetype6-dev libgl1-mesa-dev libv8-3.14-dev",
+    "postinstall": "mv node_modules/glxwin ./;mv node_modules/x11clip ./;mv node_modules/dnaof ./;mv node_modules/intervision ./;mv node_modules/terminal.js ./",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,8 +22,14 @@
   },
   "homepage": "https://github.com/exebook/deodar",
   "dependencies": {
-    "vt": "~0.1.1",
-    "dotcall": "~0.2.30",
-    "room": "~0.0.2"
+    "vt": "0.1.1",
+    "dotcall": "0.2.30",
+    "room": "0.0.1",
+    "terminal.js": "0.1.2",
+    "pty.js": "0.2.7-1",
+    "glxwin": "exebook/glxwin",
+    "x11clip": "exebook/x11clip",
+    "dnaof": "exebook/dnaof",
+    "intervision": "exebook/intervision"
   }
 }
