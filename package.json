@@ -4,8 +4,7 @@
   "description": "Классическая двухпанельная рабочая среда (коммандер) для О.С. Линукс",
   "main": "deodar.js",
   "scripts": {
-    "preinstall": "sudo apt-get install libx11-dev libxcursor-dev mesa-common-dev libfreetype6-dev libgl1-mesa-dev libv8-3.14-dev",
-    "postinstall": "mv node_modules/glxwin ./;mv node_modules/x11clip ./;mv node_modules/dnaof ./;mv node_modules/intervision ./;mv node_modules/terminal.js ./",
+    "postinstall": "rm -Rf glxwin x11clip dnaof intervision terminal.js;mv node_modules/glxwin ./;mv node_modules/x11clip ./;mv node_modules/dnaof ./;mv node_modules/intervision ./;mv node_modules/terminal.js ./",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
