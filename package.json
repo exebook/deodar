@@ -23,7 +23,7 @@
   "dependencies": {
     "vt": "0.1.1",
     "dotcall": "0.2.30",
-    "room": "0.0.1",
+    "room": "0.0.2",
     "terminal.js": "0.1.2",
     "pty.js": "0.2.7-1",
     "glxwin": "exebook/glxwin",
