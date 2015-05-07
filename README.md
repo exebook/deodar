@@ -23,5 +23,11 @@
 
 [Как установить из исходников](https://github.com/exebook/deodar/blob/master/%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0.%D0%B1%D1%83%D0%BA%D0%B2)
 
+## Быстрая установка / Quick start (Ubuntu/Debian)
+```sh
+sudo apt-get install nodejs-legacy npm libx11-dev libxcursor-dev mesa-common-dev libfreetype6-dev libgl1-mesa-dev libv8-3.14-dev
+npm install deodar
+```
+
 [скриншот]: https://raw.github.com/exebook/deodar/master/picture/peek.png
 
