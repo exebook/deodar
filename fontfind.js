@@ -92,7 +92,7 @@ function taskFontSelect() {
 // '/home/ya/.local/share/fonts/PTM55F_W.ttf'
 //'/usr/share/fonts/truetype/freefont/FreeSans.ttf'
 //'/x/fonts/freefont-20120503/sfd/GnuMono.ttf'
-__dirname + '/elfu.ttf'
+__dirname + '/fonts/elfu.ttf'
 //'/x/fonts/freefont-20120503/sfd/PTMono-Sym.ttf'
 //'/usr/share/fonts/truetype/unifont/unifont.ttf'
 	this.state = 'done'
