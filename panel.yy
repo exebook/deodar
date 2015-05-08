@@ -247,8 +247,9 @@ TFileDetail.can.draw = ➮(state) {
 		⚫set(⚫filelist.column_xⁱ, 0, graphChar['┴'], ⚫pal⁰ | 0x8000, ⚫pal¹)
 	∇ x = ⍽(⚫filelist.w / 2)
 	⌥ (⚫sel ≠ ∅) {
+		//TODO: hardcoded yellow 0x880 -> move to the theme
 		⚫rect(x - (⚫sel ↥ >> 1) - 1, 0, ⚫sel ↥ + 2, 1, ' ', ⚫pal³, 0x880)
-		⚫print(x - (⚫sel ↥ >> 1), 0, ⚫sel)
+		⚫print(x - (⚫sel ↥ >> 1), 0, ⚫sel, ⚫pal³, 0x880)
 	}
 	➮ zz s { s=s+'' ⦙ ⧖ (s ↥ < 2)s='0'+s ⦙ $ s }
 

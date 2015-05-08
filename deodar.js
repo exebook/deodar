@@ -1,3 +1,4 @@
+console.time('START')
 process.env.PATH += ':/home/ya/sh:.'
 debugConsoleOutput = false
 //        Начальный файл Рабочей Среды "Деодар"
@@ -118,7 +119,7 @@ require('./dnaof')
 require('room')
 glxwin = require('./glxwin/glxwin.js')
 execSync = glxwin.native_sh
-require('./intervision/intervision.yy')
+require('./intervision/intervision')
 require('./lexer')
 require('./panel')
 require('./editfile')
@@ -268,6 +269,7 @@ function taskDeodarCreate() {
 	+ 'лицензия: ^1Unlicense^0, автор: Яков Нивин  *')
 	with (deodarVersion) A.desktop.main.output.colorLog(
 		'   *  ^3' + label + '^0, ^4' + sub + '^0, ^5' + time)
+console.timeEnd('START')
 	glxwin.mainLoop()
 	this.state = 'done'
 	this.chain.tick()

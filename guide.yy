@@ -60,14 +60,14 @@ TGuideList.can.drawItem = ➮(X) {
 TGuide = kindof(TDialog)
 ➮ loadList {
 	∇ L = [ ]
-	⌥ (fs.existsSync(expandPath('~/.deodar/guide.js'))) {
-		∇ js = expandPath('~/.deodar/guide.js')
+	js ∆ expandPath('~/.deodar/guide.js')
+	sourceFile = js
+	⌥ (fs.existsSync(js)) {
 		try {
 			∇ src = fs.readFileSync(js)≂
 			L = eval(src)
 		} catch (e) { }
-		sourceFile = js
-	}
+	} ⎇ fs.writeFileSync(js, '[]')
 //	i ⬌ L {
 //		∇ t = Lⁱ.path
 //		Lⁱ.title = t
@@ -80,6 +80,7 @@ TGuide = kindof(TDialog)
 }
 
 ➮ saveList L {
+	⌥ (!sourceFile) $
 	∇ src = fs.readFileSync(sourceFile)≂
 	src = src.split('[')⁰ + '\n'
 		+ ꗌ(L,0,'  ')
