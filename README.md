@@ -27,6 +27,7 @@
 ```sh
 sudo apt-get install nodejs-legacy npm libx11-dev libxcursor-dev mesa-common-dev libfreetype6-dev libgl1-mesa-dev libv8-3.14-dev
 npm install deodar
+DISPLAY=:0.0 node node_modules/deodar/deodar.js
 ```
 
 [скриншот]: https://raw.github.com/exebook/deodar/master/picture/peek.png
