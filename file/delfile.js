@@ -22,6 +22,18 @@ TDeleteDialog.can.init = function(message, callback) {
 	$.size($.w, $.addY + 3)
 }
 
+function rmdir(d) {
+	var self = arguments.callee
+	if (fs.existsSync(d)) {
+		fs.readdirSync(d).forEach(function(file) {
+			var C = d + '/' + file
+			if (fs.statSync(C).isDirectory()) self(C)
+			else fs.unlinkSync(C)
+		})
+		fs.rmdirSync(d)
+	}
+}
+
 promptDeleteFile = function(panel) {
 	var
 		list = [], sel = panel.list.selection, it = panel.list.items,
@@ -36,9 +48,14 @@ promptDeleteFile = function(panel) {
 		}
 	}
 	var delDialog = TDeleteDialog.create('Удалить ' + list.length + ' штук?', function() {
-		for (var i = 0; i < list.length; i++)
-			glxwin.native_sh
-			("rm -R '" + path + '/' + list[i] + "'")
+		for (var i = 0; i < list.length; i++) {
+			var f = path + '/' + list[i]
+			try {
+				if (fs.statSync(f).isDirectory()) 
+					rmdir(f);
+				else fs.unlinkSync(f)
+			} catch (e) { console.log(e) }
+		}
 		panel.list.reload()
 		 // теперь переставить курсор
 		if (sid > panel.list.items.length - 1) sid = panel.list.items.length - 1

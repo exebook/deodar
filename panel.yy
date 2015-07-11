@@ -1,3 +1,5 @@
+ロ 'abcde'≀'bc'.slice(1)
+
 SortModes = [
 	{char: 'n', title:'Имя', func:➮(L) { $ L❄(➮(a, b) { ⌥ (a.dir ≠ b.dir) $ b.dir - a.dir ⦙ ⎇ $ a.name.localeCompare(b.name) }) }},
 	{char: 'x', title:'Расширение', func:➮(L) {

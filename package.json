@@ -1,6 +1,6 @@
 {
   "name": "deodar",
-  "version": "0.1.1",
+  "version": "0.0.3",
   "description": "Классическая двухпанельная рабочая среда (коммандер) для О.С. Линукс",
   "main": "deodar.js",
   "scripts": {
@@ -21,9 +21,14 @@
   },
   "homepage": "https://github.com/exebook/deodar",
   "dependencies": {
+    "intervision": "0.0.x",
+    "elfu": "0.0.x",
+    "glxwin": "0.0.x",
+    "room":"0.0.x",
+
     "vt": "0.1.1",
-    "dotcall": "0.2.30",
-    "room": "0.0.2",
+    "elfu": "0.0.x",
+    "room": "0.0.x",
     "terminal.js": "0.1.2",
     "pty.js": "0.2.7-1",
     "glxwin": "exebook/glxwin",

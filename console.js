@@ -1,4 +1,4 @@
-var Terminal = require('./terminal.js');
+var Terminal = require('terminal.js');
 // git clone https://github.com/c3ks/terminal.js
 
 var newRemoveLine = true
@@ -315,7 +315,8 @@ TConsole.can.draw = function(state) {
 			this.set(x, Y, ch, fc, bc)
 		}
 	}
-	if (state.focused)  with(this.terminal.buffer.cursor) this.caret = { x: x, y: y }
+	if (state.focused)  with(this.terminal.buffer.cursor) 
+		SCREEN.caret = { x: x, y: y }
 }
 
 TConsole.can.fitSize = function() {

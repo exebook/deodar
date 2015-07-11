@@ -12,8 +12,8 @@ TMouseDemo.can.init = function() {
 TMouseDemo.can.draw = function(state) {
 	this.dna(state)
 	var y = 0, s = this.data1.split('"x"')
-	this.print(5, 4, s[0])
-	if (s[1]) this.print(5, 5, '"x"' + s[1])
+	this.print(5, 4, s[0], this.pal[0], this.pal[1])
+	if (s[1]) this.print(5, 5, '"x"' + s[1], this.pal[0], this.pal[1])
 }
 
 TMouseDemo.can.onMouse = function(K) {

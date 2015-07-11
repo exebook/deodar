@@ -1,3 +1,8 @@
+console.log('START')
+setTimeout(function(){
+	console.log('END')
+}, 1000)
+try {
 console.time('START')
 process.env.PATH += ':/home/ya/sh:.'
 debugConsoleOutput = false
@@ -35,6 +40,7 @@ debugConsoleOutput = false
 Ашипки
 	случилось страшное, зашел в mus, (в другом део копировалось в муз), control+R, control+S(*talpa*), control+S(talpa*), F6->/x/music/talpa, control-A, F6->/x/music/iphone: вдруг скопировалось не только всё из папки муз но и из верхней частично
 	
+	переключение через вожатого не проверяет сохранён ли файл
 	отражение (Control-U) надо сделать по-другому (size() всё равно возвращает их на места сейчас)
 	возврат строчки: разделять добавление и стирание
 	после переменования одного файла его надо выделить
@@ -107,7 +113,11 @@ deodarVersion = {
 	abstract: 'Выбрано направление развития, соединены опорные технологии (Xlib, freetype, OpenGL, GLX, Xinput, Xcursor, Node.js, x11clip), созданы основные части, панели, редактор, работа с деревом.',
 	people: ['Яков Нивин'],
 }
-require('dotcall')
+//module.paths.push(process.cwd())
+//module.paths.push('/v/deodar')
+module.paths.push('/usr/local/lib/node_modules')
+
+require('elfu')
 spawn = require('child_process').spawn
 //actor==panel cursor->actor
 fs = require('fs');
@@ -116,11 +126,13 @@ log = console.log
 //require('./file/mask')
 //process.exit()
 //require('./pretty_error')
-require('./dnaof')
+require('dnaof')
 require('room')
-glxwin = require('./glxwin/glxwin.js')
-execSync = glxwin.native_sh
-require('./intervision/intervision')
+//glxwin = require('glxwin')
+glxwin = require('./glxwin/xrender/x11win.js')
+//glxwin = require('./win32/hwnd.js')
+//execSync = glxwin.native_sh
+require('intervision')
 require('./lexer')
 require('./panel')
 require('./editfile')
@@ -140,7 +152,7 @@ var fontfind = require('./fontfind')
 var useX11clipboard = true
 
 if (useX11clipboard) {
-	var x11clip = require('./x11clip')
+	var x11clip = require('x11clip')
 	clipboardSet = x11clip.copy
 	
 	clipboardGet = function(callback) {
@@ -171,7 +183,7 @@ var enterRule = [
  { ext: 'asm', tty: 'fasm' },
  { ext: 'coffee', tty: 'coffee' },
  { ext: 'js', tty: 'node' },
- { ext: 'yy', tty: '/v/js/dotcall/yy' },
+ { ext: 'yy', tty: 'yy' },
  { ext: 'atr', tty: 'atari800' },
  { ext: 'jpeg', spawn: 'xdg-open' },
  { ext: 'jpg', spawn: 'xdg-open' },
@@ -228,7 +240,7 @@ TController.can.init = function(W, H) {
 //	this.add(this.main)
 //	this.main.size(30, 20)
 //	this.main.pos(0, 0)
-//	this.main.viewer.text.L = fs.readFileSync(f).toString().split('\n')
+//	this.main.viewer.text.setText(fs.readFileSync(f).toString().split('\n'))
 //	this.main.viewer.multiLine = false
 ////	this.main.viewer.setText('abc')
 //	this.main.viewer.para = 0
@@ -256,7 +268,8 @@ var TDeodar = kindof(TGLXVision)
 
 TDeodar.can.init = function(fontPath) {
 //	dnaof(this, fontPath, 40, TController, 24*2,12)
-	dnaof(this, fontPath, 18, TController, 44*2,52)
+	dnaof(this, fontPath, 14, TController, 44*2,57)
+//	44*2,52)
 	//37*2,40)
 	room.say('desktop created', this.desktop)
 	DESK = this.desktop
@@ -331,3 +344,6 @@ mainChain.tick()
 --
 */
 
+} catch (e) {
+console.log('ERROR=',e)
+}
