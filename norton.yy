@@ -125,6 +125,7 @@ TNorton.can.guideOpen = ➮ {
 	me ∆ ⚪
 	signal('guide', 'clean')
 	wait('guide', 'select', ➮ {
+		resortGuideConfig(a)
 		me.viewFileName(TFileEdit, a)
 	})
 	$⦿
@@ -250,19 +251,30 @@ fs.readFile(expandPath('~/.deodar/command_history.js'),
 })
 
 TNorton.can.historyNavigate = ➮(arg) {
-	∇ L = commandHistory.list
-	⌥ (L ≟ ∅) $
-	⌥ (arg ≟ 'up') {
-		∇ s = L.pop()
-		⌥ (s ≟ ⚫input.getText()) L ⬋(s), s = L.pop()
-		L ⬋(s)
-	} ⥹ (arg ≟ 'down') {
-		∇ s = L.shift()
-		⌥ (s ≟ ⚫input.getText()) L ⬊(s), s = L.shift()
-		L ⬊(s)
+	me ∆ ⚪
+	➮ setText {
+		me.input.setText(a)
+		me.input.sel.clear()
 	}
-	⚫input.setText(s)
-	⚫input.sel.clear()
+	⌥ (⚫historyPtr ≟ ∅) ⚫historyPtr = -1
+	L ∆ commandHistory.list
+	⌥ (L ≟ ∅) $ ⦿
+	⌥ (arg ≟ 'up') {
+		⌥ (⚫historyPtr ≟ L↟) {
+			$ ⦿
+		}
+		⚫historyPtr++
+		s ∆ L[⚫historyPtr]
+	} ⥹ (arg ≟ 'down') {
+		⚫historyPtr--
+		⌥ (⚫historyPtr < 0) {
+			⚫historyPtr = -1
+			setText('')
+			$ ⦿
+		}
+		s ∆ L[⚫historyPtr]
+	}
+	setText(s)
 	$ ⦿
 }
 
@@ -346,10 +358,14 @@ TNorton.can.onKey = ➮ (K) {
 }
 
 TNorton.can.historyAdd = ➮(text) {
+	⚫historyPtr = -1
 	⌥ (commandHistory.list ≟ ∅) commandHistory.list = []
-	∇ L = commandHistory.list
-	∇ j = L≀(text) ⦙ ⌥ (j >= 0) L⨄(j, 1)
-	L ⬊(text)
+	❶ commandHistory.list
+	j ∆ ①≀text
+	⌥ (j >= 0) {
+		① ⨄(j, 1)
+	}
+	① ⬋ text
 //		saveCommandHistory()
 //		fs.writeFileSync(expandPath('~/.deodar/command_history.js'),  
 //			'commandHistory=' + JSON.stringify(commandHistory,0, ' '))

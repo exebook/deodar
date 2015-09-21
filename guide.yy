@@ -1,4 +1,7 @@
 /*
+	Известное так же как "вожатый", это окно позволяет
+	переключаться быстро между редактируемыми файлами
+	
 	TODO
 	⚫ gotofolder
 	⚫ remove key, duplicate key
@@ -43,22 +46,34 @@ TGuideList.can.drawItem = ➮(X) {
 }
 
 ➮ removeOlderAndSort L {
+	// idea is to sort the list some how
+	// first it was sorted with keyworded items at bottom, ohterwise unsorted
+	// but now it is last item goes to top, otherwise unsorted
 	R ∆ []
 	c ∆ 0
 	l ⬌ L {
 		❶ Lˡ
-		⌥ (①key) ♻
-		⌥ (++c > RECENT_ENTRIES) ♻
-		R ⬊ ①
+//		⌥ (①key) ♻
+//		⌥ (++c > RECENT_ENTRIES) ♻
+		⌥ (①key) {
+			R ⬊ ①
+		} ⎇ {
+			⌥ (c > RECENT_ENTRIES) ♻
+			R ⬊ ①
+			c++
+		}
+//		R ⬊ ①
 	}
-	l ⬌ L { ❶ Lˡ ⦙ ⌥ (①key) R ⬊ ① }
+//	l ⬌ L { ❶ Lˡ ⦙ ⌥ (①key) R ⬊ ① }
+
 	$ R
 }
 
 ∇ sourceFile = ∅
 
 TGuide = kindof(TDialog)
-➮ loadList {
+
+loadGuideConfig = ➮ {
 	∇ L = [ ]
 	js ∆ expandPath('~/.deodar/guide.js')
 	sourceFile = js
@@ -66,7 +81,10 @@ TGuide = kindof(TDialog)
 		try {
 			∇ src = fs.readFileSync(js)≂
 			L = eval(src)
-		} catch (e) { }
+		} catch (e) {
+			// Error at parsing guide.js, write new empty one
+			fs.writeFileSync(js, '[]')
+		}
 	} ⎇ fs.writeFileSync(js, '[]')
 //	i ⬌ L {
 //		∇ t = Lⁱ.path
@@ -79,7 +97,23 @@ TGuide = kindof(TDialog)
 	$L
 }
 
-➮ saveList L {
+resortGuideConfig = ➮ resortList {
+	L ∆ loadGuideConfig()
+	i ⬌ L {
+		⌥ (a ≟ Lⁱ.path) {
+			// move current file to top
+			L ⬋ (L ⨄(i, 1)⁰)
+			saveGuideConfig(L)
+			@
+		}
+	}
+}
+
+➮ loadList {
+	$ loadGuideConfig()
+}
+
+saveGuideConfig = ➮ saveList L {
 	⌥ (!sourceFile) $
 	∇ src = fs.readFileSync(sourceFile)≂
 	src = src.split('[')⁰ + '\n'
@@ -167,14 +201,19 @@ TGuide.can.onEnter = ➮{
 }
 
 room.listen('edit begin file', ➮ {
-	L ∆ loadList(), found = ⦾
+	L ∆ loadList(), found = -1
 	i ⬌ L {
 		∇ t = Lⁱ.path
-		⌥ (a ≟ t) found = ⦿
+		⌥ (a ≟ t) found = i
 	}
-	⌥ (!found) {
+	⌥ (found < 0) {
 		L ⬋ ({path:a})
 		saveList(L)
+	} ⎇ {
+// NOT HERE TO DO SO
+//		// move current file to top
+//		L ⬋ (L ⨄(found, 1)⁰)
+//		saveList(L)
 	}
 })
 
@@ -236,12 +275,16 @@ showGuide = ➮(norton, curFile) {
 	guide.curFile = curFile
 	L ∆ guide.list.items
 	i ⬌ L {
-		⌥ (Lⁱ.path ≟ curFile) guide.list.sid = i
-		guide.list.scrollIntoView()
+		⌥ (Lⁱ.path ≟ curFile) {
+			guide.list.sid = i
+			guide.list.scrollIntoView()
+			@
+		}
 	}
 	guide.list.startSid = guide.list.sid
-	⌥ (guide.list.items ↥ > 0)
+	⌥ (guide.list.items ↥ > 0) {
 		desk.showModal(guide, (desk.w >> 1) - (guide.w >> 1), 3)
+	}
 }
 
 room.listen('desktop created', ➮ {
