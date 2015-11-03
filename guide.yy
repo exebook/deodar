@@ -113,7 +113,7 @@ resortGuideConfig = ➮ resortList {
 	$ loadGuideConfig()
 }
 
-saveGuideConfig = ➮ saveList L {
+saveGuideConfig = ➮ (L) {
 	⌥ (!sourceFile) $
 	∇ src = fs.readFileSync(sourceFile)≂
 	src = src.split('[')⁰ + '\n'
@@ -121,6 +121,10 @@ saveGuideConfig = ➮ saveList L {
 		+ '\n' + src.split(']')¹
 	src = src.replace(/\n\n/g, '\n')//откуда берутся?
 	fs.writeFileSync(sourceFile, src)
+}
+
+➮ saveList {
+	$ saveGuideConfig(a)
 }
 
 TGuide.can.init = ➮ (norton) {

@@ -545,7 +545,9 @@ TNorton.can.viewFile = ➮(viewClass) {
 			∇ panel = ⚫actor
 			⌥ (items[sid].dir ≟ ⦾ && items[sid].hint ≠ ⦿) {
 				// сделай isFile()
-				⚫viewFileName(viewClass, path + '/' + items[sid].name)
+				filePath ∆ path + '/' + items[sid].name
+				resortGuideConfig(filePath)
+				⚫viewFileName(viewClass, filePath)
 				⌥ (⚫viewer) {
 					⚫viewer.onHide = ➮{
 						panel.list.reload()

@@ -156,7 +156,7 @@ TConsole.can.respawn = function(cmd, args, cwd, callback) {
 //	process.chdir(cwd)
 	this.lastCmd = cmd
 	this.term = pty.spawn(cmd, args, { 
-		name: 'xterm-color', cols: wh.w, rows: wh.h, cwd: cwd});//, env: process.env });
+		name: 'xterm-256color', cols: wh.w, rows: wh.h, cwd: cwd});//, env: process.env });
 	this.term.on('error', function(a) {})
 	this.term.on('close', function(a) {})
 	this.term.on('data', function(Data) {
