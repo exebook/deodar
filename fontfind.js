@@ -89,10 +89,14 @@ function taskFontSelect2() {
 
 function taskFontSelect() {
 	this.chain.fontPath =
+//	'/home/ya/fonts/MonospaceTypewriter.ttf'
+	'/home/ya/fonts/NK57C.ttf'
+//	'/home/ya/fonts/nk57-monospace-cd-rg.ttf'
 // '/home/ya/.local/share/fonts/PTM55F_W.ttf'
-//'/usr/share/fonts/truetype/freefont/FreeSans.ttf'
+//'/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf'
+//'/usr/share/fonts/truetype/freefont/FreeMono.ttf'
 //'/x/fonts/freefont-20120503/sfd/GnuMono.ttf'
-__dirname + '/fonts/elfu.ttf'
+//__dirname + '/fonts/elfu.ttf'
 //'/x/fonts/freefont-20120503/sfd/PTMono-Sym.ttf'
 //'/usr/share/fonts/truetype/unifont/unifont.ttf'
 	this.state = 'done'

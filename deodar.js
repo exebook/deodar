@@ -191,7 +191,7 @@ var enterRule = [
  { ext: 'yy', tty: 'yy' },
  { ext: 'atr', tty: 'atari800' },
  { ext: 'jpeg', spawn: 'xdg-open' },
- { ext: 'jpg', spawn: 'xdg-open' },
+ { ext: 'jpg', spawn: 'gpicview' },
  { ext: 'JPG', spawn: 'xdg-open' },
  { ext: 'avi', spawn: 'xdg-open' },
  { ext: 'wmv', spawn: 'xdg-open' },
@@ -273,7 +273,7 @@ var TDeodar = kindof(TGLXVision)
 
 TDeodar.can.init = function(fontPath) {
 //	dnaof(this, fontPath, 40, TController, 24*2,12)
-	dnaof(this, fontPath, 14, TController, 44*2,57)
+	dnaof(this, fontPath, 13, TController, 53*2,63)
 //	44*2,52)
 	//37*2,40)
 	room.say('desktop created', this.desktop)
