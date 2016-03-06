@@ -134,7 +134,7 @@ log = console.log
 require('dnaof')
 require('room')
 //glxwin = require('glxwin')
-glxwin = require('./glxwin/xrender/x11win.js')
+glxwin = require('./xrender')
 //glxwin = require('./win32/hwnd.js')
 //execSync = glxwin.native_sh
 require('intervision')
