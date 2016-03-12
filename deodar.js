@@ -138,6 +138,7 @@ glxwin = require('./xrender')
 //glxwin = require('./win32/hwnd.js')
 //execSync = glxwin.native_sh
 require('intervision')
+require('./readdir')
 require('./lexer')
 require('./panel')
 require('./editfile')

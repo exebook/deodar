@@ -22,7 +22,9 @@ SortModes = [
 ]
 
 ➮ loadDir path sort dots {
-	∇ L = glxwin.native_readdir(path)
+	console.time('readdir')
+	L ∆ readDir(path, !dots)
+	console.timeEnd('readdir')
 	⌥ (L ≟ ∅) L = [{name: 'error', hint: ⦿}]
 	⌥ (!dots) L = Lꔬ(➮(s){ ⌥ (s.name△(0) ≟ '.') $ ⦾ ⦙ $ ⦿  })
 	⌥ (sort ≠ ∅)
