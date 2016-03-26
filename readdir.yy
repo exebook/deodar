@@ -4,7 +4,7 @@ function dateAsArr(d) {
 }
 
 function getFlags (pp) {
-	var p = '----------'
+	var p = '----------' ⌶ ''
 	if ((pp & 0400) != 0) p[0] = 'r'
 	if ((pp & 0200) != 0) p[1] = 'w'
 	if ((pp & 0100) != 0) p[2] = 'x'
@@ -14,6 +14,7 @@ function getFlags (pp) {
 	if ((pp & 0004) != 0) p[6] = 'r'
 	if ((pp & 0002) != 0) p[7] = 'w'
 	if ((pp & 0001) != 0) p[8] = 'x'
+	$ p ⫴ ''
 }
 
 ➮ listNotIgnoredFiles dir {
