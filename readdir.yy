@@ -17,7 +17,7 @@ function getFlags (pp) {
 	$ p ⫴ ''
 }
 
-➮ listNotIgnoredFiles dir {
+listNotIgnoredFiles = ➮ listNotIgnoredFiles dir {
 	cfg ∆['.git/']
 	⌥ fs.existsSync(dir+'/.gitignore') { cfg = cfg ꗚ (⛁(dir+'/.gitignore')≂ ⌶'\n')}
 	⌥ fs.existsSync(dir+'/.npmignore') { cfg = cfg ꗚ (⛁(dir+'/.npmignore')≂ ⌶'\n')}
@@ -43,6 +43,27 @@ function getFlags (pp) {
 		$ (!ignore(a))
 	})
 	$ A
+}
+
+
+➮ dateSmartTwoBlock {
+//	ロ 'a=',a
+	month ∆ ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+	➮ tab {
+		⧖ ((''+a)↥ < 2) { a = '0' + a }
+		$ a
+	}
+	days ∆ (⚡ - a) / 1000 / 60 / 60 / 24
+	❰days < 1❱
+		$ a.getHours() + ':' + tab(a.getMinutes())
+		⁋
+	❰days < 14❱
+		$ ⬠days + ' days'
+		⁋
+	❰days < 11*30.5❱
+		$ month[a.getMonth()] + ' ' + a.getDate()
+		⁋
+	$ (a.getYear()+1900) + ' ' + a.getMonth()
 }
 
 //A ∆ listNotIgnoredFiles('.')
@@ -84,6 +105,7 @@ readDir = function readDir(path, gitignore) {
 			ctime: dateAsArr(stat.ctime),
 			atime: dateAsArr(stat.atime),
 			mtime: dateAsArr(stat.mtime),
+			smartDate: dateSmartTwoBlock(stat.mtime)
 		})
 	}
 	$ R

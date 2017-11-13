@@ -6,7 +6,8 @@
 	⚫ gotofolder
 	⚫ remove key, duplicate key
 */
-RECENT_ENTRIES ∆ 8
+RECENT_ENTRIES ∆ 25
+driveMenuReplaces = []
 
 TGuideList = kindof(TList)
 TGuideList.can.init = ➮ {
@@ -27,7 +28,7 @@ TGuideList.can.drawItem = ➮(X) {
 	∇ F = ⚫pal⁰, B = ⚫pal¹
 	⌥ (X.focused) F = ⚫pal², B = ⚫pal³
 	⌥ (X.selected) F = ⚫pal⁴
-	∇ s = '', t = X.item.path, lights = []
+	∇ s = '', t = itemText(X.item), lights = []
 	i ⬌ t {
 		⌥ (tⁱ ≟ '^') { lights ⬊(i) ⦙ ♻ }
 		s += tⁱ
@@ -49,6 +50,8 @@ TGuideList.can.drawItem = ➮(X) {
 	// idea is to sort the list some how
 	// first it was sorted with keyworded items at bottom, ohterwise unsorted
 	// but now it is last item goes to top, otherwise unsorted
+	// addition oct 2017: added smart resort
+	smartResort(L)
 	R ∆ []
 	c ∆ 0
 	l ⬌ L {
@@ -65,7 +68,6 @@ TGuideList.can.drawItem = ➮(X) {
 //		R ⬊ ①
 	}
 //	l ⬌ L { ❶ Lˡ ⦙ ⌥ (①key) R ⬊ ① }
-
 	$ R
 }
 
@@ -81,6 +83,7 @@ loadGuideConfig = ➮ {
 		try {
 			∇ src = fs.readFileSync(js)≂
 			L = eval(src)
+			driveMenuReplaces = loadDriveMenuShortcuts()
 		} catch (e) {
 			// Error at parsing guide.js, write new empty one
 			fs.writeFileSync(js, '[]')
@@ -97,8 +100,41 @@ loadGuideConfig = ➮ {
 	$L
 }
 
+➮ smartResort L {
+	L.sort(➮{
+		date_a ∆ a.saveTime
+		date_b ∆ b.saveTime
+		⌥ (date_a == ∅) date_a = 0
+		⌥ (date_b == ∅) date_b = 0
+		count_a ∆ a.saves
+		count_b ∆ b.saves
+		⌥ (count_a == ∅) count_a = 1
+		⌥ (count_b == ∅) count_b = 1
+		A ∆ sortFunc(count_a, date_a)
+		B ∆ sortFunc(count_b, date_b)
+// debug only code
+//		X ∆ [@/v/deodar/LICENSE /v/deodar/guide.yy]
+//		if (X ≀ a.path >= 0 && X ≀ b.path >= 0) {
+//			console.log(a.path, A, count_a, date_a)
+//			console.log(b.path, B, count_b, date_b)
+//		}
+		return B - A
+		
+		➮ sortFunc count date {
+			// for now just count saves and multiply 10x if saved in last 12 hours
+			day ∆ 1e3 * 60 * 60 * 24
+			now ∆ Date.now()
+			//days ∆ (now - date) / day
+			mul ∆ 1
+			⌥ now - day/2 < date { mul = 10 }
+			$ mul * count
+		}
+	})
+}
+
 resortGuideConfig = ➮ resortList {
 	L ∆ loadGuideConfig()
+	smartResort(L)
 	i ⬌ L {
 		⌥ (a ≟ Lⁱ.path) {
 			// move current file to top
@@ -127,6 +163,18 @@ saveGuideConfig = ➮ (L) {
 	$ saveGuideConfig(a)
 }
 
+➮ itemText item {
+	t ∆ item.path
+	t = t.split(process.env.HOME).join('~')
+	n ► driveMenuReplaces {
+		⌥ n.path == '/' ♻
+		⌥ (t ≀ (n.path) == 0) {
+			t = t.split(n.path).join('['+n.title+']')
+		}
+	}
+	$ t
+}
+
 TGuide.can.init = ➮ (norton) {
 	dnaof(⚪, 40, 1)
 	∇ me = ⚪
@@ -138,7 +186,7 @@ TGuide.can.init = ➮ (norton) {
 	⚫L = L
 	∇ width ⊜
 	i ⬌ L {
-		∇ t = Lⁱ.path
+		∇ t = itemText(Lⁱ)
 		⌥ (t ↥ > width) width = t ↥
 		⚫list.items ⬊(Lⁱ)
 	}
@@ -201,24 +249,35 @@ TGuide.can.onDelete = ➮{
 TGuide.can.onEnter = ➮{
 	⚫close()
 	❶ ⚫list.items[⚫list.sid]
-	⌥ (①) signal('guide', 'select', ① path)
+	⌥ ① {
+		⚫onSelect(① path)
+	}
 }
 
 room.listen('edit begin file', ➮ {
+})
+
+room.listen('edit save file', ➮ {
 	L ∆ loadList(), found = -1
 	i ⬌ L {
-		∇ t = Lⁱ.path
-		⌥ (a ≟ t) found = i
+		t ∆ Lⁱ.path
+		⌥ a ≟ t {
+			found = i
+			⌥ (⟑ Lⁱ.saves) Lⁱ.saves ++
+			⎇ Lⁱ.saves = 1
+			Lⁱ.saveTime = Date.now()
+			@
+		}
 	}
 	⌥ (found < 0) {
-		L ⬋ ({path:a})
-		saveList(L)
+		L ⬋ ({path:a, saves: 1})
 	} ⎇ {
 // NOT HERE TO DO SO
 //		// move current file to top
 //		L ⬋ (L ⨄(found, 1)⁰)
 //		saveList(L)
 	}
+	saveList(L)
 })
 
 TGuide.can.editSource = ➮ {
@@ -273,10 +332,11 @@ TGuide.can.onKey = ➮ {
 
 ∇ desk
 
-showGuide = ➮(norton, curFile) {
-	∇ guide = TGuide.create(norton)
+showGuide = ➮(norton, curFile, onSelect) {
+	guide ∆ TGuide.create(norton)
 	guide.norton = norton
 	guide.curFile = curFile
+	guide.onSelect = onSelect
 	L ∆ guide.list.items
 	i ⬌ L {
 		⌥ (Lⁱ.path ≟ curFile) {

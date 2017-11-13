@@ -90,6 +90,7 @@ function taskFontSelect2() {
 function taskFontSelect() {
 	this.chain.fontPath =
 __dirname + '/fonts/HighElf.ttf'
+//__dirname + '/fonts/NovoBukva.ttf'
 //__dirname + '/fonts/elfu.ttf'
 //	'/home/ya/fonts/MonospaceTypewriter.ttf'
 //	'/home/ya/fonts/NK57C.ttf'

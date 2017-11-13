@@ -41,7 +41,7 @@ TNorton.can.init = ➮(panelW, panelH) {
 
 	⚫react(10, keycode.F7, ⚫userFindModal, { arg:⚪, role:['panel', 'input'] })
 	⚫react(100, keycode['f'], ⚫userFindModal, { arg:⚪, role:['panel', 'input'] })
-	⚫react(10, keycode.F1, showHelp, { arg:⚪, role:['panel', 'input'] })
+	⚫react(1, keycode.F1, showHelp, { arg:⚪, role:['panel', 'input'] })
 	⚫react(0, keycode.TAB, ⚫switchPanel, {role:['panel']})
 	⚫react(100, keycode['o'], ⚫outputFlip, {role:['panel', 'input', 'output']})
 	⚫react(0, keycode.F1, ⚫driveMenu, {arg: 'left', role:['panel', 'input']})
@@ -66,6 +66,9 @@ TNorton.can.init = ➮(panelW, panelH) {
 	⚫react(0, keycode.F6, ⚫commandCopy, { arg: 'move', role:['panel'] })
 	⚫react(0, keycode.F7, ⚫commandMakeDir, { role:['panel'] })
 	⚫react(0, keycode.F8, ⚫commandDelete, { role:['panel'] })
+
+	⚫react(0, keycode.F9, ⚫guideOpen, { role:['panel','input'] })
+	⚫react(100, keycode['w'], ⚫guideOpen, { role:['panel','input'] })//какую выбрать кнопку?
 
 	⚫react(100, keycode['k'], ⚫showKeyCode, {role:['panel','input']})
 	⚫react(0, keycode.ESCAPE, ⚫escape, {role:['panel', 'input']})
@@ -121,13 +124,12 @@ TNorton.can.quitProgram = ➮ {
 }
 
 TNorton.can.guideOpen = ➮ {
-	showGuide(⚪)
 	me ∆ ⚪
-	signal('guide', 'clean')
-	wait('guide', 'select', ➮ {
+	showGuide(⚪, null, ➮ {
 		resortGuideConfig(a)
 		me.viewFileName(TFileEdit, a)
 	})
+//	signal('guide', 'clean')
 	$⦿
 }
 
@@ -425,7 +427,13 @@ TNorton.can.onItemEnter = ➮(list, item) {
 					}
 					$
 				} ⥹ (X.spawn) {
-					spawn(X.spawn, [list.path + '/' + X.name])
+					try {
+						//НАДО: понять, почему не ловятся проблемы со спавном (асинк же)
+						spawn(X.spawn, [list.path + '/' + X.name])
+					} catch (em) {
+						ロ 'ERR', em
+						
+					}
 					$
 				} ⥹ (X.tty) {
 					⚫historyAdd(X.tty + ' ' + X.name)

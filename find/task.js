@@ -1,3 +1,4 @@
+
 function taskFindFile() {
 	if (this.state == 'cancel') {
 		this.state = 'canceled'
@@ -10,6 +11,8 @@ function taskFindFile() {
 }
 
 function taskFindDir() {
+	var gitignore = true // hardcoded for now
+	// наверное можно control+. использовать?
 	if (this.state == 'cancel') {
 		this.state = 'canceled'
 		this.chain.tick()
@@ -20,7 +23,10 @@ function taskFindDir() {
 		var processDir = this.chain.onDir(this.name)
 		if (processDir) {
 			try {
-				var list = fs.readdirSync(this.name)
+				var list
+				if (gitignore) list = listNotIgnoredFiles(this.name)
+				else list = fs.readdirSync(this.name)
+//				var list = fs.readdirSync(this.name)
 				for (var i = 0; i < list.length; i++) {
 					this.chain.tasks.push({
 						task: taskFindItem, chain: this.chain, name: this.name + '/' + list[i]

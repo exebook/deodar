@@ -1,5 +1,3 @@
-ロ 'abcde'≀'bc'.slice(1)
-
 SortModes = [
 	{char: 'n', title:'Имя', func:➮(L) { $ L❄(➮(a, b) { ⌥ (a.dir ≠ b.dir) $ b.dir - a.dir ⦙ ⎇ $ a.name.localeCompare(b.name) }) }},
 	{char: 'x', title:'Расширение', func:➮(L) {
@@ -56,7 +54,7 @@ TFileList.can.init = ➮{
 }
 
 TFileList.can.goToRoot = ➮{
-	∇ path = '/'
+	path ∆ '/'
 	⌥ (⚫parent.root ≠ ∅) path = ⚫parent.root.path
 	⚫load(path)
 	$ ⦿
@@ -258,22 +256,17 @@ TFileDetail.can.draw = ➮(state) {
 	x = ⚫w
 	⌥ (⚫info.mode ≠ ∅) s = ' '+(⚫info.mode).toString(8)⩪(), x -= (s ↥),
 		⚫print(x, 1, s, 0x773, ⚫pal¹)
-	⌥ (⚫info.mtime ≠ ∅) {
-		s = ''
-		s += zz(⚫info.mtime³) // hour
-		s += ':'
-		s += zz(⚫info.mtime⁴) // minute
-		x -= s ↥
-		⚫print(x, 1, s, 0x4a6, ⚫pal¹)
-		s = ''
-		s += zz(⚫info.mtime¹) // month
-		s += '.'
-		s += zz(⚫info.mtime²) // day
+	⌥ (⚫info.smartDate ≠ ∅) {
+		s = ⚫info.smartDate
+		x -= (s ↥ + 1)
+		⚫print(x, 1, s, 0x284, ⚫pal¹)
+	}
+	⎇ {
+		s = '...'
 		x -= (s ↥ + 1)
 		⚫print(x, 1, s, 0x284, ⚫pal¹)
 	}
 	⌥ (⚫info.size ≠ ∅) {
-//			x += 1
 		∇ s = readableSize(⚫info.size)
 		x -= (s ↥ + 2)
 		⚫print(x, 1, s, 0xaef, ⚫pal¹)
@@ -327,7 +320,22 @@ TFilePanel.can.size = ➮(w, h) {
 	⚫detail.x = ⚫list.x, ⚫detail.y = ⚫list.y + ⚫list.h
 }
 
+driveMenuReplaces ∆ []
+
+➮ makeNiceTitle t {
+	t = t.split(process.env.HOME).join('~')
+	// тот же код что и в вожатом/правке
+	n ► driveMenuReplaces {
+		⌥ n.path == '/' ♻
+		⌥ (t ≀ (n.path) == 0) {
+			t = t.split(n.path).join('['+n.title+']')
+		}
+	}
+	$ t
+}
+
 TFilePanel.can.titleFit = ➮(s, w) {
+	// используем оба способа
 	$ pathCompress(s, w)
 }
 
@@ -339,7 +347,8 @@ TFilePanel.can.draw = ➮(state) {
 
 TFilePanel.can.onLoad = ➮{
 	⌥ (⚫root ≟ ∅) {
-		⚫title = ⚫list.path ⦙
+		⚫title = ⚫list.path
+		⚫title = makeNiceTitle(⚫title)
 		⌥ (⚫list.path ≠ '/') ⚫list.items ⬋(
 			{name:'..', dir:⦿, size:0})
 	} ⎇ {
@@ -357,5 +366,6 @@ TFilePanel.can.onLoad = ➮{
 	⌥ (count > 0 && ⚫path ≠ '/') count --
 	⌥ (count ≟ 0) ⚫bottomTitle = 'пустая папка' ⦙ ⎇
 	⚫bottomTitle = readableSize(size, ' байтов', 'склонения') + ' в ' + count +' '+ numDeclension('в', 'м', count, 'файл')
+	driveMenuReplaces = loadDriveMenuShortcuts()
 }
 

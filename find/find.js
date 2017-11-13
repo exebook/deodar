@@ -65,7 +65,7 @@ TFindWindow.can.onFile = function(file) {
 	if (this.contents) {
 		try { var size = fs.lstatSync(file).size } catch (e) { return }
 		try {
-			if (size < 100 * 1024)
+			if (size < 1024 * 1024)
 				var s = fs.readFileSync(file).toString()
 		} catch (e) { return }
 		if (s) match = s.indexOf(q) >= 0

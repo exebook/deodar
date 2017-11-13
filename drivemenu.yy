@@ -86,7 +86,7 @@ TDriveMenu.can.pathSelect = ➮ (item) {
 	⌥ (⬤ item.path ≟ 'function') path = item.path.apply(⚫panel)
 	⎇ path = item.path
 	⌥ (item.root) {
-		∇ other = ⚫panel.parent.getOpposite(⚫panel)
+		other ∆ ⚫panel.parent.getOpposite(⚫panel)
 		⌥ (other ≠ ∅) {
 			∇ o = other.list.path
 			⌥ (o≀(path) ≟ 0) {
@@ -96,7 +96,13 @@ TDriveMenu.can.pathSelect = ➮ (item) {
 	}
 	⚫panel.list.path = expandPath(path)
 	⏀ ⚫panel.root
-	⌥ (item.root ≟ ⦿) ⚫panel.root = item
+	⌥ (item.root) {
+		⚫panel.root = item
+		⌥ ⬤(item.root) ≟ 'string' {
+			⚫panel.root.path = item.root
+			// 	чтобы указать относительный корень, а не прямой
+		}
+	}
 	⚫panel.list.reload()
 	⚫panel.parent.updateInputLabel()
 }
