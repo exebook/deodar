@@ -22,9 +22,9 @@ TLexer.can.charType = function(c) {
 TLexer.can.colorizeString = function(text) {
 //	if (this.keywords == undefined) this.keywords = this.initKeywords()
 	var c
-	var sym = '\'`~!@#$%^&*()-+={[}]:;"?/>.<,\\|≠≟≁∼≃≄⟑⬤'
+	var sym = '\'`~!#$%^&*()-+={[}]:;"?/>.<,\\|≠≟≁∼≃≄⟑⬤'
 	+ '⁰¹²³⁴⁵⁶⁷⁸⁹ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖʱʳˢᵗᵘᵛʷˣʸᶻ'
-	+ 'ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ', num = '1234567890', spc = ' \n\r\t'
+	+ 'ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ', num = '1234567890_', spc = ' \n\r\t'
 	var sym2 = '⏚☎✚ᗰᙏᗲᗶᗼᙢᙕᙨᙜᘻ❶❷❸❹❺❻❼❽❾❿①②③④⑤⑥⑦⑧⑨⑩∆↟ꕉ⌶⫴⋃⨄ꔬ⧉ꗚ❄⩪△◬⟡⌑≞≂≈≀⍽★⬠⚂♻★⏀⚪⚫⋀⋁↥⎇⌚⌛≣⦾⦿⬌⬊⬈⬉⬋⬍∞⧖∅⧗⌥⥹⊜∅⨃∇➮ꗝꗌꖇ⛁⛃⥹☛ꘉ↵√⚑►≜ꔪ' // Aⁱ⁻¹⁻ ⁻ ᵃ⁺¹
 	sym2 += '❰❱◇⁋'
 	sym += '→⇒⟶⇨➡'
@@ -51,6 +51,12 @@ TLexer.can.colorizeString = function(text) {
 			COLOR.push(cnum)
 			i += 2
 			state = num
+			while(s[i]&&((s[i]>='0'&&s[i]<='9')||(s[i]>='a'&&s[i]<='f')||(s[i]>='A'&&s[i]<='F')||s[i]=='_')){
+				i++;
+				COLOR.push(cnum)
+			}
+			c = s[i]
+			//continue
 		}
 		if (c == '"') { scanStr('"'); continue
 		} else if (c == "'") { scanStr("'"); continue
@@ -84,11 +90,11 @@ TJSLexer.can.init = function() {
 
 TJSLexer.can.initKeywords = function() {
 	var keywordSource = [
-	"break export return case for switch comment function continue if typeof instanceof import var delete in do label while else new with abstract implements protected boolean instanceOf public byte int short char interface static double long synchronized native throws final  transient float package goto private catch enum throw class extends try const finally debugger super alert isFinite personalbar Anchor isNan Plugin Area java print JavaArray prompt Array JavaClass prototype assign JavaObject Radio blur JavaPackage ref Boolean RegExp Button Link releaseEvents  location Reset caller Location resizeBy captureEvents locationbar resizeTo Checkbox Math routeEvent clearInterval menubar scroll clearTimeout MimeType scrollbars close moveBy scrollBy closed moveTo scrollTo confirm name Select constructor Date navigate setInterval defaultStatus navigator setTimeout document Navigator status Document netscape statusbar Element Number stop escape Object String eval onBlur Submit FileUpload onError sun find onFocus taint focus onLoad Text Form onUnload Textarea Frame open toolbar Frames opener top Function Option toString getClass outerHeight unescape Hidden OuterWidth untaint history Packages unwatch History pageXoffset valueOf home pageYoffset watch Image parent window parseFloat Window InnerHeight parseInt InnerWidth Password bool int u32 struct  wchar_t sizeof arr list str wstr word virtual typedef typename template inline operator extern __stdcall __cdecl stdcall cdecl using namespace",
+	"break export return case for switch comment function continue if typeof instanceof import var delete in do label while else new with abstract implements protected boolean instanceOf public byte int short char interface static double long synchronized native throws final  transient float package goto private catch enum throw class extends try const finally debugger super alert isFinite personalbar Anchor isNan Plugin Area java print JavaArray prompt Array JavaClass prototype assign JavaObject Radio blur JavaPackage ref Boolean RegExp Button Link releaseEvents  location Reset caller Location resizeBy captureEvents locationbar resizeTo Checkbox Math routeEvent clearInterval menubar scroll clearTimeout MimeType scrollbars close moveBy scrollBy closed moveTo scrollTo confirm name Select constructor Date navigate setInterval defaultStatus navigator setTimeout document Navigator status Document netscape statusbar Element Number stop escape Object String eval onBlur Submit FileUpload onError sun find onFocus taint focus onLoad Text Form onUnload Textarea Frame open toolbar Frames opener top Function Option toString getClass outerHeight unescape Hidden OuterWidth untaint history Packages unwatch History pageXoffset valueOf home pageYoffset watch Image parent window parseFloat Window InnerHeight parseInt InnerWidth Password bool unsigned int struct  wchar_t sizeof arr list str wstr word virtual typedef typename template inline operator extern __stdcall __cdecl stdcall cdecl using namespace int8_t int16_t int32_t int64_t uint8_t uint16_t uint32_t uint64_t u8 u16 u32 u64 i8 i16 i32 i64 asm volatile",
 
-	"async await ⚙ ロロ $ dnaof create kindof me can hand it ⦙ ≀≀ ⌿⌚ ⌿⌛ α β γ δ ε ζ η θ ι κ λ μ ν ξ π ρ σ τ υ φ χ ψ ω ロ include define ifdef endif elif ifndef undef each loop __argarr __elfuver ret",
+	"printf async await ⚙ ロロ $ dnaof create kindof me can hand it ⦙ ≀≀ ⌿⌚ ⌿⌛ α β γ δ ε ζ η θ ι κ λ μ ν ξ π ρ σ τ υ φ χ ψ ω ロ include define ifdef endif elif ifndef undef each loop __argarr __elfuver ret join",
 
-	"console log process fs a b c",
+	"console log ilog li lu process fs a b c",
 
 	"nil leaf THolder TConsole TController varTDeodar TDriveMenu TDeleteDialog TSearch TResults TFindWindow TNorton TFileList TFileDetail TFilePanel TControl TButton TLabel TInput TDoneBar TScrollBar TDialog TOkCancel TInputBox TExitSaveCancel TMessageBox TGLXVision TMouse TEdit TGroup TDesktop TObject TKeyInput TList TQuickFind TSelection TText TTextView TKeyCode THelp TDriveList TModalTextView TFileEdit TView TWindow",
 
@@ -202,12 +208,23 @@ TShipLexer.can.init = function() {
 
 TShipLexer.can.initKeywords = function() {
 	var keywordSource = [
-	'i8 u8 i16 u16 i32 u32 i64 u64 f32 f64 int var',
-	'log are',
-	'if but fun ret lam var loop each else item while',
-	'shr shl and or xor plus minus',
-	'nil true false index lap',
-	'name'
+ // types
+	'i8 u8 i16 u16 i32 u32 i64 u64 f32 f64 int var number array string enum',
+
+// infrastructure/logging/debugging
+	'incl log are cout time_begin time_end',
+
+// control
+	'lam if but fun ret lam var loop each else while break @ cont halt init use try catch throw charmap found miss',
+
+// operations
+	'and or not plus minus inc dec chr ord put pull push pop is',
+
+// values
+	'nil true false index lap len item OR AND SHR SHL NOT XOR match',
+
+// concept
+	'name rec union'
 	]
 
 	var keywords = {}

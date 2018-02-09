@@ -51,7 +51,7 @@ TGuideList.can.drawItem = ➮(X) {
 	// first it was sorted with keyworded items at bottom, ohterwise unsorted
 	// but now it is last item goes to top, otherwise unsorted
 	// addition oct 2017: added smart resort
-	smartResort(L)
+//	smartResort(L)
 	R ∆ []
 	c ∆ 0
 	l ⬌ L {
@@ -100,7 +100,7 @@ loadGuideConfig = ➮ {
 	$L
 }
 
-➮ smartResort L {
+➮ smartResort_proved_useless L {
 	L.sort(➮{
 		date_a ∆ a.saveTime
 		date_b ∆ b.saveTime
@@ -134,7 +134,8 @@ loadGuideConfig = ➮ {
 
 resortGuideConfig = ➮ resortList {
 	L ∆ loadGuideConfig()
-	smartResort(L)
+	//smartResort(L)
+	L = removeOlderAndSort(L)
 	i ⬌ L {
 		⌥ (a ≟ Lⁱ.path) {
 			// move current file to top

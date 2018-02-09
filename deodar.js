@@ -197,6 +197,7 @@ var enterRule = [ // НАДО: переделать в объект
  { ext: 'coffee', tty: 'coffee' },
  { ext: 'js', tty: 'node' },
  { ext: 'yy', tty: 'yy' },
+ { ext: 'ship', tty: 'ship' },
  { ext: 'atr', tty: 'atari800' },
  { ext: 'jpeg', spawn: 'xdg-open' },
  { ext: 'jpg', spawn: 'xdg-open' },
